@@ -8,11 +8,10 @@ public class ControlPanel : MonoBehaviour
 {
     private string languageName;
     private List<string> langList = new List<string>() {"LATIN", "ENGLISH", "SPANISH", "OFF"};
-    [SerializeField]  private UnityEvent onLangPress;
     [SerializeField] private GameObject LLatin, RLatin, LEnglish, REnglish, LSpanish, RSpanish;
     [SerializeField] private GameObject langNameTextObject;
     private TextMesh langNameText;
-    private int i = 0;
+    private int i = 3;
     
     [SerializeField]  private UnityEvent onMusicPress;
     [SerializeField] private GameObject musicObject;
@@ -23,7 +22,7 @@ public class ControlPanel : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        languageName = langList[0];
+        languageName = langList[3];
         langNameText = langNameTextObject.GetComponent<TextMesh>();
         langNameText.text = languageName;
         UpdateLanguageObjects();
@@ -35,7 +34,7 @@ public class ControlPanel : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.C))
         {
-            onLangPress.Invoke();
+            CycleLanguageName();
         }
 
         if (Input.GetKeyDown(KeyCode.M))
@@ -53,6 +52,7 @@ public class ControlPanel : MonoBehaviour
             i = 0;
         }
         langNameText.text = langList[i];
+        UpdateLanguageObjects();
     }
     
     public void CycleLanguageNameBackwards()
@@ -63,6 +63,7 @@ public class ControlPanel : MonoBehaviour
             i = langList.Count;
         }
         langNameText.text = langList[i];
+        UpdateLanguageObjects();
     }
 
     public void UpdateLanguageObjects()
