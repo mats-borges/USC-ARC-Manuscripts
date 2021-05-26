@@ -60,7 +60,7 @@ public class InteractiveSmudge : MonoBehaviour
         }
     }
 
-    void AdvanceSmudgeMaterial()
+    public void AdvanceSmudgeMaterial()
     {
         switch (pageStage)
         {
