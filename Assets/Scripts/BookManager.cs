@@ -17,7 +17,6 @@ public class BookManager : MonoBehaviour
 
     private void Start()
     {
-
         rightPage.GetComponent<Renderer>().material = pageList[rightPageNum];
         leftPage.GetComponent<Renderer>().material = pageList[leftPageNum];
         simPage.GetComponent<Renderer>().material = pageList[simPageNum];
@@ -27,25 +26,21 @@ public class BookManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.G))
         {
-            Increment(rightPage, ref rightPageNum);
-            Increment(leftPage, ref leftPageNum);
-            Increment(simPage, ref simPageNum);
+            IncrementAll();
         }
         if (Input.GetKeyDown(KeyCode.F))
         {
-            Decrement(rightPage,ref rightPageNum);
-            Decrement(leftPage,ref leftPageNum);
-            Decrement(simPage,ref simPageNum);
+            decrementAll();
         }
     }
 
     public void Increment(GameObject page,ref int pgn)
     {
         pgn++;
-        Debug.Log(page.name + pgn + " was incremented");
-        if(pgn>pageList.Count || pgn < 0)
+        if(pgn>=pageList.Count)
         {
-            page.GetComponent<Renderer>().material = testMat;
+            pgn = 0;
+            page.GetComponent<Renderer>().material = pageList[pgn];
         }
         else
         {
@@ -56,13 +51,28 @@ public class BookManager : MonoBehaviour
     public void Decrement(GameObject page,ref int pgn)
     {
         pgn--;
-        if (pgn > pageList.Count || pgn < 0)
+        if ( pgn < 0)
         {
-            page.GetComponent<Renderer>().material = testMat;
+            pgn = pageList.Count-1;
+            page.GetComponent<Renderer>().material = pageList[pgn];
         }
         else
         {
             page.GetComponent<Renderer>().material = pageList[pgn];
         }
+    }
+
+    public void IncrementAll()
+    {
+        Increment(rightPage, ref rightPageNum);
+        Increment(leftPage, ref leftPageNum);
+        Increment(simPage, ref simPageNum);
+    }
+
+    public void decrementAll()
+    {
+        Decrement(rightPage,ref rightPageNum);
+        Decrement(leftPage,ref leftPageNum);
+        Decrement(simPage,ref simPageNum);
     }
 }
