@@ -25,6 +25,7 @@ public class InputConnect : MonoBehaviour
     private float _dampenedPinchValue = 0.0f;
     private float _pinchVelocity;
     [SerializeField] private float _smoothTime = 0.2f;
+    private Transform targetToFollow;
 
     // Update is called once per frame
     void Update()

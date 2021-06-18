@@ -13,6 +13,7 @@ public class InteractiveSmudge : MonoBehaviour
     [SerializeField] Material triggerMat;
     [SerializeField] private Material smudgedMat1;
     [SerializeField] private Material smudgedMat2;
+    [SerializeField] private Material smudgedMat3;
     [SerializeField] float xBoundary;
     [SerializeField] private int particleGroupIndex;
     private int pageStage;
@@ -31,7 +32,8 @@ public class InteractiveSmudge : MonoBehaviour
     void Update()
     {
         transform.SetPositionAndRotation(actor.GetParticlePosition(particleIdx), Quaternion.identity);
-        if ((page.GetComponent<MeshRenderer>().material.name == "8 (Instance)" || page.GetComponent<MeshRenderer>().material.name == "8_revised.png for smudging 5-05 (Instance)") && transform.position.x > xBoundary)
+        string name = page.GetComponent<MeshRenderer>().material.name;
+        if ((name == triggerMat.name + " (Instance)" || name == smudgedMat1.name + " (Instance)" || name == smudgedMat2.name + " (Instance)"|| name == smudgedMat3.name + " (Instance)") && transform.position.x > xBoundary)
         {
             gameObject.GetComponent<OutlineBehaviour>().enabled = true;
         }
@@ -73,6 +75,10 @@ public class InteractiveSmudge : MonoBehaviour
                 pageStage++;
                 break;
             case 2:
+                page.GetComponent<MeshRenderer>().material = smudgedMat3;
+                pageStage++;
+                break;
+            case 3:
                 page.GetComponent<MeshRenderer>().material = triggerMat;
                 pageStage = 0;
                 break;
