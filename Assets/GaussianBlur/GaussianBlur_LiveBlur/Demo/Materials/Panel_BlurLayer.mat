@@ -13,7 +13,7 @@ Material:
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 1000
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -74,7 +74,7 @@ Material:
     m_Floats:
     - Reprocess: 1
     - _AlphaAsBlurSize: 0
-    - _BlurSize: 5
+    - _BlurSize: 250
     - _BumpAmt: 128
     - _BumpScale: 1
     - _ColorMask: 357.3
@@ -85,7 +85,7 @@ Material:
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _LightAdj: 0
-    - _Lightness: 0.2
+    - _Lightness: -0.32
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
