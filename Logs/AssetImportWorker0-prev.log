@@ -1,272 +1,41 @@
 Using pre-set license
 Built from '2020.3/release' branch; Version is '2020.3.1f1 (77a89f25062f) revision 7841951'; Using compiler version '192528614'; Build Type 'Release'
-OS: 'Windows 10 Pro; OS build 19042.1052; Version 2009; 64bit' Language: 'en' Physical Memory: 32691 MB
+OS: 'Windows 10 Education; OS build 19042.1083; Version 2009; 64bit' Language: 'en' Physical Memory: 24511 MB
 BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1, IsPro: 0
 
  COMMAND LINE ARGUMENTS:
-C:\Program Files\Unity\Hub\Editor\2020.3.1f1\Editor\Unity.exe
+D:\Library\UnityEditors\2020.3.1f1\Editor\Unity.exe
 -adb2
 -batchMode
 -noUpm
 -name
 AssetImportWorker0
 -projectPath
-C:/Users/matts/Documents/Dev/Unity/USC/Book of Hours
+D:/Dev/Unity/_Matts_Borges/Book-of-Hours
 -logFile
 Logs/AssetImportWorker0.log
 -srvPort
-57952
-Successfully changed project path to: C:/Users/matts/Documents/Dev/Unity/USC/Book of Hours
-C:/Users/matts/Documents/Dev/Unity/USC/Book of Hours
+61135
+Successfully changed project path to: D:/Dev/Unity/_Matts_Borges/Book-of-Hours
+D:/Dev/Unity/_Matts_Borges/Book-of-Hours
 Using Asset Import Pipeline V2.
-Refreshing native plugins compatible for Editor in 94.67 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.82 ms.
+Refreshing native plugins compatible for Editor in 1123.58 ms, found 8 plugins.
+Preloading 1 native plugins for Editor in 19.66 ms.
 Initialize engine version: 2020.3.1f1 (77a89f25062f)
-[Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/Resources/UnitySubsystems
-[Subsystems] Discovering subsystems at path C:/Users/matts/Documents/Dev/Unity/USC/Book of Hours/Assets
+[Subsystems] Discovering subsystems at path D:/Library/UnityEditors/2020.3.1f1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path D:/Dev/Unity/_Matts_Borges/Book-of-Hours/Assets
 GfxDevice: creating device client; threaded=0
 Direct3D:
     Version:  Direct3D 11.0 [level 11.1]
-    Renderer: NVIDIA GeForce GTX 980 (ID=0x13c0)
+    Renderer: NVIDIA GeForce RTX 2070 (ID=0x1f10)
     Vendor:   
-    VRAM:     4053 MB
-    Driver:   27.21.14.6647
-Shader 'Oculus/OVRMRCameraFrameLit': fallback shader 'Alpha-Diffuse' not found
+    VRAM:     8031 MB
+    Driver:   30.0.14.7111
 Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
+Shader 'Oculus/OVRMRCameraFrameLit': fallback shader 'Alpha-Diffuse' not found
 Initialize mono
-Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/Managed'
-Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit'
-Mono config path = 'C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56732
+Mono path[0] = 'D:/Library/UnityEditors/2020.3.1f1/Editor/Data/Managed'
+Mono path[1] = 'D:/Library/UnityEditors/2020.3.1f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit'
+Mono config path = 'D:/Library/UnityEditors/2020.3.1f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56508
 Begin MonoManager ReloadAssembly
-Registering precompiled unity dll's ...
-Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.001667 seconds.
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 79.04 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.06 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.568 seconds
-Platform modules already initialized, skipping
-Registering precompiled user dll's ...
-Registered in 0.006322 seconds.
-Begin MonoManager ReloadAssembly
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 80.06 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.06 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-[XR] OculusXRPlugin: registering subsystems
-[XR] Unable to register display lifecyle provider: [1]
-[XR] Oculus Input lifecycle provider registered.
-[XR] Unable to register input lifecyle provider: [1]
-[XR] OVRP version 1.57.0
-Mono: successfully reloaded assembly
-- Completed reload, in  1.258 seconds
-Platform modules already initialized, skipping
-========================================================================
-Worker process is ready to serve import requests
-Shader 'Oculus/OVRMRCameraFrameLit': fallback shader 'Alpha-Diffuse' not found
-Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
-Launched and connected shader compiler UnityShaderCompiler.exe after 0.03 seconds
-Refreshing native plugins compatible for Editor in 1.12 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.06 ms.
-Unloading 4026 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 187.6 MB.
-System memory in use after: 187.7 MB.
-
-Unloading 64 unused Assets to reduce memory usage. Loaded Objects now: 4436.
-Total: 3.746200 ms (FindLiveObjects: 0.716800 ms CreateObjectMapping: 0.543800 ms MarkObjects: 2.305700 ms  DeleteObjects: 0.178500 ms)
-
-========================================================================
-Received Import Request.
-  path: Assets/Materials/New Material.mat
-  artifactKey: Guid(c4322a52f1f186a4c9fc51dd9a7e67d7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Materials/New Material.mat using Guid(c4322a52f1f186a4c9fc51dd9a7e67d7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '31815eec959315f94e48ca54c88d2286') in 0.101645 seconds
-  Import took 0.108231 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 150.702059 seconds.
-  path: Assets/GaussianBlur/GaussianBlur_LiveBlur/Resources
-  artifactKey: Guid(7abfcc391a4584439b6a6385d578cf7c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/GaussianBlur/GaussianBlur_LiveBlur/Resources using Guid(7abfcc391a4584439b6a6385d578cf7c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '938172b9b02280d3406ad26917853cf7') in 0.010877 seconds
-  Import took 0.018175 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 6.981755 seconds.
-  path: Assets/Obi/Editor/Resources/DistanceFieldPreview.mat
-  artifactKey: Guid(5dde1f45f471c48a1a13fc4b8c0b5b43) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Obi/Editor/Resources/DistanceFieldPreview.mat using Guid(5dde1f45f471c48a1a13fc4b8c0b5b43) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7819c3de880046470d6ba20ce29fae4d') in 0.020943 seconds
-  Import took 0.027775 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 0.004699 seconds.
-  path: Assets/Obi/Editor/Resources/DistanceFieldPreview.mat
-  artifactKey: Guid(5dde1f45f471c48a1a13fc4b8c0b5b43) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Obi/Editor/Resources/DistanceFieldPreview.mat using Guid(5dde1f45f471c48a1a13fc4b8c0b5b43) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7819c3de880046470d6ba20ce29fae4d') in 0.006858 seconds
-  Import took 0.013828 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 190.438645 seconds.
-  path: Assets/GaussianBlur/GaussianBlur_LiveBlur/Demo/Materials/Circle_BlurLayer.mat
-  artifactKey: Guid(2806292d1949e4fd4bfd34f6032a30d8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/GaussianBlur/GaussianBlur_LiveBlur/Demo/Materials/Circle_BlurLayer.mat using Guid(2806292d1949e4fd4bfd34f6032a30d8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2e2980210295b6b5a5f7632517cf14d7') in 0.016696 seconds
-  Import took 0.024831 seconds .
-
-========================================================================
-Received Prepare
-Registering precompiled user dll's ...
-Registered in 0.006217 seconds.
-Begin MonoManager ReloadAssembly
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 1.30 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.11 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.190 seconds
-Platform modules already initialized, skipping
-Switching build target platform(5) subTarget(0) extendedPlatform(0) -> platform(13) subTarget(524294) extendedPlatform(0)
-Shader 'Oculus/OVRMRCameraFrameLit': fallback shader 'Alpha-Diffuse' not found
-Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
-Refreshing native plugins compatible for Editor in 1.30 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.08 ms.
-Unloading 3838 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 172.7 MB.
-System memory in use after: 172.9 MB.
-
-Unloading 59 unused Assets to reduce memory usage. Loaded Objects now: 4481.
-Total: 3.549800 ms (FindLiveObjects: 0.441500 ms CreateObjectMapping: 0.200900 ms MarkObjects: 2.712600 ms  DeleteObjects: 0.192900 ms)
-
-AssetImportParameters requested are different than current active one (requested -> active):
-  custom:graphics/normal-map-encoding: 01000000000000000000000000000000 -> 02000000000000000000000000000000
-========================================================================
-Received Import Request.
-  Time since last request: 5913.008796 seconds.
-  path: Assets/book_collision_volume.fbx
-  artifactKey: Guid(b45a909e2338c6046bf6e4b6be84ddf8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/book_collision_volume.fbx using Guid(b45a909e2338c6046bf6e4b6be84ddf8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2a8e2600d17f5a81b0a1b54106d8091c') in 0.111267 seconds
-  Import took 0.119507 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 201.486843 seconds.
-  path: Assets/Obi
-  artifactKey: Guid(705fbdd18c9ee6245b398c2a2221ce06) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Obi using Guid(705fbdd18c9ee6245b398c2a2221ce06) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ef32e1fb6574a0f9e47d2e387c59db60') in 0.007539 seconds
-  Import took 0.014437 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 17.234974 seconds.
-  path: Assets/Obi Assets/distance field.asset
-  artifactKey: Guid(8fec5bfba73d6a04f8e13ca7f3e8ad04) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Obi Assets/distance field.asset using Guid(8fec5bfba73d6a04f8e13ca7f3e8ad04) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'cf83f78ee1efb83a768f3cdf77090506') in 0.009297 seconds
-  Import took 0.015485 seconds .
-
-========================================================================
-Received Prepare
-Registering precompiled user dll's ...
-Registered in 0.006377 seconds.
-Begin MonoManager ReloadAssembly
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 1.24 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.08 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.081 seconds
-Platform modules already initialized, skipping
-Switching build target platform(5) subTarget(0) extendedPlatform(0) -> platform(13) subTarget(524294) extendedPlatform(0)
-Shader 'Oculus/OVRMRCameraFrameLit': fallback shader 'Alpha-Diffuse' not found
-Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
-Refreshing native plugins compatible for Editor in 1.14 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.06 ms.
-Unloading 3838 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 173.0 MB.
-System memory in use after: 173.2 MB.
-
-Unloading 60 unused Assets to reduce memory usage. Loaded Objects now: 4489.
-Total: 3.376600 ms (FindLiveObjects: 0.525800 ms CreateObjectMapping: 0.402200 ms MarkObjects: 2.305400 ms  DeleteObjects: 0.142000 ms)
-
-AssetImportParameters requested are different than current active one (requested -> active):
-  custom:graphics/normal-map-encoding: 01000000000000000000000000000000 -> 02000000000000000000000000000000
-========================================================================
-Received Import Request.
-  Time since last request: 401.276719 seconds.
-  path: Assets/Obi Assets/distance field.asset
-  artifactKey: Guid(8fec5bfba73d6a04f8e13ca7f3e8ad04) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Obi Assets/distance field.asset using Guid(8fec5bfba73d6a04f8e13ca7f3e8ad04) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ae1010a7d45abd9423639eb7646c3ab2') in 0.017931 seconds
-  Import took 0.024535 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 22.772075 seconds.
-  path: Assets/book_collision_volume.fbx
-  artifactKey: Guid(b45a909e2338c6046bf6e4b6be84ddf8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/book_collision_volume.fbx using Guid(b45a909e2338c6046bf6e4b6be84ddf8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '0b44cc638e4f8ac13ba885cf382dd1ea') in 0.056607 seconds
-  Import took 0.063263 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 45.448268 seconds.
-  path: Assets/Obi Assets/book_collision_volume.asset
-  artifactKey: Guid(8fec5bfba73d6a04f8e13ca7f3e8ad04) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Obi Assets/book_collision_volume.asset using Guid(8fec5bfba73d6a04f8e13ca7f3e8ad04) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '713e0c09f457949d2f0327f4c1630f1a') in 0.003248 seconds
-  Import took 0.009997 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 26.412290 seconds.
-  path: Assets/book_collision_volume.fbx
-  artifactKey: Guid(b45a909e2338c6046bf6e4b6be84ddf8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/book_collision_volume.fbx using Guid(b45a909e2338c6046bf6e4b6be84ddf8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '4a2d9151fc2b3c759a9bc06fd9e0759f') in 0.009629 seconds
-  Import took 0.017367 seconds .
-
-========================================================================
-Received Prepare
-Registering precompiled user dll's ...
-Registered in 0.006501 seconds.
-Begin MonoManager ReloadAssembly
-Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 1.23 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.08 ms.
-Invoked RoslynAnalysisRunner static constructor.
-RoslynAnalysisRunner will not be running.
-RoslynAnalysisRunner has terminated.
-Mono: successfully reloaded assembly
-- Completed reload, in  1.301 seconds
-Platform modules already initialized, skipping
-Switching build target platform(5) subTarget(0) extendedPlatform(0) -> platform(13) subTarget(524294) extendedPlatform(0)
-Shader 'Oculus/OVRMRCameraFrameLit': fallback shader 'Alpha-Diffuse' not found
-Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
-Refreshing native plugins compatible for Editor in 1.24 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.06 ms.
-Unloading 3838 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 173.1 MB.
-System memory in use after: 173.2 MB.
-
-Unloading 60 unused Assets to reduce memory usage. Loaded Objects now: 4494.
-Total: 3.159700 ms (FindLiveObjects: 0.585700 ms CreateObjectMapping: 0.171500 ms MarkObjects: 2.253800 ms  DeleteObjects: 0.147400 ms)
-
-AssetImportParameters requested are different than current active one (requested -> active):
-  custom:graphics/normal-map-encoding: 01000000000000000000000000000000 -> 02000000000000000000000000000000
-========================================================================
-Received Import Request.
-  Time since last request: 2588.124839 seconds.
-  path: Assets/Obi Assets/book_collision_volume.asset
-  artifactKey: Guid(8fec5bfba73d6a04f8e13ca7f3e8ad04) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Obi Assets/book_collision_volume.asset using Guid(8fec5bfba73d6a04f8e13ca7f3e8ad04) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '852c661c88bf72762e729301636ff0e6') in 0.067449 seconds
-  Import took 0.076105 seconds .
-
-AssetImportWorkerClient::OnTransportError - code=2 error=End of file
