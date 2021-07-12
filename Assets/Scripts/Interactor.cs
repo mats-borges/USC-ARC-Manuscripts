@@ -10,6 +10,7 @@ public class Interactor : MonoBehaviour
     
     public bool isIntersecting = false;
     private List<Interactible> intersectedObjects = new List<Interactible>();
+    private List<Interactible> _grabbedObjects = new List<Interactible>();
     public bool isLeftHand = true;
     
     public OVRHand ovrHand;
@@ -49,13 +50,11 @@ public class Interactor : MonoBehaviour
         
         UpdateHandTrackingStatus();
 
-        SetInteractorTransform();
-        
-        if (!isIntersecting)
-            return;
-        
-        if(IsHandTracking) 
+        if (IsHandTracking)
+        {
+            SetInteractorTransform();
             DoHandTrackingUpdate();
+        }
         else
             DoControllerUpdate();
     }
@@ -68,11 +67,8 @@ public class Interactor : MonoBehaviour
         if (handSkeleton.Bones.Count == 0) return;
         
         var tipTransform  = handSkeleton.Bones[(int)OVRSkeleton.BoneId.Hand_IndexTip].Transform;  // index tip position
-
-        if (IsHandTracking)
-        {
-            transform.position = tipTransform.position;
-        }
+        
+        transform.position = tipTransform.position;
     }
 
     private void DoControllerUpdate()
@@ -83,14 +79,17 @@ public class Interactor : MonoBehaviour
         {
             foreach (var obj in intersectedObjects)
             {
+                _grabbedObjects.Add(obj);
                 obj.OnGrab.Invoke(this);
             }
         }
         else
         {
-            foreach (var obj in intersectedObjects)
+            var cachedList = new List<Interactible>(_grabbedObjects);
+            foreach (var obj in cachedList)
             {
                 obj.OffGrab.Invoke(this);
+                _grabbedObjects.Remove(obj);
             }
         }
     }
@@ -103,15 +102,19 @@ public class Interactor : MonoBehaviour
             Debug.Log("Pinch");
             foreach (var obj in intersectedObjects)
             {
+                _grabbedObjects.Add(obj);
                 obj.OnGrab.Invoke(this);
             }
         }
         else
         {
             Debug.Log("Unpinch");
-            foreach (var obj in intersectedObjects)
+            
+            var cachedList = new List<Interactible>(_grabbedObjects);
+            foreach (var obj in cachedList)
             {
                 obj.OffGrab.Invoke(this);
+                _grabbedObjects.Remove(obj);
             }
         }
     }
@@ -119,33 +122,27 @@ public class Interactor : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         var interactible = other.gameObject.GetComponent<Interactible>();
-
-        if (interactible)
-        {
-            intersectedObjects.Add(interactible);
+        if (!interactible) return;
+        
+        intersectedObjects.Add(interactible);
             
-            interactible.OnTouch.Invoke(this);
-            
-
-            //change interactor sphere's material
-            GetComponent<MaterialSwitcher>().TurnOnHighlight();
-            isIntersecting = true;
-        }
+        interactible.OnTouch.Invoke(this);
+        //change interactor sphere's material
+        GetComponent<MaterialSwitcher>().TurnOnHighlight();
+        isIntersecting = true;
     }
 
     private void OnTriggerExit(Collider other)
     {
         var interactible = other.gameObject.GetComponent<Interactible>();
-
-        if (interactible)
-        {
-            intersectedObjects.Remove(interactible);
+        if (!interactible) return;
+        
+        intersectedObjects.Remove(interactible);
             
-            interactible.OffTouch.Invoke(this);
-            //change interactor sphere's material
-            GetComponent<MaterialSwitcher>().TurnOffHighlight();
-            isIntersecting = false;
-        }
+        interactible.OffTouch.Invoke(this);
+        //change interactor sphere's material
+        GetComponent<MaterialSwitcher>().TurnOffHighlight();
+        isIntersecting = false;
     }
 
 
