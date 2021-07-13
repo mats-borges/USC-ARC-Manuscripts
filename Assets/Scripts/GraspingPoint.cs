@@ -23,24 +23,31 @@ public class GraspingPoint : MonoBehaviour
 
     private VelocityEstimator _velocityEstimator;
     public GameObject tooFastText;
-
-
+    
+    public BoxCollider pageColliderLeft;
+    public BoxCollider pageColliderRight;
+    
     // Object constrain properties
     private Transform unconstrainedPoint;
-    public BoxCollider pageCollider;
 
     [Header("Output")]
     public Vector3 constrainedPoint;
+    
+    private BoxCollider pageCollider;
 
+    [SerializeField] private Transform book;
+    
     // Corners
-    Bounds localBounds;
+    Bounds leftPageLocalBounds;
+    Bounds rightPageLocalBounds;
     Vector3 bookCenterTop, bookCenterBottom;
-    Vector3 pageEdgeTop, pageEdgeBottom;
+    Vector3 leftPageEdgeTop, leftPageEdgeBottom;
+    Vector3 rightPageEdgeTop, rightPageEdgeBottom;
     private Vector3 pageBoundaryUp;
 
     // Radius vector
-    Vector3 centerPoint, edgePoint;
-    float radius;
+    Vector3 centerPoint = Vector3.zero, edgePoint = Vector3.zero;
+    public float radius = 10.0f;
     
     // Dot product of radiusPoint and pageBoundaryUp
     private float ppDot = 0;
@@ -61,6 +68,9 @@ public class GraspingPoint : MonoBehaviour
         _velocityEstimator = GetComponent<VelocityEstimator>();
 
         _rb = GetComponent<Rigidbody>();
+        
+        // page constraint variables
+        pageCollider = pageColliderRight;
     }
 
     private void Update()
@@ -75,22 +85,27 @@ public class GraspingPoint : MonoBehaviour
         _rb.MovePosition(Vector3.Slerp(transform.position, interactorObject.transform.position, fracComplete));
         
         CheckVelocity();
-            
+        
         // constrain the point within defined region
         DoConstraint();
-            
+        
         // match the position of this object to the constrained point
         _rb.MovePosition(constrainedPoint);
-            
-            
+        
         // DRAW GIZMOS -----------------------------------------------
         if (!pageCollider) return;
-            
-        // Draw page
+        
+        // Draw page colliders
         Draw.ingame.Line(bookCenterTop, bookCenterBottom, Color.red);
-        Draw.ingame.Line(pageEdgeTop, pageEdgeBottom, Color.blue);
-        Draw.ingame.Line(bookCenterTop, pageEdgeTop, Color.yellow);
-        Draw.ingame.Line(bookCenterBottom, pageEdgeBottom, Color.yellow);
+        
+        Draw.ingame.Line(rightPageEdgeTop, rightPageEdgeBottom, Color.blue);
+        Draw.ingame.Line(bookCenterTop, rightPageEdgeTop, Color.yellow);
+        Draw.ingame.Line(bookCenterBottom, rightPageEdgeBottom, Color.yellow);
+        
+        Draw.ingame.Line(leftPageEdgeTop, leftPageEdgeBottom, Color.blue);
+        Draw.ingame.Line(bookCenterTop, leftPageEdgeTop, Color.yellow);
+        Draw.ingame.Line(bookCenterBottom, leftPageEdgeBottom, Color.yellow);
+        
         
         // draw the center point
         Draw.ingame.WireSphere(centerPoint, 0.25f, Color.blue);
@@ -104,17 +119,14 @@ public class GraspingPoint : MonoBehaviour
 
     private void CheckVelocity()
     {
-        float curVel = _velocityEstimator.GetVelocityEstimate().sqrMagnitude;
-        if ( curVel >= maxVelocity )
-        {
-            Debug.Log("Too fast! Current velocity: " + curVel);
+        var curVel = _velocityEstimator.GetVelocityEstimate().sqrMagnitude;
+        if (curVel < maxVelocity) return;
+        
+        Debug.Log("Too fast! Current velocity: " + curVel);
 
-            if (!tooFastText.activeSelf)
-            {
-                tooFastText.SetActive(true);
-                StartCoroutine(HideTooFastText());
-            }
-        }
+        if (tooFastText.activeSelf) return;
+        tooFastText.SetActive(true);
+        StartCoroutine(HideTooFastText());
     }
 
     private IEnumerator HideTooFastText()
@@ -130,6 +142,9 @@ public class GraspingPoint : MonoBehaviour
         _particleAttachment.enabled = true;
 
         unconstrainedPoint = interactor.transform;
+        
+        centerPoint = BasicHelpers.NearestPointOnFiniteLine(bookCenterTop, bookCenterBottom, actor.GetParticlePosition(particleIdx));
+        edgePoint = BasicHelpers.NearestPointOnFiniteLine(rightPageEdgeTop, rightPageEdgeBottom, actor.GetParticlePosition(particleIdx));
     }
     
     public void UnAttach()
@@ -143,64 +158,63 @@ public class GraspingPoint : MonoBehaviour
 
 
     #region Constraint Functions
-    private void CalculatePagePosWeight()
-    {
-        throw new NotImplementedException();
-    }
-    
     private void DoConstraint()
     {
         if (!unconstrainedPoint) return;
         UpdateCorners();
-        centerPoint = BasicHelpers.NearestPointOnFiniteLine(bookCenterTop, bookCenterBottom, unconstrainedPoint.position);
-        edgePoint = BasicHelpers.NearestPointOnFiniteLine(pageEdgeTop, pageEdgeBottom, unconstrainedPoint.position);
-        radius = Vector3.Distance(centerPoint, edgePoint);
         UpdateConstrainedPoint();
+        CheckBoundaryTransition();
     }
     
     private void UpdateCorners()
     {
-        if (!pageCollider) return;
-
-        localBounds = pageCollider.bounds;
-        localBounds.center = pageCollider.center;
-        localBounds.size = pageCollider.size;
-
+        if (!pageColliderLeft || !pageColliderRight) return;
+        
         // cache for performance
-        var pageColTransform = pageCollider.transform;
-
-        bookCenterBottom = pageColTransform.TransformPoint(localBounds.min.x, localBounds.min.y, localBounds.min.z);
-        bookCenterTop = pageColTransform.TransformPoint(localBounds.min.x, localBounds.min.y, localBounds.max.z);
+        var pageColTransformL = pageColliderLeft.transform;
+        var pageColTransformR = pageColliderRight.transform;
         
-        pageEdgeTop = pageColTransform.TransformPoint(localBounds.max.x, localBounds.min.y, localBounds.max.z);
-        pageEdgeBottom = pageColTransform.TransformPoint(localBounds.max.x, localBounds.min.y, localBounds.min.z);
-        
-        Draw.ingame.WireBox(pageColTransform.position, pageColTransform.rotation, pageCollider.size);
+        // # [BEGIN] Handle Right Collider
+        rightPageLocalBounds = pageColliderRight.bounds;
+        rightPageLocalBounds.center = pageColliderRight.center;
+        rightPageLocalBounds.size = pageColliderRight.size;
 
-        pageBoundaryUp = pageCollider.transform.up;
+        bookCenterBottom = pageColTransformR.TransformPoint(rightPageLocalBounds.min.x, rightPageLocalBounds.min.y, rightPageLocalBounds.min.z);
+        bookCenterTop = pageColTransformR.TransformPoint(rightPageLocalBounds.min.x, rightPageLocalBounds.min.y, rightPageLocalBounds.max.z);
+        
+        rightPageEdgeTop = pageColTransformR.TransformPoint(rightPageLocalBounds.max.x, rightPageLocalBounds.min.y, rightPageLocalBounds.max.z);
+        rightPageEdgeBottom = pageColTransformR.TransformPoint(rightPageLocalBounds.max.x, rightPageLocalBounds.min.y, rightPageLocalBounds.min.z);
+        // # [END] Handle Right Collider
+        
+        // # [BEGIN] Handle Left Collider
+        leftPageLocalBounds = pageColliderLeft.bounds;
+        leftPageLocalBounds.center = pageColliderLeft.center;
+        leftPageLocalBounds.size = pageColliderLeft.size;
+
+        leftPageEdgeTop = pageColTransformL.TransformPoint(leftPageLocalBounds.min.x, leftPageLocalBounds.min.y, leftPageLocalBounds.max.z);
+        leftPageEdgeBottom = pageColTransformL.TransformPoint(leftPageLocalBounds.min.x, leftPageLocalBounds.min.y, leftPageLocalBounds.min.z);
+        // # [END] Handle Left Collider
+        
+        Draw.ingame.WireBox(pageColTransformL.position, pageColTransformL.rotation, pageColliderLeft.size);
+        Draw.ingame.WireBox(pageColTransformR.position, pageColTransformR.rotation, pageColliderRight.size);
     }
 
     private void UpdateConstrainedPoint()
     {
+        var handPos = unconstrainedPoint.position;
+        
         if (pageCollider.bounds.Contains(unconstrainedPoint.position))
         {
-            var freePoint = centerPoint + (unconstrainedPoint.position - centerPoint);
-            var radiusPoint = centerPoint + ((unconstrainedPoint.position - centerPoint).normalized * radius);
+            var freePoint = centerPoint + (handPos - centerPoint);
+            var radiusPoint = centerPoint + ((handPos - centerPoint).normalized * radius);
 
             constrainedPoint = freePoint.magnitude <= radiusPoint.magnitude ? freePoint : radiusPoint;
             
-            Debug.DrawLine(unconstrainedPoint.position, centerPoint, Color.cyan);
+            Draw.ingame.Line(handPos, centerPoint, Color.cyan);
         }
         else
         {
-            var handPos = unconstrainedPoint.position;
-            var colliderPoint = Vector3.zero;
-            
-            // # cast a ray from center point to unconstrained point (location of hand)
-            var colLeftCenter = ((bookCenterBottom + bookCenterTop) / 2) + new Vector3(0.5f,0.5f,0);
-            Draw.ingame.WireSphere(colLeftCenter, 0.2f, Color.red);
-            
-            colliderPoint = pageCollider.ClosestPoint(handPos);
+            var colliderPoint = pageCollider.ClosestPoint(handPos);
 
             var radiusPoint = centerPoint + ((colliderPoint - centerPoint).normalized * radius);
             constrainedPoint = colliderPoint.magnitude <= radiusPoint.magnitude ? colliderPoint : radiusPoint;
@@ -210,13 +224,24 @@ public class GraspingPoint : MonoBehaviour
         }
 
         Draw.ingame.Arrow(centerPoint, constrainedPoint, Color.blue);
+    }
+
+    private void CheckBoundaryTransition()
+    {
+        // cache for performance
+        var pageColTransform = pageCollider.transform;
         
-        var planeNormal = pageCollider.transform.forward;
+        // set the reference frame for the book side by extracting its normal vector
+        pageBoundaryUp = book.up;
+        
+        var planeNormal = pageColTransform.forward;
         
         var bookUpProjected = Vector3.ProjectOnPlane(pageBoundaryUp + bookUpShift, planeNormal);
         var constrainedProjected = Vector3.ProjectOnPlane(constrainedPoint, planeNormal);
         
-        ppDot = Vector3.Dot(bookUpProjected.normalized, constrainedProjected.normalized);
+        ppDot = Vector3.SignedAngle(bookUpProjected.normalized, constrainedProjected.normalized, planeNormal);
+
+        pageCollider = ppDot >= 0 ? pageColliderLeft : pageColliderRight;
     }
     #endregion
 }
