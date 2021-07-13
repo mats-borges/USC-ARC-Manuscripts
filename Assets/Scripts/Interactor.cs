@@ -13,6 +13,9 @@ public class Interactor : MonoBehaviour
     private List<Interactible> _grabbedObjects = new List<Interactible>();
     public bool isLeftHand = true;
     
+    public Color _highlightOnTouch = Color.cyan;
+    public Color _highlightOnGrab = Color.green;
+
     public OVRHand ovrHand;
     private OVRSkeleton handSkeleton;
     private float _dampenedPinchValue = 0.0f;
@@ -27,6 +30,7 @@ public class Interactor : MonoBehaviour
 
     [SerializeField] private UnityEvent onHandTrackingActive;
     [SerializeField] private UnityEvent onHandTrackingInactive;
+    private bool isGrabbing = false;
 
     private Vector3 _initialScale;
     private Vector3 _initialPosition = Vector3.zero;
@@ -79,8 +83,7 @@ public class Interactor : MonoBehaviour
         {
             foreach (var obj in intersectedObjects)
             {
-                _grabbedObjects.Add(obj);
-                obj.OnGrab.Invoke(this);
+                DoGrab(obj);
             }
         }
         else
@@ -88,10 +91,27 @@ public class Interactor : MonoBehaviour
             var cachedList = new List<Interactible>(_grabbedObjects);
             foreach (var obj in cachedList)
             {
-                obj.OffGrab.Invoke(this);
-                _grabbedObjects.Remove(obj);
+                DoUngrab(obj);
             }
         }
+    }
+
+    private void DoGrab(Interactible objtoGrab)
+    {
+        _grabbedObjects.Add(objtoGrab);
+        objtoGrab.OnGrab.Invoke(this);
+        isGrabbing = true;
+        
+        GetComponent<MaterialSwitcher>().TurnOnHighlight(_highlightOnGrab);
+    }
+
+    private void DoUngrab(Interactible objtoGrab)
+    {
+        objtoGrab.OffGrab.Invoke(this);
+        _grabbedObjects.Remove(objtoGrab);
+        isGrabbing = false;
+        
+        GetComponent<MaterialSwitcher>().TurnOffHighlight();
     }
 
     private void DoHandTrackingUpdate()
@@ -102,8 +122,7 @@ public class Interactor : MonoBehaviour
             Debug.Log("Pinch");
             foreach (var obj in intersectedObjects)
             {
-                _grabbedObjects.Add(obj);
-                obj.OnGrab.Invoke(this);
+                DoGrab(obj);
             }
         }
         else
@@ -113,8 +132,7 @@ public class Interactor : MonoBehaviour
             var cachedList = new List<Interactible>(_grabbedObjects);
             foreach (var obj in cachedList)
             {
-                obj.OffGrab.Invoke(this);
-                _grabbedObjects.Remove(obj);
+                DoUngrab(obj);
             }
         }
     }
@@ -124,12 +142,14 @@ public class Interactor : MonoBehaviour
         var interactible = other.gameObject.GetComponent<Interactible>();
         if (!interactible) return;
         
+        isIntersecting = true;
         intersectedObjects.Add(interactible);
             
         interactible.OnTouch.Invoke(this);
+
         //change interactor sphere's material
-        GetComponent<MaterialSwitcher>().TurnOnHighlight();
-        isIntersecting = true;
+        if(!isGrabbing)
+            GetComponent<MaterialSwitcher>().TurnOnHighlight(_highlightOnTouch);
     }
 
     private void OnTriggerExit(Collider other)
@@ -137,12 +157,14 @@ public class Interactor : MonoBehaviour
         var interactible = other.gameObject.GetComponent<Interactible>();
         if (!interactible) return;
         
+        isIntersecting = false;
         intersectedObjects.Remove(interactible);
             
         interactible.OffTouch.Invoke(this);
+        
         //change interactor sphere's material
-        GetComponent<MaterialSwitcher>().TurnOffHighlight();
-        isIntersecting = false;
+        if(!isGrabbing)
+            GetComponent<MaterialSwitcher>().TurnOffHighlight();
     }
 
 

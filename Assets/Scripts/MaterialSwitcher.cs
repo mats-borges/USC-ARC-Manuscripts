@@ -6,19 +6,28 @@ using UnityEngine;
 public class MaterialSwitcher : MonoBehaviour
 {
     [SerializeField] private Material highlightMaterial;
+    private MeshRenderer _meshRenderer;
     private Material originalMat;
-    private void Start()
+    private void Awake()
     {
-        originalMat = GetComponent<MeshRenderer>().material;
+        _meshRenderer = GetComponent<MeshRenderer>();
+        originalMat = _meshRenderer.material;
     }
 
+    public void TurnOnHighlight(Color highlightColor)
+    {
+        
+        _meshRenderer.material = highlightMaterial;
+        _meshRenderer.material.SetColor("_Color", highlightColor);
+    }
+    
     public void TurnOnHighlight()
     {
-        GetComponent<MeshRenderer>().material = highlightMaterial;
+        _meshRenderer.material = highlightMaterial;
     }
 
     public void TurnOffHighlight()
     {
-        GetComponent<MeshRenderer>().material = originalMat;
+        _meshRenderer.material = originalMat;
     }
 }
