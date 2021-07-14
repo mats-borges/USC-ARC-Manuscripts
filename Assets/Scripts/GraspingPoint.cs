@@ -1,42 +1,48 @@
 using System;
 using System.Collections;
+using System.Linq;
 using System.Threading.Tasks;
 using Drawing;
 using HandPhysicsToolkit.Helpers;
 using Obi;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class GraspingPoint : MonoBehaviour
 {
-    public float speed = 2f;
+    [FormerlySerializedAs("speed")] public float followSpeed = 2f;
     private float startTime;
     private bool isAttached = false;
     private GameObject interactorObject;
     [SerializeField] private GameObject page;
     private Vector3 targetParticlePos;
     private ObiActor actor;
-    private ObiParticleGroup particleGroup;
-    [SerializeField] private int particleGroupIndex;
-    private int particleIdx;
+    private ObiParticleGroup _pageEdgeParticleGroup;
+    private ObiParticleGroup _grabbedParticleGroup;
+    [SerializeField] private string pageEdgeParticleGroupName;
+    [SerializeField] private string grabbedParticleGroupName;
+    private int _grabbedParticleIdx;
 
     [SerializeField] private float maxVelocity = 50f;
 
     private VelocityEstimator _velocityEstimator;
     public GameObject tooFastText;
+
+    [Header("Constraint Properties")]
+    [SerializeField] private bool showGizmos = false;
+    [SerializeField] private Transform book;
+    public float pageLength = 10.0f;
     
     public BoxCollider pageColliderLeft;
     public BoxCollider pageColliderRight;
     
     // Object constrain properties
     private Transform unconstrainedPoint;
-
-    [Header("Output")]
-    public Vector3 constrainedPoint;
+    
+    private Vector3 constrainedPoint;
     
     private BoxCollider pageCollider;
 
-    [SerializeField] private Transform book;
-    
     // Corners
     Bounds leftPageLocalBounds;
     Bounds rightPageLocalBounds;
@@ -47,8 +53,7 @@ public class GraspingPoint : MonoBehaviour
 
     // Radius vector
     Vector3 centerPoint = Vector3.zero, edgePoint = Vector3.zero;
-    public float radius = 10.0f;
-    
+
     // Dot product of radiusPoint and pageBoundaryUp
     private float ppDot = 0;
     public Vector3 bookUpShift = Vector3.zero;
@@ -56,14 +61,29 @@ public class GraspingPoint : MonoBehaviour
     private Rigidbody _rb;
     private ObiParticleAttachment _particleAttachment;
 
+    private Vector3 handPos;
+
+    private string handDebugLine = "";
+    private bool attachmentInProgress;
+
     private void Awake()
     {
         actor = page.GetComponent<ObiActor>();
         _particleAttachment = page.GetComponent<ObiParticleAttachment>();
         
         startTime = Time.time;
-        particleGroup = actor.blueprint.groups[particleGroupIndex];
-        particleIdx = particleGroup.particleIndices[0];
+
+        foreach (var @group in actor.blueprint.groups.Where(@group => @group.name == pageEdgeParticleGroupName))
+        {
+            _pageEdgeParticleGroup = @group;
+        }
+        
+        foreach (var @group in actor.blueprint.groups.Where(@group => @group.name == grabbedParticleGroupName))
+        {
+            _grabbedParticleGroup = @group;
+        }
+        
+        _grabbedParticleIdx = _pageEdgeParticleGroup.particleIndices[0];
         
         _velocityEstimator = GetComponent<VelocityEstimator>();
 
@@ -75,27 +95,27 @@ public class GraspingPoint : MonoBehaviour
 
     private void Update()
     {
-        if(_particleAttachment.enabled == false)
-            _rb.MovePosition(actor.GetParticlePosition(particleIdx));
+        handPos = unconstrainedPoint.position;
+        var grabbedParticlePos = actor.GetParticlePosition(_grabbedParticleIdx);
         
-        if (!isAttached) return;
-        
-        // make object follow the interactor [e.g., the hand which is "holding" this object]
-        float fracComplete = (Time.time - startTime) / speed;
-        _rb.MovePosition(Vector3.Slerp(transform.position, interactorObject.transform.position, fracComplete));
-        
+        if (!isAttached || attachmentInProgress)
+        {
+            _rb.MovePosition(grabbedParticlePos);
+            return;
+        }
+
         CheckVelocity();
         
         // constrain the point within defined region
         DoConstraint();
         
         // match the position of this object to the constrained point
-        _rb.MovePosition(constrainedPoint);
+        // make object follow the interactor [e.g., the hand which is "holding" this object]
+        float fracComplete = (Time.time - startTime) / followSpeed;
+        _rb.MovePosition(Vector3.Slerp(transform.position, constrainedPoint, fracComplete));
         
         // DRAW GIZMOS -----------------------------------------------
-        if (!pageCollider) return;
-        
-        // Draw page colliders
+        if (!showGizmos || !pageCollider) return;
         Draw.ingame.Line(bookCenterTop, bookCenterBottom, Color.red);
         
         Draw.ingame.Line(rightPageEdgeTop, rightPageEdgeBottom, Color.blue);
@@ -111,10 +131,15 @@ public class GraspingPoint : MonoBehaviour
         Draw.ingame.WireSphere(centerPoint, 0.25f, Color.blue);
         Draw.ingame.WireSphere(edgePoint, 0.25f, Color.white);
         
-        // Draw constrained point
+        // // Draw constrained point
         Draw.ingame.WireSphere(constrainedPoint, 0.2f, Color.green);
+        Draw.ingame.WireSphere(transform.position, 0.4f, Color.magenta);
         
-        Draw.ingame.Label2D(interactorObject.transform.position, ppDot.ToString(), 14F);
+        // Draw label showing ppDot value
+        Draw.ingame.Label2D(interactorObject.transform.position, handDebugLine, 14F);
+        
+        // Draw grappedParticle sphere
+        Draw.ingame.WireSphere(grabbedParticlePos, 0.05f, Color.red);
     }
 
     private void CheckVelocity()
@@ -137,14 +162,55 @@ public class GraspingPoint : MonoBehaviour
 
     public void Attach(Interactor interactor)
     {
+        handPos = interactor.transform.position;
+        attachmentInProgress = true;
+        
+        if (!isAttached)
+        {
+            var minDistance = float.MaxValue;
+            var pIdxOfMin = -1;
+            var pPosOfMin = Vector3.zero;
+            foreach (var pIdx in _pageEdgeParticleGroup.particleIndices)
+            {
+                var particlePos = actor.GetParticlePosition(pIdx);
+                var distance = Vector3.Distance(particlePos, handPos);
+                if (distance >= minDistance) continue;
+                
+                pPosOfMin = particlePos;
+                pIdxOfMin = pIdx;
+                minDistance = distance;
+            }
+            
+            centerPoint = BasicHelpers.NearestPointOnFiniteLine(bookCenterTop, bookCenterBottom,
+                pPosOfMin);
+            edgePoint = BasicHelpers.NearestPointOnFiniteLine(rightPageEdgeTop, rightPageEdgeBottom,
+                pPosOfMin);
+
+            if (pIdxOfMin != _grabbedParticleIdx)
+            {
+                // set obi particle's target transform to null, disconnecting its previous particle
+                _particleAttachment.target = null;
+                
+                // modify list of particleGroup to include new particle we want to grab
+                _particleAttachment.particleGroup.particleIndices[0] = pIdxOfMin;
+                
+                // teleport this grabber object to particle position
+                transform.position = pPosOfMin;
+                
+                _grabbedParticleIdx = pIdxOfMin;
+                
+                // force rebind of particle attachment component
+                _particleAttachment.target = transform;
+            }
+        }
+
         isAttached = true;
         interactorObject = interactor.gameObject;
         _particleAttachment.enabled = true;
 
         unconstrainedPoint = interactor.transform;
         
-        centerPoint = BasicHelpers.NearestPointOnFiniteLine(bookCenterTop, bookCenterBottom, actor.GetParticlePosition(particleIdx));
-        edgePoint = BasicHelpers.NearestPointOnFiniteLine(rightPageEdgeTop, rightPageEdgeBottom, actor.GetParticlePosition(particleIdx));
+        attachmentInProgress = false;
     }
     
     public void UnAttach()
@@ -175,7 +241,6 @@ public class GraspingPoint : MonoBehaviour
         var pageColTransformR = pageColliderRight.transform;
         
         // # [BEGIN] Handle Right Collider
-        rightPageLocalBounds = pageColliderRight.bounds;
         rightPageLocalBounds.center = pageColliderRight.center;
         rightPageLocalBounds.size = pageColliderRight.size;
 
@@ -187,43 +252,55 @@ public class GraspingPoint : MonoBehaviour
         // # [END] Handle Right Collider
         
         // # [BEGIN] Handle Left Collider
-        leftPageLocalBounds = pageColliderLeft.bounds;
         leftPageLocalBounds.center = pageColliderLeft.center;
         leftPageLocalBounds.size = pageColliderLeft.size;
 
         leftPageEdgeTop = pageColTransformL.TransformPoint(leftPageLocalBounds.min.x, leftPageLocalBounds.min.y, leftPageLocalBounds.max.z);
         leftPageEdgeBottom = pageColTransformL.TransformPoint(leftPageLocalBounds.min.x, leftPageLocalBounds.min.y, leftPageLocalBounds.min.z);
         // # [END] Handle Left Collider
-        
+
+        if (!showGizmos) return;
         Draw.ingame.WireBox(pageColTransformL.position, pageColTransformL.rotation, pageColliderLeft.size);
         Draw.ingame.WireBox(pageColTransformR.position, pageColTransformR.rotation, pageColliderRight.size);
     }
 
     private void UpdateConstrainedPoint()
     {
-        var handPos = unconstrainedPoint.position;
+        var handPosRelativeToPage = pageCollider.transform.InverseTransformPoint(handPos);
         
-        if (pageCollider.bounds.Contains(unconstrainedPoint.position))
+        if (pageCollider.bounds.Contains(handPos))
         {
+            handDebugLine = "Interactor inside collider, PageCollider: " + (pageCollider == pageColliderLeft ? "Left" : "Right");
+            
             var freePoint = centerPoint + (handPos - centerPoint);
-            var radiusPoint = centerPoint + ((handPos - centerPoint).normalized * radius);
+            var radiusPoint = centerPoint + ((handPos - centerPoint).normalized * pageLength);
 
             constrainedPoint = freePoint.magnitude <= radiusPoint.magnitude ? freePoint : radiusPoint;
             
-            Draw.ingame.Line(handPos, centerPoint, Color.cyan);
+            if(showGizmos)
+                Draw.ingame.Line(handPos, centerPoint, Color.cyan);
         }
         else
         {
+            handDebugLine = "Interactor outside collider, PageCollider: " + (pageCollider == pageColliderLeft ? "Left" : "Right");
+            
             var colliderPoint = pageCollider.ClosestPoint(handPos);
+            var radiusPoint = centerPoint + ((colliderPoint - centerPoint).normalized * pageLength);
 
-            var radiusPoint = centerPoint + ((colliderPoint - centerPoint).normalized * radius);
-            constrainedPoint = colliderPoint.magnitude <= radiusPoint.magnitude ? colliderPoint : radiusPoint;
+            if (radiusPoint.magnitude < colliderPoint.magnitude && pageCollider.bounds.Contains(radiusPoint))
+                constrainedPoint = radiusPoint;
+            else
+                constrainedPoint = colliderPoint;
 
-            Draw.ingame.Arrow(handPos, colliderPoint, Color.green);
-            Draw.ingame.Arrow(colliderPoint, centerPoint, Color.red);
+            if (showGizmos)
+            {
+                Draw.ingame.Arrow(handPos, colliderPoint, Color.green);
+                Draw.ingame.Arrow(colliderPoint, centerPoint, Color.red);
+            }
         }
-
-        Draw.ingame.Arrow(centerPoint, constrainedPoint, Color.blue);
+        
+        if(showGizmos)
+            Draw.ingame.Arrow(centerPoint, constrainedPoint, Color.blue);
     }
 
     private void CheckBoundaryTransition()
