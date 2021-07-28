@@ -47,6 +47,7 @@ public class GraspingPoint : MonoBehaviour
     Bounds leftPageLocalBounds;
     Bounds rightPageLocalBounds;
     Vector3 bookCenterTop, bookCenterBottom;
+    private float centerPointCoverage = 0.0f;
     Vector3 leftPageEdgeTop, leftPageEdgeBottom;
     Vector3 rightPageEdgeTop, rightPageEdgeBottom;
     private Vector3 pageBoundaryUp;
@@ -61,7 +62,7 @@ public class GraspingPoint : MonoBehaviour
     private Rigidbody _rb;
     private ObiParticleAttachment _particleAttachment;
 
-    private Vector3 handPos;
+    private Vector3 handPos = Vector3.zero;
 
     private string handDebugLine = "";
     private bool attachmentInProgress;
@@ -95,7 +96,9 @@ public class GraspingPoint : MonoBehaviour
 
     private void Update()
     {
-        handPos = unconstrainedPoint.position;
+        if(unconstrainedPoint)
+            handPos = unconstrainedPoint.position;
+        
         var grabbedParticlePos = actor.GetParticlePosition(_grabbedParticleIdx);
         
         if (!isAttached || attachmentInProgress)
@@ -113,6 +116,9 @@ public class GraspingPoint : MonoBehaviour
         // make object follow the interactor [e.g., the hand which is "holding" this object]
         float fracComplete = (Time.time - startTime) / followSpeed;
         _rb.MovePosition(Vector3.Slerp(transform.position, constrainedPoint, fracComplete));
+        
+        if(interactorObject)
+            Draw.ingame.Line(this.transform.position, interactorObject.transform.position, new Color(1,1,1,0.5f));
         
         // DRAW GIZMOS -----------------------------------------------
         if (!showGizmos || !pageCollider) return;
@@ -137,6 +143,12 @@ public class GraspingPoint : MonoBehaviour
         
         // Draw label showing ppDot value
         Draw.ingame.Label2D(interactorObject.transform.position, handDebugLine, 14F);
+
+        // Draw whatever
+        Draw.ingame.Label2D(interactorObject.transform.position + new Vector3(0,2,0), "Completion: " + centerPointCoverage.ToString(), 14F);
+        
+        // Draw whatever
+        Draw.ingame.Label2D(interactorObject.transform.position + new Vector3(0,-2,0), "CenterPoint: " + centerPoint.ToString() + ", ConstrainedPoint: " + constrainedPoint.ToString(), 14F);
         
         // Draw grappedParticle sphere
         Draw.ingame.WireSphere(grabbedParticlePos, 0.05f, Color.red);
@@ -185,6 +197,8 @@ public class GraspingPoint : MonoBehaviour
                 pPosOfMin);
             edgePoint = BasicHelpers.NearestPointOnFiniteLine(rightPageEdgeTop, rightPageEdgeBottom,
                 pPosOfMin);
+            
+            centerPointCoverage = CalculatePageWeights(Vector3.Distance(bookCenterBottom, centerPoint) / (Vector3.Distance(bookCenterTop, bookCenterBottom)));
 
             if (pIdxOfMin != _grabbedParticleIdx)
             {
@@ -224,6 +238,17 @@ public class GraspingPoint : MonoBehaviour
 
 
     #region Constraint Functions
+    private float CalculatePageWeights(float coverage)
+    {
+        // [0, 0.5, 1] -> [0, 1, 0]; with parabolic curves
+        Func<float, float> parabola = x =>
+        {
+            var inner = (x - 0.5f);
+            return -4 * (inner * inner) + 1;
+        };
+
+        return parabola.Invoke(coverage);
+    }
     private void DoConstraint()
     {
         if (!unconstrainedPoint) return;
@@ -299,6 +324,12 @@ public class GraspingPoint : MonoBehaviour
             }
         }
         
+        var ZOfConstrainedPoint = constrainedPoint.z;
+        var ZOfCenterPoint = centerPoint.z - 1.7f; // not sure why there's this discrepancy, 1.7 is just a magic number right now, from testing
+        var ZBias = (pageLength) * (1 - centerPointCoverage);
+            
+        constrainedPoint.z = Mathf.Clamp(ZOfConstrainedPoint, ZOfCenterPoint - ZBias, ZOfCenterPoint + ZBias);
+
         if(showGizmos)
             Draw.ingame.Arrow(centerPoint, constrainedPoint, Color.blue);
     }
