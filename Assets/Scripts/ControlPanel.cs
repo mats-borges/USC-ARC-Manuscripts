@@ -9,6 +9,7 @@ public class ControlPanel : MonoBehaviour
     private string languageName;
     private List<string> langList = new List<string>() {"LATIN", "ENGLISH", "SPANISH", "OFF"};
     [SerializeField] private GameObject LLatin, RLatin, LEnglish, REnglish, LSpanish, RSpanish;
+    
     [SerializeField] private GameObject langNameTextObject;
     private TextMesh langNameText;
     private int i = 3;
@@ -17,6 +18,15 @@ public class ControlPanel : MonoBehaviour
     [SerializeField] private GameObject musicObject;
     [SerializeField] private GameObject musicOnOffText;
     private bool musicHasBeenTurnedOff;
+    
+    [SerializeField] private GameObject AnnotationOnOffText;
+    [SerializeField] private GameObject highlightFolder;
+    private bool AnnotationHasBeenTurnedOff;
+    
+    [SerializeField] private GameObject SittingModeOnOffText;
+    [SerializeField] private GameObject player;
+    private bool SittingModeHasBeenTurnedOff;
+    public float standingY, sittingY;
 
     
     // Start is called before the first frame update
@@ -27,6 +37,8 @@ public class ControlPanel : MonoBehaviour
         langNameText.text = languageName;
         UpdateLanguageObjects();
         musicHasBeenTurnedOff = false;
+        AnnotationHasBeenTurnedOff = false;
+        SittingModeHasBeenTurnedOff = true;
     }
 
     // Update is called once per frame
@@ -120,6 +132,39 @@ public class ControlPanel : MonoBehaviour
             musicOnOffText.GetComponent<TextMesh>().text = "ON";
             musicObject.GetComponent<AudioSource>().Play();
             musicHasBeenTurnedOff = false;
+        }
+    }
+    
+    public void UpdateAnnotationsOnOff()
+    {
+        if (AnnotationHasBeenTurnedOff == false)
+        {
+            AnnotationOnOffText.GetComponent<TextMesh>().text = "OFF";
+            highlightFolder.SetActive(false);
+            AnnotationHasBeenTurnedOff = true;
+        }
+        else
+        {
+            AnnotationOnOffText.GetComponent<TextMesh>().text = "ON";
+            highlightFolder.SetActive(true);
+            AnnotationHasBeenTurnedOff = false;
+        }
+    }
+    
+    public void UpdateSittingMode()
+    {
+        if (SittingModeHasBeenTurnedOff == false)
+        {
+            SittingModeOnOffText.GetComponent<TextMesh>().text = "OFF";
+            player.transform.position = new Vector3(player.transform.position.x, standingY, player.transform.position.z); 
+            SittingModeHasBeenTurnedOff = true;
+        }
+        else
+        {
+            SittingModeOnOffText.GetComponent<TextMesh>().text = "ON";
+            player.transform.position = new Vector3(player.transform.position.x, sittingY, player.transform.position.z); 
+            SittingModeHasBeenTurnedOff = false;
+            
         }
     }
 }

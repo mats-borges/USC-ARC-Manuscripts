@@ -78,8 +78,10 @@ public class Interactor : MonoBehaviour
     private void DoControllerUpdate()
     {
         var triggerType = isLeftHand ? OVRInput.Axis1D.PrimaryHandTrigger : OVRInput.Axis1D.SecondaryHandTrigger;
+
+        var controllerHandedness = isLeftHand ? OVRInput.Controller.LTouch : OVRInput.Controller.RTouch;
         
-        if (OVRInput.Get(triggerType, OVRInput.Controller.Touch) > 0.7f)
+        if (OVRInput.Get(triggerType, OVRInput.Controller.Touch) > 0.7f || OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, controllerHandedness) > 0.7f )
         {
             foreach (var obj in intersectedObjects)
             {

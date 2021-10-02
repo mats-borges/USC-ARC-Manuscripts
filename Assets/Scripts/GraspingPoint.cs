@@ -95,6 +95,10 @@ public class GraspingPoint : MonoBehaviour
 
     private void Update()
     {
+        if (!unconstrainedPoint)
+        {
+            return;
+        }
         handPos = unconstrainedPoint.position;
         var grabbedParticlePos = actor.GetParticlePosition(_grabbedParticleIdx);
         
