@@ -8,26 +8,25 @@ The music from the Liederbuch of Anna von Köln is performed by USC Thornton Col
 
 
 
-*This virtual reality experience has been made possible in part by a Digital Humanities Advancement Grant from the National Endowment for the Humanities: Democracy demands wisdom* (https://www.neh.gov/).
-
+*This virtual reality experience has been made possible in part by a Digital Humanities Advancement Grant from the National Endowment for the Humanities: Democracy demands wisdom* (https://www.neh.gov/).<br/>
 *Any views, findings, conclusions, or recommendations expressed in this experience do not necessarily represent those of the National Endowment for the Humanities.*
 
 
 
-**NEH Project Co-Directors**: 
-**Lynn Swartz Dodd**, Director, Archaeology Research Center, USC Dornsife School of Religion
+**NEH Project Co-Directors**: <br/>
+**Lynn Swartz Dodd**, Director, Archaeology Research Center, USC Dornsife School of Religion<br/>
 **Sabina Zonno**, USC Early Modern Studies Institute - The Huntington Library, Art Museum and Botanical Gardens
 
-**NEH Project Developers:**
-Mats Borges, USC Cinematic Arts
-Abriannah Aiken, USC Architecture
-Elena Prado, USC Archaeology
-Lauren Malkoun, USC Archaeology
-Jose Botello-Herrera, USC Archaeology
+**NEH Project Developers:**<br/>
+Mats Borges, USC Cinematic Arts<br/>
+Abriannah Aiken, USC Architecture<br/>
+Elena Prado, USC Archaeology<br/>
+Lauren Malkoun, USC Archaeology<br/>
+Jose Botello-Herrera, USC Archaeology<br/>
 
-**NEH Project Participants:** 
-Adam Knight Gilbert, USC Thornton
-Eric Hanson, USC Cinematic Arts
+**NEH Project Participants:** <br/>
+Adam Knight Gilbert, USC Thornton<br/>
+Eric Hanson, USC Cinematic Arts<br/>
 Sue Luftschein, USC Libraries’ Special CollectionsAmy Knight Powell, USC Art History
 
 **NEH Project Consultants:**
