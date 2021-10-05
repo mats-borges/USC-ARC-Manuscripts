@@ -1,8 +1,10 @@
-**Using Virtual Reality to Explore 15th Century Illuminated Manuscripts** 
+# Using Virtual Reality to Explore 15th Century Illuminated Manuscripts
+
+
 
 This virtual experience was designed and created by USC Archaeology Research Center Extended Reality Lab (https://dornsife.usc.edu/xrlab/projects/) with support from USC Dornsife and USC Libraries Special Collections. 
 
-The music from the Liederbuch of Anna von Köln is performed by USC Thornton Collegium directed by Adam Knight Gilbert. [©](https://www.alt-codes.net/copyright_alt_code.php#:~:text=Press ⇧ Option Key and,a copyright symbol on Mac.) 2017 USC Thornton School of Music. All rights reserved.
+The music from the Liederbuch of Anna von Köln is performed by USC Thornton Collegium directed by Adam Knight Gilbert. ©2017 USC Thornton School of Music. All rights reserved.
 
 
 
@@ -15,7 +17,7 @@ The music from the Liederbuch of Anna von Köln is performed by USC Thornton Col
 **Lynn Swartz Dodd**, Director, Archaeology Research Center, USC Dornsife School of Religion
 **Sabina Zonno**, USC Early Modern Studies Institute - The Huntington Library, Art Museum and Botanical Gardens
 
-**NEH Project Developers:****
+**NEH Project Developers:**
 Mats Borges, USC Cinematic Arts
 Abriannah Aiken, USC Architecture
 Elena Prado, USC Archaeology
@@ -30,8 +32,8 @@ Sue Luftschein, USC Libraries’ Special CollectionsAmy Knight Powell, USC Art H
 **NEH Project Consultants:**
 Greg Downing, Hyperacuity 
 
-**Thanks to:** **
-**Luis Rodriguez-Perez, USC Archaeology
+**Thanks to:**
+Luis Rodriguez-Perez, USC Archaeology
 
 
 
