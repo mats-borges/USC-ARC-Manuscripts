@@ -1,3 +1,40 @@
+**Using Virtual Reality to Explore 15th Century Illuminated Manuscripts** 
+
+This virtual experience was designed and created by USC Archaeology Research Center Extended Reality Lab (https://dornsife.usc.edu/xrlab/projects/) with support from USC Dornsife and USC Libraries Special Collections. 
+
+The music from the Liederbuch of Anna von Köln is performed by USC Thornton Collegium directed by Adam Knight Gilbert. [©](https://www.alt-codes.net/copyright_alt_code.php#:~:text=Press ⇧ Option Key and,a copyright symbol on Mac.) 2017 USC Thornton School of Music. All rights reserved.
+
+
+
+*This virtual reality experience has been made possible in part by a Digital Humanities Advancement Grant from the National Endowment for the Humanities: Democracy demands wisdom* (https://www.neh.gov/). 
+*Any views, findings, conclusions, or recommendations expressed in this experience do not necessarily represent those of the National Endowment for the Humanities.*
+
+
+
+**NEH Project Co-Directors**: 
+**Lynn Swartz Dodd**, Director, Archaeology Research Center, USC Dornsife School of Religion
+**Sabina Zonno**, USC Early Modern Studies Institute - The Huntington Library, Art Museum and Botanical Gardens
+
+**NEH Project Developers:****
+Mats Borges, USC Cinematic Arts
+Abriannah Aiken, USC Architecture
+Elena Prado, USC Archaeology
+Lauren Malkoun, USC Archaeology
+Jose Botello-Herrera, USC Archaeology
+
+**NEH Project Participants:** 
+Adam Knight Gilbert, USC Thornton
+Eric Hanson, USC Cinematic Arts
+Sue Luftschein, USC Libraries’ Special CollectionsAmy Knight Powell, USC Art History
+
+**NEH Project Consultants:**
+Greg Downing, Hyperacuity 
+
+**Thanks to:** **
+**Luis Rodriguez-Perez, USC Archaeology
+
+
+
 Shield: [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 
 This work is licensed under a
@@ -8,3 +45,8 @@ This work is licensed under a
 [cc-by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/4.0/
 [cc-by-nc-sa-image]: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
 [cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg
+
+
+
+
+
