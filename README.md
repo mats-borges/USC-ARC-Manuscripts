@@ -8,7 +8,8 @@ The music from the Liederbuch of Anna von Köln is performed by USC Thornton Col
 
 
 
-*This virtual reality experience has been made possible in part by a Digital Humanities Advancement Grant from the National Endowment for the Humanities: Democracy demands wisdom* (https://www.neh.gov/). 
+*This virtual reality experience has been made possible in part by a Digital Humanities Advancement Grant from the National Endowment for the Humanities: Democracy demands wisdom* (https://www.neh.gov/).
+
 *Any views, findings, conclusions, or recommendations expressed in this experience do not necessarily represent those of the National Endowment for the Humanities.*
 
 
