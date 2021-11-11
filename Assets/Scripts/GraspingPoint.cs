@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Drawing;
 using HandPhysicsToolkit.Helpers;
+using HandPhysicsToolkit.Helpers.Interfaces;
 using Obi;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -65,6 +66,9 @@ public class GraspingPoint : MonoBehaviour
 
     private string handDebugLine = "";
     private bool attachmentInProgress;
+    
+    //page complaint delay
+    private bool isDelaying = false;
 
     private void Awake()
     {
@@ -107,8 +111,12 @@ public class GraspingPoint : MonoBehaviour
             _rb.MovePosition(grabbedParticlePos);
             return;
         }
-
-        CheckVelocity();
+        
+        //if page complaint delay is done, check the velocity
+        if (isDelaying == false)
+        {
+            CheckVelocity();
+        }
         
         // constrain the point within defined region
         DoConstraint();
@@ -164,10 +172,13 @@ public class GraspingPoint : MonoBehaviour
         tooFastText.SetActive(false);
     }
 
-    public void Attach(Interactor interactor)
+    public void Attach(BaseInteractor interactor)
     {
-        handPos = interactor.transform.position;
+        handPos = interactor.GetGameObject().transform.position;
         attachmentInProgress = true;
+        
+        //call delaying coroutine here
+        StartCoroutine("StartGraspDelay");
         
         if (!isAttached)
         {
@@ -209,12 +220,19 @@ public class GraspingPoint : MonoBehaviour
         }
 
         isAttached = true;
-        interactorObject = interactor.gameObject;
+        interactorObject = interactor.GetGameObject();
         _particleAttachment.enabled = true;
 
-        unconstrainedPoint = interactor.transform;
+        unconstrainedPoint = interactor.GetGameObject().transform;
         
         attachmentInProgress = false;
+    }
+    
+    IEnumerator StartGraspDelay()
+    {
+        isDelaying = true;
+        yield return new WaitForSeconds(1f);
+        isDelaying = false;
     }
     
     public void UnAttach()

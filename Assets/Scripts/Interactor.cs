@@ -1,11 +1,14 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using HandPhysicsToolkit.Helpers.Interfaces;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityFx.Outline;
 
 
-public class Interactor : MonoBehaviour
+public class Interactor : MonoBehaviour, BaseInteractor
 {
     
     public bool isIntersecting = false;
@@ -28,8 +31,8 @@ public class Interactor : MonoBehaviour
     private bool IsHandTracking = false;
     private bool wasHandTracking = false; // used to detect hand tracking toggle
 
-    [SerializeField] private UnityEvent onHandTrackingActive;
-    [SerializeField] private UnityEvent onHandTrackingInactive;
+    [SerializeField] public UnityEvent onHandTrackingActive;
+    [SerializeField] public UnityEvent onHandTrackingInactive;
     private bool isGrabbing = false;
 
     private Vector3 _initialScale;
@@ -37,7 +40,7 @@ public class Interactor : MonoBehaviour
     private OutlineBehaviour _outlineBehaviour;
     private MaterialSwitcher _materialSwitcher;
 
-    private void Start()
+    private void Awake()
     {
         _initialScale = this.transform.localScale;
         _initialPosition = transform.localPosition;
@@ -46,6 +49,20 @@ public class Interactor : MonoBehaviour
 
         onHandTrackingActive = new UnityEvent();
         onHandTrackingInactive = new UnityEvent();
+    }
+
+    private void Start()
+    {
+        StartCoroutine(DelayedHandTrackingEventInvoke());
+    }
+
+    IEnumerator DelayedHandTrackingEventInvoke()
+    {
+        yield return new WaitForSecondsRealtime(3);
+        
+        IsHandTracking = OVRInput.GetActiveController() == OVRInput.Controller.Hands;
+        HandTrackingChange(IsHandTracking);
+        wasHandTracking = IsHandTracking;
     }
 
     // Update is called once per frame
@@ -61,6 +78,11 @@ public class Interactor : MonoBehaviour
         }
         else
             DoControllerUpdate();
+    }
+
+    public GameObject GetGameObject()
+    {
+        return gameObject;
     }
 
     private void SetInteractorTransform()
@@ -190,6 +212,7 @@ public class Interactor : MonoBehaviour
             transform.localScale = _initialScale * 2;
             _materialSwitcher.enabled = false;
             _outlineBehaviour.enabled = false;
+            Debug.Log("interactor: hand tracking true");
             
             onHandTrackingActive.Invoke();
         }
@@ -200,7 +223,7 @@ public class Interactor : MonoBehaviour
             
             transform.localScale = _initialScale;
             transform.localPosition = _initialPosition;
-            
+            Debug.Log("interactor: hand tracking flase");
             onHandTrackingInactive.Invoke();
         }
     }
