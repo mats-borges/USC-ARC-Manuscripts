@@ -7,12 +7,12 @@ using UnityEngine.UI;
 public class ControlPanel : MonoBehaviour
 {
     private string languageName;
-    private List<string> langList = new List<string>() {"LATIN", "ENGLISH", "SPANISH", "OFF"};
-    [SerializeField] private GameObject LLatin, RLatin, LEnglish, REnglish, LSpanish, RSpanish;
-    
+    private List<string> langList = new List<string>();
+
     [SerializeField] private GameObject langNameTextObject;
+    [SerializeField] private GameObject pagesideTextManager;
     private TextMesh langNameText;
-    private int i = 3;
+    public int CurLangNum = 0;
     
     [SerializeField]  private UnityEvent onMusicPress;
     [SerializeField] private GameObject musicObject;
@@ -32,10 +32,16 @@ public class ControlPanel : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        languageName = langList[3];
+        //fill a list with the names of all language files from the pageside text manager
+        List<TextAsset> langAssetList = pagesideTextManager.GetComponent<PagesideTextManager>().LanguageFileList;
+        for (int i = 0; i < langAssetList.Count; i++)
+        {
+            langList.Add(langAssetList[i].name);
+        }
+        
         langNameText = langNameTextObject.GetComponent<TextMesh>();
-        langNameText.text = languageName;
-        UpdateLanguageObjects();
+        langNameText.text = langList[CurLangNum];
+
         musicHasBeenTurnedOff = false;
         AnnotationHasBeenTurnedOff = false;
         SittingModeHasBeenTurnedOff = true;
@@ -58,66 +64,25 @@ public class ControlPanel : MonoBehaviour
 
     public void CycleLanguageName()
     {
-        i++;
-        if (i >= langList.Count)
+        CurLangNum++;
+        if (CurLangNum >= langList.Count)
         {
-            i = 0;
+            CurLangNum = 0;
         }
-        langNameText.text = langList[i];
-        UpdateLanguageObjects();
+        langNameText.text = langList[CurLangNum];
     }
     
     public void CycleLanguageNameBackwards()
     {
-        i--;
-        if (i <= langList.Count)
+        CurLangNum--;
+        if (CurLangNum <= langList.Count)
         {
-            i = langList.Count;
+            CurLangNum = langList.Count;
         }
-        langNameText.text = langList[i];
-        UpdateLanguageObjects();
+        langNameText.text = langList[CurLangNum];
     }
 
-    public void UpdateLanguageObjects()
-    {
-        switch (i)
-        {
-            case 0:
-                LLatin.SetActive(true);
-                RLatin.SetActive(true);
-                LEnglish.SetActive(false);
-                REnglish.SetActive(false);
-                LSpanish.SetActive(false);
-                LSpanish.SetActive(false);
-                break;
-            case 1:
-                LLatin.SetActive(false);
-                RLatin.SetActive(false);
-                LEnglish.SetActive(true);
-                REnglish.SetActive(true);
-                LSpanish.SetActive(false);
-                LSpanish.SetActive(false);
-                break;
-            case 2:
-                LLatin.SetActive(false);
-                RLatin.SetActive(false);
-                LEnglish.SetActive(false);
-                REnglish.SetActive(false);
-                LSpanish.SetActive(true);
-                RSpanish.SetActive(true);
-                break;
-            case 3:
-                LLatin.SetActive(false);
-                RLatin.SetActive(false);
-                LEnglish.SetActive(false);
-                REnglish.SetActive(false);
-                LSpanish.SetActive(false);
-                RSpanish.SetActive(false);
-                break;
-            default:
-                break;
-        }
-    }
+   
 
     public void UpdateMusicOnOff()
     {

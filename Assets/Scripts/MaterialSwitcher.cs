@@ -5,9 +5,11 @@ using UnityEngine;
 
 public class MaterialSwitcher : MonoBehaviour
 {
-    [SerializeField] private Material highlightMaterial;
-    private MeshRenderer _meshRenderer;
     private Material originalMat;
+    [SerializeField] private Material highlightMaterial;
+    [SerializeField] private Material clickedMaterial;
+    private MeshRenderer _meshRenderer;
+    
     private void Awake()
     {
         _meshRenderer = GetComponent<MeshRenderer>();
@@ -29,5 +31,15 @@ public class MaterialSwitcher : MonoBehaviour
     public void TurnOffHighlight()
     {
         _meshRenderer.material = originalMat;
+    }
+
+    public void TurnOnClickedMaterial()
+    {
+        _meshRenderer.material = clickedMaterial;
+    }
+    
+    public void TurnOffClickedMaterial()
+    {
+        _meshRenderer.material = highlightMaterial;
     }
 }

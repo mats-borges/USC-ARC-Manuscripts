@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class BookManager : MonoBehaviour
 {
-    int rightPageNum = 2;
-    int leftPageNum = 0;
+    //leftpagenum is used by pagesideTextManager
+    public int leftPageNum = 0;
     int simPageNum = 1;
+    int rightPageNum = 2;
+    
 
     [SerializeField] GameObject rightPage;
     [SerializeField] GameObject leftPage;
