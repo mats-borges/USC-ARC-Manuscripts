@@ -118,7 +118,7 @@ public class PagesideTextManager : MonoBehaviour
 
     private void Update()
     {
-        //two enum variables, one for this frame, other for last frame, the type of mismatch determines when the increment and decrement functions are called
+        //two enum variables, one for this frame, other for last frame. The type of mismatch determines when the increment and decrement functions are called
         if (pageMarker.transform.position.x < bookManager.transform.position.x )
         {
             thisFrame = pageRegion.LEFT;
@@ -138,5 +138,17 @@ public class PagesideTextManager : MonoBehaviour
         }
         
         lastFrame = thisFrame;
+    }
+
+    public void ResetExperiencePTM()
+    {
+        //safely move the pagemarker to the other side without triggering an increment
+        pageMarker.transform.SetPositionAndRotation(new Vector3(bookManager.transform.position.x + 5, pageMarker.transform.position.y,pageMarker.transform.position.z), Quaternion.identity);
+        lastFrame = pageRegion.RIGHT;
+        
+        //reset the language and page numbers
+        langNum = controlPanel.GetComponent<ControlPanel>().CurLangNum;
+        pageNum = bookManager.GetComponent<BookManager>().leftPageNum;
+        displayTexts();
     }
 }

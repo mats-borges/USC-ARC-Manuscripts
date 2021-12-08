@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Obi;
 using UnityEngine;
 
 public class BookManager : MonoBehaviour
@@ -13,7 +14,11 @@ public class BookManager : MonoBehaviour
     [SerializeField] GameObject rightPage;
     [SerializeField] GameObject leftPage;
     [SerializeField] GameObject simPage;
-    
+    [SerializeField] private GameObject obiSolver;
+    private Vector3 obiSolverPos;
+    private Quaternion obiSolverQuat;
+    [SerializeField] private GameObject book;
+
     [SerializeField] Material testMat;
     [SerializeField] List<Material> pageList = new List<Material>(); 
 
@@ -22,6 +27,9 @@ public class BookManager : MonoBehaviour
         rightPage.GetComponent<Renderer>().material = pageList[rightPageNum];
         leftPage.GetComponent<Renderer>().material = pageList[leftPageNum];
         simPage.GetComponent<Renderer>().material = pageList[simPageNum];
+
+        obiSolverPos = obiSolver.transform.position;
+        obiSolverQuat = obiSolver.transform.rotation;
     }
     
     void Update()
@@ -76,5 +84,17 @@ public class BookManager : MonoBehaviour
         Decrement(rightPage,ref rightPageNum);
         Decrement(leftPage,ref leftPageNum);
         Decrement(simPage,ref simPageNum);
+    }
+
+    public void ResetExperienceBM()
+    {
+        leftPageNum = 0;
+        simPageNum = 1;
+        rightPageNum = 2;
+        leftPage.GetComponent<Renderer>().material = pageList[leftPageNum];
+        simPage.GetComponent<Renderer>().material = pageList[simPageNum];
+        rightPage.GetComponent<Renderer>().material = pageList[rightPageNum];
+
+        simPage.GetComponent<ObiTearableCloth>().ResetParticles();
     }
 }

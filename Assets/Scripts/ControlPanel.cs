@@ -132,4 +132,25 @@ public class ControlPanel : MonoBehaviour
             
         }
     }
+
+    public void ResetExperienceCP()
+    {
+        //translation
+        CurLangNum = 0;
+        langNameText.text = langList[CurLangNum];
+        
+        //music
+        musicOnOffText.GetComponent<TextMesh>().text = "ON";
+        musicObject.GetComponent<AudioSource>().Play();
+        musicHasBeenTurnedOff = false;
+        
+        //page
+        //done in book manager
+        
+        //annotation
+        AnnotationOnOffText.GetComponent<TextMesh>().text = "ON";
+        highlightFolder.SetActive(true);
+        AnnotationHasBeenTurnedOff = false;
+    }
+    
 }
