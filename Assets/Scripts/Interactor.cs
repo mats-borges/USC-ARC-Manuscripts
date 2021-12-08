@@ -87,14 +87,22 @@ public class Interactor : MonoBehaviour, BaseInteractor
 
     private void SetInteractorTransform()
     {
+        transform.position = GetBonePosition(OVRSkeleton.BoneId.Hand_IndexTip);
+    }
+
+    public Vector3 GetBonePosition(OVRSkeleton.BoneId boneId)
+    {
         if (!handSkeleton) handSkeleton = ovrHand.GetComponentInChildren<OVRSkeleton>();
-        if (!handSkeleton) return;
-        if (handSkeleton.Bones == null) return;
-        if (handSkeleton.Bones.Count == 0) return;
+        if (!handSkeleton) return Vector3.zero;
+        if (handSkeleton.Bones == null) return Vector3.zero;
         
-        var tipTransform  = handSkeleton.Bones[(int)OVRSkeleton.BoneId.Hand_IndexTip].Transform;  // index tip position
-        
-        transform.position = tipTransform.position;
+        return handSkeleton.Bones.Count == 0 ? Vector3.zero : handSkeleton.Bones[(int) boneId].Transform.position;
+    }
+
+    public Transform GetPointerPose()
+    {
+        if (!ovrHand) return null;
+        return ovrHand.IsPointerPoseValid ? ovrHand.PointerPose : null;
     }
 
     private void DoControllerUpdate()
@@ -229,7 +237,7 @@ public class Interactor : MonoBehaviour, BaseInteractor
     }
     
     // Returns values [0,1]
-    private float GetIndexPinch()
+    public float GetIndexPinch()
     {
         if (!ovrHand)
         {

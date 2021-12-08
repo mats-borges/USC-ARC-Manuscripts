@@ -36,4 +36,10 @@ public class MenuText : MonoBehaviour
         }
         GetComponent<TextMesh>().text = stateList[stateNum];
     }
+
+    public void ResetExperienceMT()
+    {
+        stateNum = 0;
+        GetComponent<TextMesh>().text = stateList[stateNum];
+    }
 }
