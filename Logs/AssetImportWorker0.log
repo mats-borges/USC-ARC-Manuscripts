@@ -1,6 +1,6 @@
 Using pre-set license
 Built from '2020.3/release' branch; Version is '2020.3.1f1 (77a89f25062f) revision 7841951'; Using compiler version '192528614'; Build Type 'Release'
-OS: 'Windows 10 Pro; OS build 19042.1348; Version 2009; 64bit' Language: 'en' Physical Memory: 32691 MB
+OS: 'Windows 10 Pro; OS build 19042.1415; Version 2009; 64bit' Language: 'en' Physical Memory: 32691 MB
 BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1, IsPro: 0
 
  COMMAND LINE ARGUMENTS:
@@ -15,12 +15,12 @@ C:/Users/matts/Documents/Dev/Unity/USC/Book of Hours
 -logFile
 Logs/AssetImportWorker0.log
 -srvPort
-61331
+64513
 Successfully changed project path to: C:/Users/matts/Documents/Dev/Unity/USC/Book of Hours
 C:/Users/matts/Documents/Dev/Unity/USC/Book of Hours
 Using Asset Import Pipeline V2.
-Refreshing native plugins compatible for Editor in 98.15 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.72 ms.
+Refreshing native plugins compatible for Editor in 113.29 ms, found 8 plugins.
+Preloading 1 native plugins for Editor in 0.77 ms.
 Initialize engine version: 2020.3.1f1 (77a89f25062f)
 [Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/Resources/UnitySubsystems
 [Subsystems] Discovering subsystems at path C:/Users/matts/Documents/Dev/Unity/USC/Book of Hours/Assets
@@ -30,33 +30,33 @@ Direct3D:
     Renderer: NVIDIA GeForce GTX 980 (ID=0x13c0)
     Vendor:   
     VRAM:     4053 MB
-    Driver:   27.21.14.6647
+    Driver:   30.0.14.9709
 Shader 'Oculus/OVRMRCameraFrameLit': fallback shader 'Alpha-Diffuse' not found
 Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
 Initialize mono
 Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/Managed'
 Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit'
 Mono config path = 'C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56280
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56028
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.001888 seconds.
+Registered in 0.001854 seconds.
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 81.83 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.07 ms.
+Refreshing native plugins compatible for Editor in 89.07 ms, found 8 plugins.
+Preloading 1 native plugins for Editor in 0.13 ms.
 Invoked RoslynAnalysisRunner static constructor.
 RoslynAnalysisRunner will not be running.
 RoslynAnalysisRunner has terminated.
 Mono: successfully reloaded assembly
-- Completed reload, in  1.586 seconds
+- Completed reload, in  1.989 seconds
 Platform modules already initialized, skipping
 Registering precompiled user dll's ...
-Registered in 0.006703 seconds.
+Registered in 0.008984 seconds.
 Begin MonoManager ReloadAssembly
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 87.86 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.06 ms.
+Refreshing native plugins compatible for Editor in 83.84 ms, found 8 plugins.
+Preloading 1 native plugins for Editor in 0.07 ms.
 Invoked RoslynAnalysisRunner static constructor.
 RoslynAnalysisRunner will not be running.
 RoslynAnalysisRunner has terminated.
@@ -66,120 +66,92 @@ RoslynAnalysisRunner has terminated.
 [XR] Unable to register input lifecyle provider: [1]
 [XR] OVRP version 1.57.0
 Mono: successfully reloaded assembly
-- Completed reload, in  1.338 seconds
+- Completed reload, in  1.369 seconds
 Platform modules already initialized, skipping
 ========================================================================
 Worker process is ready to serve import requests
 Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
 Shader 'Oculus/OVRMRCameraFrameLit': fallback shader 'Alpha-Diffuse' not found
-Launched and connected shader compiler UnityShaderCompiler.exe after 0.03 seconds
-Refreshing native plugins compatible for Editor in 1.11 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.06 ms.
-Unloading 4059 Unused Serialized files (Serialized files now loaded: 0)
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.04 seconds
+Refreshing native plugins compatible for Editor in 1.15 ms, found 8 plugins.
+Preloading 1 native plugins for Editor in 0.07 ms.
+Unloading 4060 Unused Serialized files (Serialized files now loaded: 0)
 System memory in use before: 208.2 MB.
-System memory in use after: 208.3 MB.
+System memory in use after: 208.4 MB.
 
-Unloading 65 unused Assets to reduce memory usage. Loaded Objects now: 4489.
-Total: 2.879700 ms (FindLiveObjects: 0.351300 ms CreateObjectMapping: 0.153900 ms MarkObjects: 2.201900 ms  DeleteObjects: 0.171700 ms)
-
-========================================================================
-Received Import Request.
-  path: Assets/Textures/handtracking_pinch_graphic.png
-  artifactKey: Guid(d221267a1e54bd842b6f486197f74cd3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Textures/handtracking_pinch_graphic.png using Guid(d221267a1e54bd842b6f486197f74cd3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '690d3556f3ed78250e7cb559d79b8a58') in 0.126256 seconds
-  Import took 0.132463 seconds .
+Unloading 65 unused Assets to reduce memory usage. Loaded Objects now: 4490.
+Total: 3.375800 ms (FindLiveObjects: 0.486000 ms CreateObjectMapping: 0.352700 ms MarkObjects: 2.332000 ms  DeleteObjects: 0.204200 ms)
 
 ========================================================================
 Received Import Request.
-  Time since last request: 3613.827561 seconds.
-  path: Assets/Textures/handtracking_pinch_graphic.png
-  artifactKey: Guid(d221267a1e54bd842b6f486197f74cd3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Textures/handtracking_pinch_graphic.png using Guid(d221267a1e54bd842b6f486197f74cd3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f5c18f7358f134d33be39f6cda4c6ad8') in 0.025095 seconds
-  Import took 0.034020 seconds .
+  path: Assets/Textures/Oculus_Movement_Diagram.png
+  artifactKey: Guid(42cf5f78d0c24b44c951528dff39795e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Textures/Oculus_Movement_Diagram.png using Guid(42cf5f78d0c24b44c951528dff39795e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '35f0de001faea993e5d8a3ea6e4321a8') in 0.229040 seconds
+  Import took 0.235437 seconds .
 
 ========================================================================
 Received Import Request.
-  Time since last request: 10.205294 seconds.
-  path: Assets/Textures/handtracking_pinch_graphic.png
-  artifactKey: Guid(d221267a1e54bd842b6f486197f74cd3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Textures/handtracking_pinch_graphic.png using Guid(d221267a1e54bd842b6f486197f74cd3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '4e408b28b2696bc9485617f49c321557') in 0.023871 seconds
-  Import took 0.031633 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 13.947256 seconds.
-  path: Assets/Textures/handtracking_pinch_graphic.png
-  artifactKey: Guid(d221267a1e54bd842b6f486197f74cd3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Textures/handtracking_pinch_graphic.png using Guid(d221267a1e54bd842b6f486197f74cd3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '90fa4eb3b9579cfde4ac1ad4c5387196') in 0.023713 seconds
-  Import took 0.030577 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 5.702348 seconds.
-  path: Assets/Textures/handtracking_pinch_graphic.png
-  artifactKey: Guid(d221267a1e54bd842b6f486197f74cd3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Textures/handtracking_pinch_graphic.png using Guid(d221267a1e54bd842b6f486197f74cd3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '84e81828aaf67341997d47544ec17cff') in 0.024140 seconds
-  Import took 0.031269 seconds .
-
-========================================================================
-Received Import Request.
-  Time since last request: 23.757355 seconds.
-  path: Assets/Textures/handtracking_pinch_graphic.png
-  artifactKey: Guid(d221267a1e54bd842b6f486197f74cd3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Textures/handtracking_pinch_graphic.png using Guid(d221267a1e54bd842b6f486197f74cd3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '4128451686d3b945fccc75db63ac69a3') in 0.030645 seconds
-  Import took 0.038674 seconds .
+  Time since last request: 7.091267 seconds.
+  path: Assets/Textures/Oculus_Movement_Diagram.png
+  artifactKey: Guid(42cf5f78d0c24b44c951528dff39795e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Textures/Oculus_Movement_Diagram.png using Guid(42cf5f78d0c24b44c951528dff39795e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5c6f312355eecb8811a346221f0046f7') in 0.118889 seconds
+  Import took 0.125829 seconds .
 
 ========================================================================
 Received Prepare
 Registering precompiled user dll's ...
-Registered in 0.006546 seconds.
+Registered in 0.006286 seconds.
 Begin MonoManager ReloadAssembly
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 1.16 ms, found 8 plugins.
+Refreshing native plugins compatible for Editor in 1.17 ms, found 8 plugins.
 Preloading 1 native plugins for Editor in 0.07 ms.
 Invoked RoslynAnalysisRunner static constructor.
 RoslynAnalysisRunner will not be running.
 RoslynAnalysisRunner has terminated.
 Mono: successfully reloaded assembly
-- Completed reload, in  1.147 seconds
+- Completed reload, in  1.122 seconds
 Platform modules already initialized, skipping
 Switching build target platform(5) subTarget(0) extendedPlatform(0) -> platform(13) subTarget(524294) extendedPlatform(0)
 Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
 Shader 'Oculus/OVRMRCameraFrameLit': fallback shader 'Alpha-Diffuse' not found
-Refreshing native plugins compatible for Editor in 1.89 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.07 ms.
-Unloading 3865 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 203.4 MB.
+Refreshing native plugins compatible for Editor in 1.18 ms, found 8 plugins.
+Preloading 1 native plugins for Editor in 0.06 ms.
+Unloading 3866 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 203.5 MB.
 System memory in use after: 203.6 MB.
 
-Unloading 60 unused Assets to reduce memory usage. Loaded Objects now: 4502.
-Total: 3.799100 ms (FindLiveObjects: 0.538600 ms CreateObjectMapping: 0.437500 ms MarkObjects: 2.690000 ms  DeleteObjects: 0.131700 ms)
+Unloading 60 unused Assets to reduce memory usage. Loaded Objects now: 4504.
+Total: 2.909200 ms (FindLiveObjects: 0.365500 ms CreateObjectMapping: 0.170400 ms MarkObjects: 2.242100 ms  DeleteObjects: 0.129700 ms)
 
 AssetImportParameters requested are different than current active one (requested -> active):
   custom:graphics/normal-map-encoding: 01000000000000000000000000000000 -> 02000000000000000000000000000000
 ========================================================================
-Received Prepare
-Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
-Shader 'Oculus/OVRMRCameraFrameLit': fallback shader 'Alpha-Diffuse' not found
-Refreshing native plugins compatible for Editor in 14.01 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.06 ms.
-Unloading 56 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 132.3 MB.
-System memory in use after: 132.4 MB.
-
-Unloading 56 unused Assets to reduce memory usage. Loaded Objects now: 4502.
-Total: 4.843600 ms (FindLiveObjects: 0.611500 ms CreateObjectMapping: 0.298000 ms MarkObjects: 3.757200 ms  DeleteObjects: 0.175400 ms)
+Received Import Request.
+  Time since last request: 635.351625 seconds.
+  path: Assets/Textures/D Icon.png
+  artifactKey: Guid(c19834de8ee796949a0d25638d88a159) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Textures/D Icon.png using Guid(c19834de8ee796949a0d25638d88a159) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'fd94d9ee56f005c4814e445e00b24729') in 0.130971 seconds
+  Import took 0.138952 seconds .
 
 ========================================================================
 Received Prepare
 Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
 Shader 'Oculus/OVRMRCameraFrameLit': fallback shader 'Alpha-Diffuse' not found
-Refreshing native plugins compatible for Editor in 14.40 ms, found 8 plugins.
+Refreshing native plugins compatible for Editor in 14.56 ms, found 8 plugins.
 Preloading 1 native plugins for Editor in 0.07 ms.
 Unloading 56 Unused Serialized files (Serialized files now loaded: 0)
 System memory in use before: 132.3 MB.
-System memory in use after: 132.4 MB.
+System memory in use after: 132.5 MB.
 
-Unloading 56 unused Assets to reduce memory usage. Loaded Objects now: 4502.
-Total: 4.119500 ms (FindLiveObjects: 0.399100 ms CreateObjectMapping: 0.167700 ms MarkObjects: 3.387800 ms  DeleteObjects: 0.163500 ms)
+Unloading 56 unused Assets to reduce memory usage. Loaded Objects now: 4505.
+Total: 3.847100 ms (FindLiveObjects: 0.361600 ms CreateObjectMapping: 0.150900 ms MarkObjects: 3.147400 ms  DeleteObjects: 0.186000 ms)
 
+========================================================================
+Received Import Request.
+  Time since last request: 630.032110 seconds.
+  path: Assets/MovementManager.cs
+  artifactKey: Guid(279fc6af2c08f6f44a63174fc9881db7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/MovementManager.cs using Guid(279fc6af2c08f6f44a63174fc9881db7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7322f96b6a287e963413fda14697b695') in 0.010232 seconds
+  Import took 0.017698 seconds .
+
+AssetImportWorkerClient::OnTransportError - code=2 error=End of file
