@@ -64,24 +64,29 @@ public class InteractiveSmudge : MonoBehaviour
 
     public void AdvanceSmudgeMaterial()
     {
-        switch (pageStage)
+        string name = page.GetComponent<MeshRenderer>().material.name;
+        Debug.Log(name);
+        if ((name == triggerMat.name + " (Instance)" || name == smudgedMat1.name + " (Instance)" || name == smudgedMat2.name + " (Instance)"|| name == smudgedMat3.name + " (Instance)") && transform.position.x > xBoundary)
         {
-            case 0 : 
-                page.GetComponent<MeshRenderer>().material = smudgedMat1;
-                pageStage++;
-                break;
-            case 1:
-                page.GetComponent<MeshRenderer>().material = smudgedMat2;
-                pageStage++;
-                break;
-            case 2:
-                page.GetComponent<MeshRenderer>().material = smudgedMat3;
-                pageStage++;
-                break;
-            case 3:
-                page.GetComponent<MeshRenderer>().material = triggerMat;
-                pageStage = 0;
-                break;
+            switch (pageStage)
+            {
+                case 0 : 
+                    page.GetComponent<MeshRenderer>().material = smudgedMat1;
+                    pageStage++;
+                    break;
+                case 1:
+                    page.GetComponent<MeshRenderer>().material = smudgedMat2;
+                    pageStage++;
+                    break;
+                case 2:
+                    page.GetComponent<MeshRenderer>().material = smudgedMat3;
+                    pageStage++;
+                    break;
+                case 3:
+                    page.GetComponent<MeshRenderer>().material = triggerMat;
+                    pageStage = 0;
+                    break;
+            }
         }
     }
 }
