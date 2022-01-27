@@ -159,7 +159,7 @@ public class GraspingPoint : MonoBehaviour
         var curVel = _velocityEstimator.GetVelocityEstimate().sqrMagnitude;
         if (curVel < maxVelocity) return;
         
-        Debug.Log("Too fast! Current velocity: " + curVel);
+        // Debug.Log("Too fast! Current velocity: " + curVel);
 
         if (tooFastText.activeSelf) return;
         tooFastText.SetActive(true);

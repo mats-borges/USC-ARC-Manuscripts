@@ -64,6 +64,7 @@ public class InteractiveSmudge : MonoBehaviour
 
     public void AdvanceSmudgeMaterial()
     {
+        Debug.Log("advancedsmudgematerial()");
         switch (pageStage)
         {
             case 0 : 
