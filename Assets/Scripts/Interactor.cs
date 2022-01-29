@@ -227,7 +227,7 @@ public class Interactor : MonoBehaviour, BaseInteractor
         else
         {
             _materialSwitcher.enabled = true;
-            _outlineBehaviour.enabled = true;
+//            _outlineBehaviour.enabled = true;
             
             transform.localScale = _initialScale;
             transform.localPosition = _initialPosition;
