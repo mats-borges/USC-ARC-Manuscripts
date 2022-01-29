@@ -1,6 +1,6 @@
 Using pre-set license
 Built from '2020.3/release' branch; Version is '2020.3.1f1 (77a89f25062f) revision 7841951'; Using compiler version '192528614'; Build Type 'Release'
-OS: 'Windows 10 Pro; OS build 19042.1415; Version 2009; 64bit' Language: 'en' Physical Memory: 32691 MB
+OS: 'Windows 10 Pro; OS build 19042.1466; Version 2009; 64bit' Language: 'en' Physical Memory: 32691 MB
 BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1, IsPro: 0
 
  COMMAND LINE ARGUMENTS:
@@ -15,12 +15,12 @@ C:/Users/matts/Documents/Dev/Unity/USC/Book of Hours
 -logFile
 Logs/AssetImportWorker0.log
 -srvPort
-61379
+58879
 Successfully changed project path to: C:/Users/matts/Documents/Dev/Unity/USC/Book of Hours
 C:/Users/matts/Documents/Dev/Unity/USC/Book of Hours
 Using Asset Import Pipeline V2.
-Refreshing native plugins compatible for Editor in 98.09 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.74 ms.
+Refreshing native plugins compatible for Editor in 101.62 ms, found 8 plugins.
+Preloading 1 native plugins for Editor in 0.75 ms.
 Initialize engine version: 2020.3.1f1 (77a89f25062f)
 [Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/Resources/UnitySubsystems
 [Subsystems] Discovering subsystems at path C:/Users/matts/Documents/Dev/Unity/USC/Book of Hours/Assets
@@ -37,25 +37,25 @@ Initialize mono
 Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/Managed'
 Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit'
 Mono config path = 'C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56876
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56352
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.001766 seconds.
+Registered in 0.001702 seconds.
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 84.39 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.07 ms.
+Refreshing native plugins compatible for Editor in 83.01 ms, found 8 plugins.
+Preloading 1 native plugins for Editor in 0.06 ms.
 Invoked RoslynAnalysisRunner static constructor.
 RoslynAnalysisRunner will not be running.
 RoslynAnalysisRunner has terminated.
 Mono: successfully reloaded assembly
-- Completed reload, in  1.567 seconds
+- Completed reload, in  1.693 seconds
 Platform modules already initialized, skipping
 Registering precompiled user dll's ...
-Registered in 0.006392 seconds.
+Registered in 0.006819 seconds.
 Begin MonoManager ReloadAssembly
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 87.67 ms, found 8 plugins.
+Refreshing native plugins compatible for Editor in 81.36 ms, found 8 plugins.
 Preloading 1 native plugins for Editor in 0.06 ms.
 Invoked RoslynAnalysisRunner static constructor.
 RoslynAnalysisRunner will not be running.
@@ -66,82 +66,127 @@ RoslynAnalysisRunner has terminated.
 [XR] Unable to register input lifecyle provider: [1]
 [XR] OVRP version 1.57.0
 Mono: successfully reloaded assembly
-- Completed reload, in  1.315 seconds
+- Completed reload, in  1.372 seconds
 Platform modules already initialized, skipping
 ========================================================================
 Worker process is ready to serve import requests
 Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
 Shader 'Oculus/OVRMRCameraFrameLit': fallback shader 'Alpha-Diffuse' not found
-Launched and connected shader compiler UnityShaderCompiler.exe after 0.03 seconds
-Refreshing native plugins compatible for Editor in 1.25 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.07 ms.
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.10 seconds
+Refreshing native plugins compatible for Editor in 1.40 ms, found 8 plugins.
+Preloading 1 native plugins for Editor in 0.08 ms.
 Unloading 4060 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 208.5 MB.
-System memory in use after: 208.6 MB.
+System memory in use before: 208.6 MB.
+System memory in use after: 208.7 MB.
 
-Unloading 65 unused Assets to reduce memory usage. Loaded Objects now: 4490.
-Total: 3.221900 ms (FindLiveObjects: 0.371600 ms CreateObjectMapping: 0.154700 ms MarkObjects: 2.494300 ms  DeleteObjects: 0.200500 ms)
+Unloading 64 unused Assets to reduce memory usage. Loaded Objects now: 4491.
+Total: 3.047900 ms (FindLiveObjects: 0.373900 ms CreateObjectMapping: 0.157000 ms MarkObjects: 2.325500 ms  DeleteObjects: 0.190800 ms)
 
 ========================================================================
 Received Import Request.
-  path: Assets/Textures/D Icon.png
-  artifactKey: Guid(c19834de8ee796949a0d25638d88a159) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Textures/D Icon.png using Guid(c19834de8ee796949a0d25638d88a159) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2ac89c60117a6c5dd594cb89731383ec') in 0.168103 seconds
-  Import took 0.174950 seconds .
+  path: Assets/Oculus/SampleFramework/Core/DebugUI/Fonts/Montserrat/Montserrat-Light SDF.asset
+  artifactKey: Guid(3eb24cda238222e4aa89985f99563391) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Oculus/SampleFramework/Core/DebugUI/Fonts/Montserrat/Montserrat-Light SDF.asset using Guid(3eb24cda238222e4aa89985f99563391) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '965628022fc9be8ba98d0eaefcde942a') in 0.142410 seconds
+  Import took 0.149280 seconds .
 
 ========================================================================
 Received Prepare
 Registering precompiled user dll's ...
-Registered in 0.006347 seconds.
+Registered in 0.008318 seconds.
 Begin MonoManager ReloadAssembly
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 1.29 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.07 ms.
+Refreshing native plugins compatible for Editor in 1.34 ms, found 8 plugins.
+Preloading 1 native plugins for Editor in 0.08 ms.
 Invoked RoslynAnalysisRunner static constructor.
 RoslynAnalysisRunner will not be running.
 RoslynAnalysisRunner has terminated.
 Mono: successfully reloaded assembly
-- Completed reload, in  1.105 seconds
+- Completed reload, in  1.162 seconds
 Platform modules already initialized, skipping
 Switching build target platform(5) subTarget(0) extendedPlatform(0) -> platform(13) subTarget(524294) extendedPlatform(0)
 Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
 Shader 'Oculus/OVRMRCameraFrameLit': fallback shader 'Alpha-Diffuse' not found
-Refreshing native plugins compatible for Editor in 1.26 ms, found 8 plugins.
+Refreshing native plugins compatible for Editor in 1.15 ms, found 8 plugins.
 Preloading 1 native plugins for Editor in 0.06 ms.
 Unloading 3865 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 200.6 MB.
-System memory in use after: 200.8 MB.
+System memory in use before: 192.8 MB.
+System memory in use after: 193.0 MB.
 
-Unloading 60 unused Assets to reduce memory usage. Loaded Objects now: 4499.
-Total: 4.016100 ms (FindLiveObjects: 0.530300 ms CreateObjectMapping: 0.438100 ms MarkObjects: 2.887100 ms  DeleteObjects: 0.159500 ms)
+Unloading 59 unused Assets to reduce memory usage. Loaded Objects now: 4541.
+Total: 3.055600 ms (FindLiveObjects: 0.371700 ms CreateObjectMapping: 0.150100 ms MarkObjects: 2.402900 ms  DeleteObjects: 0.130000 ms)
 
 AssetImportParameters requested are different than current active one (requested -> active):
   custom:graphics/normal-map-encoding: 01000000000000000000000000000000 -> 02000000000000000000000000000000
 ========================================================================
 Received Prepare
+Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
+Shader 'Oculus/OVRMRCameraFrameLit': fallback shader 'Alpha-Diffuse' not found
+Refreshing native plugins compatible for Editor in 23.22 ms, found 8 plugins.
+Preloading 1 native plugins for Editor in 0.06 ms.
+Unloading 55 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 122.0 MB.
+System memory in use after: 122.1 MB.
+
+Unloading 55 unused Assets to reduce memory usage. Loaded Objects now: 4541.
+Total: 14.063800 ms (FindLiveObjects: 0.620700 ms CreateObjectMapping: 0.226400 ms MarkObjects: 12.956500 ms  DeleteObjects: 0.258400 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 276.298160 seconds.
+  path: Assets/Materials/HighlightUI.mat
+  artifactKey: Guid(cbf534bdda69ca24fb694d184bf11694) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Materials/HighlightUI.mat using Guid(cbf534bdda69ca24fb694d184bf11694) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2d7071a5681b763becd418fe88a1555c') in 0.078199 seconds
+  Import took 0.086592 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000266 seconds.
+  path: Assets/Materials/OpenFace_Fol15v16r_Model_u1_v1.mat
+  artifactKey: Guid(3961d6917176b1e4ca77b5587c65cc01) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Materials/OpenFace_Fol15v16r_Model_u1_v1.mat using Guid(3961d6917176b1e4ca77b5587c65cc01) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1d8fe4b13b21eb99e86ba9839b838284') in 0.393084 seconds
+  Import took 0.400169 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000181 seconds.
+  path: Assets/Materials/HighlightUI.mat
+  artifactKey: Guid(cbf534bdda69ca24fb694d184bf11694) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Materials/HighlightUI.mat using Guid(cbf534bdda69ca24fb694d184bf11694) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2d7071a5681b763becd418fe88a1555c') in 0.009970 seconds
+  Import took 0.016666 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000200 seconds.
+  path: Assets/Materials/OpenFace_Fol15v16r_Model_u1_v1.mat
+  artifactKey: Guid(3961d6917176b1e4ca77b5587c65cc01) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Materials/OpenFace_Fol15v16r_Model_u1_v1.mat using Guid(3961d6917176b1e4ca77b5587c65cc01) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1d8fe4b13b21eb99e86ba9839b838284') in 0.341760 seconds
+  Import took 0.349969 seconds .
+
+========================================================================
+Received Prepare
 Registering precompiled user dll's ...
-Registered in 0.006430 seconds.
+Registered in 0.006338 seconds.
 Begin MonoManager ReloadAssembly
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 1.19 ms, found 8 plugins.
+Refreshing native plugins compatible for Editor in 1.21 ms, found 8 plugins.
 Preloading 1 native plugins for Editor in 0.07 ms.
 Invoked RoslynAnalysisRunner static constructor.
 RoslynAnalysisRunner will not be running.
 RoslynAnalysisRunner has terminated.
 Mono: successfully reloaded assembly
-- Completed reload, in  1.105 seconds
+- Completed reload, in  1.124 seconds
 Platform modules already initialized, skipping
 Switching build target platform(5) subTarget(0) extendedPlatform(0) -> platform(13) subTarget(524294) extendedPlatform(0)
 Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
 Shader 'Oculus/OVRMRCameraFrameLit': fallback shader 'Alpha-Diffuse' not found
-Refreshing native plugins compatible for Editor in 1.27 ms, found 8 plugins.
+Refreshing native plugins compatible for Editor in 1.22 ms, found 8 plugins.
 Preloading 1 native plugins for Editor in 0.07 ms.
-Unloading 3866 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 200.7 MB.
-System memory in use after: 200.9 MB.
+Unloading 3865 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 203.8 MB.
+System memory in use after: 204.0 MB.
 
-Unloading 60 unused Assets to reduce memory usage. Loaded Objects now: 4506.
-Total: 3.394600 ms (FindLiveObjects: 0.536100 ms CreateObjectMapping: 0.367900 ms MarkObjects: 2.349600 ms  DeleteObjects: 0.140300 ms)
+Unloading 59 unused Assets to reduce memory usage. Loaded Objects now: 4549.
+Total: 3.807000 ms (FindLiveObjects: 0.544600 ms CreateObjectMapping: 0.402900 ms MarkObjects: 2.708300 ms  DeleteObjects: 0.149300 ms)
 
 AssetImportParameters requested are different than current active one (requested -> active):
   custom:graphics/normal-map-encoding: 01000000000000000000000000000000 -> 02000000000000000000000000000000
