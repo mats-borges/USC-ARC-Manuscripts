@@ -35,11 +35,11 @@ public class InteractiveSmudge : MonoBehaviour
         string name = page.GetComponent<MeshRenderer>().material.name;
         if ((name == triggerMat.name + " (Instance)" || name == smudgedMat1.name + " (Instance)" || name == smudgedMat2.name + " (Instance)"|| name == smudgedMat3.name + " (Instance)") && transform.position.x > xBoundary)
         {
-            gameObject.GetComponent<OutlineBehaviour>().enabled = true;
+            //gameObject.GetComponent<OutlineBehaviour>().enabled = true;
         }
         else
         {
-            gameObject.GetComponent<OutlineBehaviour>().enabled = false;
+            //gameObject.GetComponent<OutlineBehaviour>().enabled = false;
         }
 
         if (Input.GetKeyDown(KeyCode.X))
