@@ -219,19 +219,21 @@ public class Interactor : MonoBehaviour, BaseInteractor
         {
             transform.localScale = _initialScale * 2;
             _materialSwitcher.enabled = false;
-            _outlineBehaviour.enabled = false;
-            Debug.Log("interactor: hand tracking true");
+            
+            // turn outline off
+            gameObject.layer = LayerMask.NameToLayer("Default");
             
             onHandTrackingActive.Invoke();
         }
         else
         {
             _materialSwitcher.enabled = true;
-//            _outlineBehaviour.enabled = true;
+            
+            // turn outline on
+            gameObject.layer = LayerMask.NameToLayer("OutlineLayer");
             
             transform.localScale = _initialScale;
             transform.localPosition = _initialPosition;
-            Debug.Log("interactor: hand tracking flase");
             onHandTrackingInactive.Invoke();
         }
     }

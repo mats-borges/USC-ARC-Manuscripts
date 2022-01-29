@@ -36,13 +36,13 @@ public class ObiParticlePositioner : MonoBehaviour
         string name = page.GetComponent<MeshRenderer>().material.name;
         if ((name == triggerMat.name + " (Instance)" || name == smudgedMat1.name + " (Instance)" || name == smudgedMat2.name + " (Instance)"|| name == smudgedMat3.name + " (Instance)") && transform.position.x > xBoundary)
         {
-            //gameObject.GetComponent<OutlineBehaviour>().enabled = true;
+            gameObject.layer = LayerMask.NameToLayer("OutlineLayer");
             line.SetActive(true);
             highlightText.SetActive(true);
         }
         else
         {
-            //gameObject.GetComponent<OutlineBehaviour>().enabled = false;
+            gameObject.layer = LayerMask.NameToLayer("Default");
             line.SetActive(false);
             highlightText.SetActive(false);
         }
