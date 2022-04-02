@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: USCDornsife
-  productName: USC Book Of Hours
+  productName: USC ARC BoH
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0, g: 0, b: 0, a: 1}
@@ -131,10 +131,8 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 0.6.4
-  preloadedAssets:
-  - {fileID: 11400000, guid: d65b890fdc0866c429e0217350f1f6a1, type: 2}
-  - {fileID: -5515200799488475981, guid: 31f905609a11ce24d8e58deaf1efdff3, type: 2}
+  bundleVersion: 0.8.1
+  preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -152,7 +150,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.USCDornsife.USCBookOfHours
+    Android: com.USCDornsife.USCARCBoH
     Standalone: com.DefaultCompany.BookofHours
   buildNumber:
     Standalone: 0

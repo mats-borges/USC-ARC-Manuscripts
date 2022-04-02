@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using HandPhysicsToolkit.Helpers.Interfaces;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityFx.Outline;
@@ -22,6 +24,7 @@ public class Interactor : MonoBehaviour, BaseInteractor
     public OVRHand ovrHand;
     private OVRSkeleton handSkeleton;
     private float _dampenedPinchValue = 0.0f;
+    private float _lastValidGripValue = 0.0f;
     private float _pinchVelocity;
     [SerializeField] private float _smoothTime = 0.2f;
     
@@ -34,6 +37,8 @@ public class Interactor : MonoBehaviour, BaseInteractor
     [SerializeField] public UnityEvent onHandTrackingActive;
     [SerializeField] public UnityEvent onHandTrackingInactive;
     private bool isGrabbing = false;
+    private bool wasPinchingOrGripping = false;
+    private HandGrabType currentHandTrackingGesture = HandGrabType.Pinch;
 
     private Vector3 _initialScale;
     private Vector3 _initialPosition = Vector3.zero;
@@ -85,9 +90,41 @@ public class Interactor : MonoBehaviour, BaseInteractor
         return gameObject;
     }
 
+    public bool GetIsLeftHand()
+    {
+        return isLeftHand;
+    }
+
+    public bool GetIsHandTracking()
+    {
+        return IsHandTracking;
+    }
+
     private void SetInteractorTransform()
     {
-        transform.position = GetBonePosition(OVRSkeleton.BoneId.Hand_IndexTip);
+        if (currentHandTrackingGesture == HandGrabType.Pinch)
+        {
+            transform.position = GetBonePosition(OVRSkeleton.BoneId.Hand_IndexTip);
+        }
+        else
+        {
+            var middleBonePos = GetBonePosition(OVRSkeleton.BoneId.Hand_Middle1);
+            var wristBonePos = GetBonePosition(OVRSkeleton.BoneId.Hand_WristRoot);
+
+            var transform1 = transform;
+            var position = (middleBonePos + wristBonePos) / 2;
+            if (isLeftHand)
+            {
+                position += (transform1.up * 2);
+            }
+            else
+            {
+                position += (transform1.up * -2);
+            }
+            
+            
+            transform1.position = position;
+        }
     }
 
     public Vector3 GetBonePosition(OVRSkeleton.BoneId boneId)
@@ -111,11 +148,11 @@ public class Interactor : MonoBehaviour, BaseInteractor
 
         var controllerHandedness = isLeftHand ? OVRInput.Controller.LTouch : OVRInput.Controller.RTouch;
         
-        if (OVRInput.Get(triggerType, OVRInput.Controller.Touch) > 0.7f || OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, controllerHandedness) > 0.7f )
+        if (OVRInput.Get(triggerType, OVRInput.Controller.Touch) > 0.7f || OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, controllerHandedness) > 0.7f)
         {
             foreach (var obj in intersectedObjects)
             {
-                DoGrab(obj);
+                DoGrab(obj, HandGrabType.Controller);
             }
         }
         else
@@ -123,49 +160,106 @@ public class Interactor : MonoBehaviour, BaseInteractor
             var cachedList = new List<Interactible>(_grabbedObjects);
             foreach (var obj in cachedList)
             {
-                DoUngrab(obj);
+                DoUngrab(obj, HandGrabType.Controller);
             }
         }
     }
 
-    private void DoGrab(Interactible objtoGrab)
+    private bool DoGrab(Interactible objtoGrab, HandGrabType handGrabType)
     {
-        _grabbedObjects.Add(objtoGrab);
-        objtoGrab.OnGrab.Invoke(this);
-        isGrabbing = true;
+        if (_grabbedObjects.Contains(objtoGrab))
+        {
+            return false;
+        }
+
+        if (!objtoGrab.TryGrab(this, handGrabType))
+        {
+            return false;
+        }
         
+        isGrabbing = true;
+        _grabbedObjects.Add(objtoGrab);
         GetComponent<MaterialSwitcher>().TurnOnHighlight(_highlightOnGrab);
+
+        return true;
     }
 
-    private void DoUngrab(Interactible objtoGrab)
+    private bool DoUngrab(Interactible objtoGrab, HandGrabType handGrabType)
     {
-        objtoGrab.OffGrab.Invoke(this);
+        if (!_grabbedObjects.Contains(objtoGrab))
+        {
+            return false;
+        }
+
+        if (!objtoGrab.TryUngrab(this, handGrabType))
+        {
+            return false;
+        }
+        
         _grabbedObjects.Remove(objtoGrab);
         isGrabbing = false;
-        
         GetComponent<MaterialSwitcher>().TurnOffHighlight();
+
+        return true;
     }
 
     private void DoHandTrackingUpdate()
     {
         var pinchValue = GetIndexPinch();
-        if (pinchValue > 0.8f)
+        var handGripValue = GetHandGripStrength();
+        
+        var isCheckingPinchValue = (pinchValue > handGripValue);
+        currentHandTrackingGesture = isCheckingPinchValue ? HandGrabType.Pinch : HandGrabType.Grip;
+        
+        var isSuccessfulPinch = pinchValue > 0.8f;
+        var isSuccessfulGrip = handGripValue > 0.8f;
+
+        if (!wasPinchingOrGripping)
         {
-            Debug.Log("Pinch");
+            if (!isSuccessfulPinch && !isSuccessfulGrip) return;
             foreach (var obj in intersectedObjects)
             {
-                DoGrab(obj);
+                if (!isCheckingPinchValue && isSuccessfulGrip)
+                {
+                    if (DoGrab(obj, HandGrabType.Grip))
+                    {
+                        wasPinchingOrGripping = true;
+                    }
+                }
+                else if (isCheckingPinchValue && isSuccessfulPinch)
+                {
+                    if (DoGrab(obj, HandGrabType.Pinch))
+                    {
+                        wasPinchingOrGripping = true;
+                    }
+                }
             }
         }
         else
         {
-            Debug.Log("Unpinch");
-            
             var cachedList = new List<Interactible>(_grabbedObjects);
+            
+            var didSucceedInUnpinchOrUngrab = false;
             foreach (var obj in cachedList)
             {
-                DoUngrab(obj);
+                if (!isSuccessfulPinch)
+                {
+                    if (DoUngrab(obj, HandGrabType.Pinch))
+                    {
+                        didSucceedInUnpinchOrUngrab = true;
+                    }
+                }
+
+                if (!isSuccessfulGrip)
+                {
+                    if (DoUngrab(obj, HandGrabType.Grip))
+                    {
+                        didSucceedInUnpinchOrUngrab = true;
+                    }
+                }
             }
+
+            wasPinchingOrGripping = !didSucceedInUnpinchOrUngrab;
         }
     }
 
@@ -217,10 +311,11 @@ public class Interactor : MonoBehaviour, BaseInteractor
     {
         if (isHandTracking)
         {
-            transform.localScale = _initialScale * 2;
+            // make interactor sphere larger
+            transform.localScale = _initialScale ;
             _materialSwitcher.enabled = false;
             
-            // turn outline off
+            // turn outline off on interactor sphere
             gameObject.layer = LayerMask.NameToLayer("Default");
             
             onHandTrackingActive.Invoke();
@@ -229,7 +324,7 @@ public class Interactor : MonoBehaviour, BaseInteractor
         {
             _materialSwitcher.enabled = true;
             
-            // turn outline on
+            // turn outline on on interactor sphere
             gameObject.layer = LayerMask.NameToLayer("OutlineLayer");
             
             transform.localScale = _initialScale;
@@ -265,6 +360,69 @@ public class Interactor : MonoBehaviour, BaseInteractor
         float indexFingerPinchStrength = ovrHand.GetFingerPinchStrength(OVRHand.HandFinger.Index);
 
         return indexFingerPinchStrength;
+    }
+    
+    // Returns values [0,1]
+    public float GetHandGripStrength()
+    {
+        // if no hand tracking hand exists, return 0 strength
+        if (!ovrHand)
+        {
+            return 0.0f;
+        }
+        // get the skeleton from the hand
+        if (!handSkeleton) handSkeleton = ovrHand.GetComponentInChildren<OVRSkeleton>();
+        
+        // check hand tracking status one more time before attempting to get strength, just to make sure
+        UpdateHandTrackingStatus();
+
+        // if we aren't hand tracking, return 0 strength
+        if (!IsHandTracking)
+        {
+            return 0.0f;
+        }
+
+        var handConfidence = ovrHand.HandConfidence;
+        var isHandBeingTracked = ovrHand.IsTracked;
+
+        Transform Hand_Root = handSkeleton.Bones[(int)OVRSkeleton.BoneId.Hand_WristRoot].Transform;
+
+        var tipTransforms = new Transform[4];
+
+        tipTransforms[0]  = handSkeleton.Bones[(int)OVRSkeleton.BoneId.Hand_IndexTip].Transform;  // index tip position
+        tipTransforms[1] = handSkeleton.Bones[(int)OVRSkeleton.BoneId.Hand_MiddleTip].Transform; // middle tip position
+        tipTransforms[2]   = handSkeleton.Bones[(int)OVRSkeleton.BoneId.Hand_RingTip].Transform;   // ring tip position
+        tipTransforms[3]  = handSkeleton.Bones[(int)OVRSkeleton.BoneId.Hand_PinkyTip].Transform;  // pinky tip position
+
+        // Calculate the sum of all squared distances between each finger tip and the wrist
+        // TODO (Note): Do we need to consider the different sizes of hands when taking in this calculation?
+        //              If so, how can we normalize this?
+        var sumSquares = 0.0f;
+        for (var i = 0; i < tipTransforms.Length; ++i)
+        {
+            var square = Vector3.Distance(tipTransforms[i].position, Hand_Root.position);
+            square *= square;
+            
+            sumSquares += square;
+        }
+
+        // Remap the sumSquare values into a 0...1 range so that it can be used to trigger actions
+        // TODO (Note): Values were observed based off my personal hand, again, do we need to consider different hand sizes?
+        float normal = Mathf.InverseLerp(180f, 1100f, sumSquares);
+        float bValue = Mathf.Lerp(0, 1, normal);
+        bValue = 1 - bValue;
+
+        if (handConfidence == OVRHand.TrackingConfidence.Low || isHandBeingTracked == false)
+        {
+            _dampenedPinchValue = Mathf.SmoothDamp(_lastValidGripValue, bValue, ref _pinchVelocity, _smoothTime);
+        }
+        else
+        {
+            _dampenedPinchValue = Mathf.SmoothDamp(_dampenedPinchValue, bValue, ref _pinchVelocity, _smoothTime);
+        }
+        
+        _lastValidGripValue = _dampenedPinchValue;
+        return _dampenedPinchValue;
     }
     
     #endregion

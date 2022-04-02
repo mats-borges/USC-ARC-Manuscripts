@@ -171,53 +171,52 @@ public class GraspingPoint : MonoBehaviour
         yield return new WaitForSeconds(5f);
         tooFastText.SetActive(false);
     }
-
+    
+    //bugnote : when the user grabs the page with pageMagic from the same particle twice, the grabber teleports far away
     public void Attach(BaseInteractor interactor)
     {
+        Debug.Log("attach called at " + Time.time + ", frameDelta: " + Time.deltaTime);
+        if (isAttached) return;
+            
         handPos = interactor.GetGameObject().transform.position;
         attachmentInProgress = true;
         
         //call delaying coroutine here
-        StartCoroutine("StartGraspDelay");
+        StartCoroutine(StartGraspDelay());
         
-        if (!isAttached)
+        var minDistance = float.MaxValue;
+        var pIdxOfMin = -1;
+        var pPosOfMin = Vector3.zero;
+        foreach (var pIdx in _pageEdgeParticleGroup.particleIndices)
         {
-            var minDistance = float.MaxValue;
-            var pIdxOfMin = -1;
-            var pPosOfMin = Vector3.zero;
-            foreach (var pIdx in _pageEdgeParticleGroup.particleIndices)
-            {
-                var particlePos = actor.GetParticlePosition(pIdx);
-                var distance = Vector3.Distance(particlePos, handPos);
-                if (distance >= minDistance) continue;
-                
-                pPosOfMin = particlePos;
-                pIdxOfMin = pIdx;
-                minDistance = distance;
-            }
+            var particlePos = actor.GetParticlePosition(pIdx);
+            var distance = Vector3.Distance(particlePos, handPos);
+            if (distance >= minDistance) continue;
             
-            centerPoint = BasicHelpers.NearestPointOnFiniteLine(bookCenterTop, bookCenterBottom,
-                pPosOfMin);
-            edgePoint = BasicHelpers.NearestPointOnFiniteLine(rightPageEdgeTop, rightPageEdgeBottom,
-                pPosOfMin);
-
-            if (pIdxOfMin != _grabbedParticleIdx)
-            {
-                // set obi particle's target transform to null, disconnecting its previous particle
-                _particleAttachment.target = null;
-                
-                // modify list of particleGroup to include new particle we want to grab
-                _particleAttachment.particleGroup.particleIndices[0] = pIdxOfMin;
-                
-                // teleport this grabber object to particle position
-                transform.position = pPosOfMin;
-                
-                _grabbedParticleIdx = pIdxOfMin;
-                
-                // force rebind of particle attachment component
-                _particleAttachment.target = transform;
-            }
+            pPosOfMin = particlePos;
+            pIdxOfMin = pIdx;
+            minDistance = distance;
         }
+        
+        centerPoint = BasicHelpers.NearestPointOnFiniteLine(bookCenterTop, bookCenterBottom,
+            pPosOfMin);
+        edgePoint = BasicHelpers.NearestPointOnFiniteLine(rightPageEdgeTop, rightPageEdgeBottom,
+            pPosOfMin);
+
+        
+        // set obi particle's target transform to null, disconnecting its previous particle
+        _particleAttachment.target = null;
+        
+        // modify list of particleGroup to include new particle we want to grab
+        _particleAttachment.particleGroup.particleIndices[0] = pIdxOfMin;
+        
+        // teleport this grabber object to particle position
+        transform.position = pPosOfMin;
+        
+        _grabbedParticleIdx = pIdxOfMin;
+        
+        // force rebind of particle attachment component
+        _particleAttachment.target = transform;
 
         isAttached = true;
         interactorObject = interactor.GetGameObject();
@@ -239,9 +238,11 @@ public class GraspingPoint : MonoBehaviour
     {
         isAttached = false;
         interactorObject = null;
+        
         _particleAttachment.enabled = false;
-
+        
         unconstrainedPoint = null;
+        
     }
 
 
