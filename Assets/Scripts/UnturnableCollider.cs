@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using HandPhysicsToolkit.Helpers.Interfaces;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class UnturnableCollider : MonoBehaviour
 {
@@ -14,15 +16,21 @@ public class UnturnableCollider : MonoBehaviour
     [SerializeField] private GameObject otherMessage;
     
     public float minDist = 5f;
+
+    //InteractibleEvent is defined in Interactible.cs
+    [SerializeField] private InteractibleEvent pageMagic;
     
-    public void ObjectCheck()
+    public void PageMagicCheck(BaseInteractor interactor)
     {
         Vector3 dist = transform.position - objToCheck.transform.position;
         if (dist.magnitude >= minDist)
         {
-            MessageDisplay();
+            //MessageDisplay();
+            
+            pageMagic.Invoke(interactor);
         }
     }
+    
     void MessageDisplay()
     {
         if (otherMessage.activeInHierarchy == false)

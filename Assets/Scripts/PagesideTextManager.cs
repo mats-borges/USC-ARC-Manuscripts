@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
+
 
 public class PagesideTextManager : MonoBehaviour
 {
@@ -31,6 +33,9 @@ public class PagesideTextManager : MonoBehaviour
     enum pageRegion {LEFT, RIGHT};
 
     private pageRegion thisFrame, lastFrame;
+    
+    [SerializeField] public UnityEvent SimPageTurnLeft;
+    [SerializeField] public UnityEvent SimPageTurnRight;
 
     private void Start()
     {
@@ -131,10 +136,22 @@ public class PagesideTextManager : MonoBehaviour
         if (thisFrame == pageRegion.LEFT && lastFrame == pageRegion.RIGHT)
         {
             IncrementPageNum();
+            //increment the page inspector also if it's paired
+            if (bookManager.GetComponent<BookManager>().pairedMode)
+            {
+                Debug.Log("it's getting turned left");
+                SimPageTurnLeft.Invoke();
+            }
         }
         if (thisFrame == pageRegion.RIGHT && lastFrame == pageRegion.LEFT)
         {
-            DecrementPageNum();        
+            DecrementPageNum();
+            //decrement the page inspector also if it's paired
+            if (bookManager.GetComponent<BookManager>().pairedMode)
+            {
+                Debug.Log("it's getting turned right");
+                SimPageTurnRight.Invoke();
+            }
         }
         
         lastFrame = thisFrame;

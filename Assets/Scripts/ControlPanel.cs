@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -23,10 +24,9 @@ public class ControlPanel : MonoBehaviour
     [SerializeField] private GameObject highlightFolder;
     private bool AnnotationHasBeenTurnedOff;
     
-    [SerializeField] private GameObject SittingModeOnOffText;
-    [SerializeField] private GameObject player;
-    private bool SittingModeHasBeenTurnedOff;
-    public float standingY, sittingY;
+    [SerializeField] private GameObject InspectorOnOffText;
+    private bool inspectorIsOn = true;
+    [SerializeField] private GameObject inspectorPeripheries;
 
     
     // Start is called before the first frame update
@@ -44,23 +44,8 @@ public class ControlPanel : MonoBehaviour
 
         musicHasBeenTurnedOff = false;
         AnnotationHasBeenTurnedOff = false;
-        SittingModeHasBeenTurnedOff = true;
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            CycleLanguageName();
-        }
-
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            onMusicPress.Invoke();   
-            
-        }
-    }
+    
 
     public void CycleLanguageName()
     {
@@ -81,8 +66,7 @@ public class ControlPanel : MonoBehaviour
         }
         langNameText.text = langList[CurLangNum];
     }
-
-   
+    
 
     public void UpdateMusicOnOff()
     {
@@ -116,21 +100,21 @@ public class ControlPanel : MonoBehaviour
         }
     }
     
-    public void UpdateSittingMode()
+    public void UpdateInspectorOnOff()
     {
-        if (SittingModeHasBeenTurnedOff == false)
+        inspectorIsOn = !inspectorIsOn;
+        if (inspectorIsOn == false)
         {
-            SittingModeOnOffText.GetComponent<TextMesh>().text = "OFF";
-            player.transform.position = new Vector3(player.transform.position.x, standingY, player.transform.position.z); 
-            SittingModeHasBeenTurnedOff = true;
+            InspectorOnOffText.GetComponent<TextMeshPro>().text = "OFF";
+            inspectorPeripheries.SetActive(false);
         }
         else
         {
-            SittingModeOnOffText.GetComponent<TextMesh>().text = "ON";
-            player.transform.position = new Vector3(player.transform.position.x, sittingY, player.transform.position.z); 
-            SittingModeHasBeenTurnedOff = false;
-            
+            InspectorOnOffText.GetComponent<TextMeshPro>().text = "ON";
+            inspectorPeripheries.SetActive(true);
+
         }
+        
     }
 
     public void ResetExperienceCP()

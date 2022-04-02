@@ -20,7 +20,7 @@ public class MaterialSwitcher : MonoBehaviour
     {
         
         _meshRenderer.material = highlightMaterial;
-        _meshRenderer.material.SetColor("_Color", highlightColor);
+        _meshRenderer.material.SetColor("_BaseColor", highlightColor);
     }
     
     public void TurnOnHighlight()

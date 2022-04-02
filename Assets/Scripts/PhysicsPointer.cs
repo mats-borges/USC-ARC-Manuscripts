@@ -72,6 +72,16 @@ public class PhysicsPointer : MonoBehaviour, BaseInteractor
         return gameObject;
     }
 
+    public bool GetIsLeftHand()
+    {
+        return isLeftHand;
+    }
+
+    public bool GetIsHandTracking()
+    {
+        return isHandtrackingOn;
+    }
+
     private void CheckPointerClick()
     {
         var triggerType = isLeftHand ? OVRInput.Axis1D.PrimaryHandTrigger : OVRInput.Axis1D.SecondaryHandTrigger;
