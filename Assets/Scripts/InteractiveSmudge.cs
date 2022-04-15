@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Obi;
 using UnityFx.Outline;
@@ -15,17 +16,21 @@ public class InteractiveSmudge : MonoBehaviour
     [SerializeField] private Material smudgedMat2;
     [SerializeField] private Material smudgedMat3;
     [SerializeField] float xBoundary;
-    [SerializeField] private int particleGroupIndex;
+    [SerializeField] private string particleGroupName;
     private int pageStage;
-    private int particleIdx;
+    private int particleIdx = -1;
 
     // Start is called before the first frame update
     void Awake()
     {
         pageStage = 0;
         actor = page.GetComponent<ObiActor>();
-        particleGroup = actor.blueprint.groups[particleGroupIndex];
-        particleIdx = particleGroup.particleIndices[0];
+
+        foreach (var @group in actor.blueprint.groups.Where(@group => @group.name == particleGroupName))
+        {
+            particleGroup = @group;
+            particleIdx = particleGroup.particleIndices[0];
+        }
     }
 
     // Update is called once per frame

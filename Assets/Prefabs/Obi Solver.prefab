@@ -50,10 +50,10 @@ MonoBehaviour:
   parameters:
     mode: 0
     interpolation: 1
-    gravity: {x: 0, y: -30, z: 0}
-    damping: 0.9999999
+    gravity: {x: 123.5, y: 0, z: 50.47}
+    damping: 0.9999
     maxAnisotropy: 5
-    sleepThreshold: 0.01
+    sleepThreshold: 0.07
     collisionMargin: 0.01
     maxDepenetration: 3
     continuousCollisionDetection: 1
@@ -83,9 +83,9 @@ MonoBehaviour:
     SORFactor: 1
     enabled: 0
   collisionConstraintParameters:
-    evaluationOrder: 0
+    evaluationOrder: 1
     iterations: 1
-    SORFactor: 1
+    SORFactor: 0.129
     enabled: 1
   frictionConstraintParameters:
     evaluationOrder: 0
@@ -164,10 +164,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8647093341242672735}
     m_Modifications:
-    - target: {fileID: 6740380904384690048, guid: 78c03281562cfcb47acf9179a9812905, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 6740380904384690051, guid: 78c03281562cfcb47acf9179a9812905, type: 3}
       propertyPath: m_Target
       value: 
@@ -179,34 +175,6 @@ PrefabInstance:
     - target: {fileID: 6740380904384690077, guid: 78c03281562cfcb47acf9179a9812905, type: 3}
       propertyPath: m_RootOrder
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6740380904384690077, guid: 78c03281562cfcb47acf9179a9812905, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.62306476
-      objectReference: {fileID: 0}
-    - target: {fileID: 6740380904384690077, guid: 78c03281562cfcb47acf9179a9812905, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.7814346
-      objectReference: {fileID: 0}
-    - target: {fileID: 6740380904384690077, guid: 78c03281562cfcb47acf9179a9812905, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0.027357766
-      objectReference: {fileID: 0}
-    - target: {fileID: 6740380904384690077, guid: 78c03281562cfcb47acf9179a9812905, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0.020044966
-      objectReference: {fileID: 0}
-    - target: {fileID: 6740380904384690077, guid: 78c03281562cfcb47acf9179a9812905, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: -103.426
-      objectReference: {fileID: 0}
-    - target: {fileID: 6740380904384690077, guid: 78c03281562cfcb47acf9179a9812905, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 16.365005
-      objectReference: {fileID: 0}
-    - target: {fileID: 6740380904384690077, guid: 78c03281562cfcb47acf9179a9812905, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: -16.962006
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78c03281562cfcb47acf9179a9812905, type: 3}

@@ -29,13 +29,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6740380904384690074}
-  m_LocalRotation: {x: -0.7814346, y: -0.027357766, z: 0.020044966, w: 0.62306476}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -103.426, y: 16.365005, z: -16.962006}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &6740380904384690048
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -43,7 +43,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6740380904384690074}
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: -3896382315264562445, guid: 6d7adc69fcebf6c4e88f720f16881801, type: 3}
 --- !u!114 &6740380904384690049
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -66,13 +66,13 @@ MonoBehaviour:
   _maxCompression: 0
   _bendConstraintsEnabled: 1
   _bendCompliance: 0
-  _maxBending: 0
+  _maxBending: 0.0605
   _plasticYield: 0
   _plasticCreep: 0
   _aerodynamicsEnabled: 0
   _drag: 0
   _lift: 0
-  m_TearableClothBlueprint: {fileID: 11400000, guid: abcd6acbcb948bb488d1a4f590e5c886, type: 2}
+  m_TearableClothBlueprint: {fileID: 11400000, guid: 9ece228c22da6254a93bef0d6b8498d5, type: 2}
   tearingEnabled: 0
   tearResistanceMultiplier: 100
   tearRate: 4

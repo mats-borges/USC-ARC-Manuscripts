@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Obi;
 using UnityFx.Outline;
@@ -12,21 +13,26 @@ public class ObiParticlePositioner : MonoBehaviour
     private ObiParticleGroup particleGroup;
     private ObiActor actor;
     [SerializeField] Material triggerMat;
-    [SerializeField] float xBoundary;
-    [SerializeField] private int particleGroupIndex;
+    [SerializeField] float xBoundary; 
+    private int particleGroupIndex;
+    [SerializeField] private string particleGroupName;
     [SerializeField] private GameObject highlightText;
     [SerializeField] private Material smudgedMat1;
     [SerializeField] private Material smudgedMat2;
     [SerializeField] private Material smudgedMat3;
 
-    private int particleIdx;
+    private int particleIdx = -1;
+    
     // Start is called before the first frame update
     void Awake()
     {
         actor = page.GetComponent<ObiActor>();
-        
-        particleGroup = actor.blueprint.groups[particleGroupIndex];
-        particleIdx = particleGroup.particleIndices[0];
+
+        foreach (var @group in actor.blueprint.groups.Where(@group => @group.name == particleGroupName))
+        {
+            particleGroup = @group;
+            particleIdx = particleGroup.particleIndices[0];
+        }
     }
 
     // Update is called once per frame
