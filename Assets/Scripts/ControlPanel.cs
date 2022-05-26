@@ -12,7 +12,7 @@ public class ControlPanel : MonoBehaviour
 
     [SerializeField] private GameObject langNameTextObject;
     [SerializeField] private GameObject pagesideTextManager;
-    private TextMesh langNameText;
+    private TextMeshPro langNameText;
     public int CurLangNum = 0;
     
     [SerializeField]  private UnityEvent onMusicPress;
@@ -39,7 +39,7 @@ public class ControlPanel : MonoBehaviour
             langList.Add(langAssetList[i].name);
         }
         
-        langNameText = langNameTextObject.GetComponent<TextMesh>();
+        langNameText = langNameTextObject.GetComponent<TextMeshPro>();
         langNameText.text = langList[CurLangNum];
 
         musicHasBeenTurnedOff = false;
@@ -72,13 +72,13 @@ public class ControlPanel : MonoBehaviour
     {
         if (musicHasBeenTurnedOff == false)
         {
-            musicOnOffText.GetComponent<TextMesh>().text = "OFF";
+            musicOnOffText.GetComponent<TextMeshPro>().text = "OFF";
             musicObject.GetComponent<AudioSource>().Pause();
             musicHasBeenTurnedOff = true;
         }
         else
         {
-            musicOnOffText.GetComponent<TextMesh>().text = "ON";
+            musicOnOffText.GetComponent<TextMeshPro>().text = "ON";
             musicObject.GetComponent<AudioSource>().Play();
             musicHasBeenTurnedOff = false;
         }
@@ -88,13 +88,13 @@ public class ControlPanel : MonoBehaviour
     {
         if (AnnotationHasBeenTurnedOff == false)
         {
-            AnnotationOnOffText.GetComponent<TextMesh>().text = "OFF";
+            AnnotationOnOffText.GetComponent<TextMeshPro>().text = "OFF";
             highlightFolder.SetActive(false);
             AnnotationHasBeenTurnedOff = true;
         }
         else
         {
-            AnnotationOnOffText.GetComponent<TextMesh>().text = "ON";
+            AnnotationOnOffText.GetComponent<TextMeshPro>().text = "ON";
             highlightFolder.SetActive(true);
             AnnotationHasBeenTurnedOff = false;
         }
@@ -124,7 +124,7 @@ public class ControlPanel : MonoBehaviour
         langNameText.text = langList[CurLangNum];
         
         //music
-        musicOnOffText.GetComponent<TextMesh>().text = "ON";
+        musicOnOffText.GetComponent<TextMeshPro>().text = "ON";
         musicObject.GetComponent<AudioSource>().Play();
         musicHasBeenTurnedOff = false;
         
@@ -132,7 +132,7 @@ public class ControlPanel : MonoBehaviour
         //done in book manager
         
         //annotation
-        AnnotationOnOffText.GetComponent<TextMesh>().text = "ON";
+        AnnotationOnOffText.GetComponent<TextMeshPro>().text = "ON";
         highlightFolder.SetActive(true);
         AnnotationHasBeenTurnedOff = false;
     }

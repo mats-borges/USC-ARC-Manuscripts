@@ -12,7 +12,7 @@ public class UnturnableCollider : MonoBehaviour
     //check if grabber is on the side closer to the hand
     //invoke the magic trick unity events in the inspector
     
-    public GraspingPoint.SimPageSide colliderSide = GraspingPoint.SimPageSide.LeftSide;
+    public GraspingPoint.SimPageSide colliderSide = GraspingPoint.SimPageSide.RightSide;
 
     //InteractibleEvent is defined in Interactible.cs
     [SerializeField] private InteractibleEvent pageMagic;

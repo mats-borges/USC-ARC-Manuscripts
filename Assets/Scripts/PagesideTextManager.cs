@@ -26,7 +26,7 @@ public class PagesideTextManager : MonoBehaviour
 
     private List<string> LanguageTexts;
     private int pageNum;
-    private int totalPages = 0;
+    private int totalPages = 3;
     private int langNum = 0;
 
     enum pageRegion {LEFT, RIGHT};
@@ -39,11 +39,11 @@ public class PagesideTextManager : MonoBehaviour
     private void Start()
     {
         langNum = controlPanel.GetComponent<ControlPanel>().CurLangNum;
-        pageNum = bookManager.GetComponent<BookManager>().rightPageNum;
+        pageNum = bookManager.GetComponent<BookManager>().leftPageNum;
         displayTexts();
 
-        thisFrame = pageRegion.LEFT;
-        lastFrame = pageRegion.LEFT;
+        thisFrame = pageRegion.RIGHT;
+        lastFrame = pageRegion.RIGHT;
     }
 
     public void IncrementLangNum()
@@ -71,7 +71,7 @@ public class PagesideTextManager : MonoBehaviour
         pageNum++;
         pageNum++;
         
-        if (pageNum > totalPages)
+        if (pageNum >= totalPages)
         {
             pageNum = 0;
         }
@@ -85,7 +85,7 @@ public class PagesideTextManager : MonoBehaviour
         
         if (pageNum < 0)
         {
-            pageNum = (totalPages + pageNum) + 1;
+            pageNum = (totalPages + pageNum) ;
         }
         displayTexts();
     }
@@ -108,10 +108,9 @@ public class PagesideTextManager : MonoBehaviour
             }
 
             //display pages
-            int tempPgNum = pageNum + 1;
-            if (tempPgNum>=splitArray.Length) { tempPgNum = 0;}
-            leftTextField.GetComponent<TextMeshPro>().text = splitArray[tempPgNum];
-            rightTextField.GetComponent<TextMeshPro>().text = splitArray[pageNum];
+            leftTextField.GetComponent<TextMeshPro>().text = splitArray[pageNum];
+            rightTextField.GetComponent<TextMeshPro>().text = splitArray[pageNum + 1];
+            
         }
         else
         {
@@ -134,7 +133,7 @@ public class PagesideTextManager : MonoBehaviour
         
         if ( lastFrame == pageRegion.LEFT && thisFrame == pageRegion.RIGHT)
         {
-            IncrementPageNum();
+            DecrementPageNum();
             //increment the page inspector also if it's paired
             if (bookManager.GetComponent<BookManager>().pairedMode)
             {
@@ -144,7 +143,7 @@ public class PagesideTextManager : MonoBehaviour
         }
         if ( lastFrame == pageRegion.RIGHT && thisFrame == pageRegion.LEFT)
         {
-            DecrementPageNum();
+            IncrementPageNum();
             //decrement the page inspector also if it's paired
             if (bookManager.GetComponent<BookManager>().pairedMode)
             {
@@ -159,12 +158,12 @@ public class PagesideTextManager : MonoBehaviour
     public void ResetExperiencePTM()
     {
         //safely move the pagemarker to the other side without triggering an increment
-        pageMarker.transform.SetPositionAndRotation(new Vector3(bookManager.transform.position.x - 5, pageMarker.transform.position.y,pageMarker.transform.position.z), Quaternion.identity);
-        lastFrame = pageRegion.LEFT;
+        pageMarker.transform.SetPositionAndRotation(new Vector3(bookManager.transform.position.x + 5, pageMarker.transform.position.y,pageMarker.transform.position.z), Quaternion.identity);
+        lastFrame = pageRegion.RIGHT;
         
         //reset the language and page numbers
         langNum = controlPanel.GetComponent<ControlPanel>().CurLangNum;
-        pageNum = bookManager.GetComponent<BookManager>().rightPageNum;
+        pageNum = bookManager.GetComponent<BookManager>().leftPageNum;
         displayTexts();
     }
 }

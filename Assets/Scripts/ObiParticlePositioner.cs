@@ -21,17 +21,23 @@ public class ObiParticlePositioner : MonoBehaviour
     [SerializeField] private Material smudgedMat2;
     [SerializeField] private Material smudgedMat3;
 
-    private int particleIdx = -1;
+    [SerializeField] private int particleIdx = -1;
     
     // Start is called before the first frame update
     void Awake()
     {
         actor = page.GetComponent<ObiActor>();
-
-        foreach (var @group in actor.blueprint.groups.Where(@group => @group.name == particleGroupName))
+        
+        if (particleIdx != -1 && particleGroupName != "")
         {
-            particleGroup = @group;
-            particleIdx = particleGroup.particleIndices[0];
+            foreach (var @group in actor.blueprint.groups.Where(@group => @group.name == particleGroupName))
+            {
+                particleGroup = @group;
+                particleIdx = particleGroup.particleIndices[0];
+            }
+        } else if (particleIdx == -1 && particleGroupName == "")
+        {
+            particleIdx = 0;
         }
     }
 

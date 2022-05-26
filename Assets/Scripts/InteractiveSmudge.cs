@@ -16,9 +16,9 @@ public class InteractiveSmudge : MonoBehaviour
     [SerializeField] private Material smudgedMat2;
     [SerializeField] private Material smudgedMat3;
     [SerializeField] float xBoundary;
-    [SerializeField] private string particleGroupName;
+    [SerializeField] private string particleGroupName = "";
     private int pageStage;
-    private int particleIdx = -1;
+    [SerializeField] private int particleIdx = -1;
 
     // Start is called before the first frame update
     void Awake()
@@ -26,10 +26,16 @@ public class InteractiveSmudge : MonoBehaviour
         pageStage = 0;
         actor = page.GetComponent<ObiActor>();
 
-        foreach (var @group in actor.blueprint.groups.Where(@group => @group.name == particleGroupName))
+        if (particleIdx != -1 && particleGroupName != "")
         {
-            particleGroup = @group;
-            particleIdx = particleGroup.particleIndices[0];
+            foreach (var @group in actor.blueprint.groups.Where(@group => @group.name == particleGroupName))
+            {
+                particleGroup = @group;
+                particleIdx = particleGroup.particleIndices[0];
+            }
+        } else if (particleIdx == -1 && particleGroupName == "")
+        {
+            particleIdx = 0;
         }
     }
 
@@ -45,25 +51,6 @@ public class InteractiveSmudge : MonoBehaviour
         else
         {
             gameObject.layer = LayerMask.NameToLayer("Default");
-        }
-
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            switch (pageStage)
-            {
-                case 0 : 
-                    page.GetComponent<MeshRenderer>().material = smudgedMat1;
-                    pageStage++;
-                    break;
-                case 1:
-                    page.GetComponent<MeshRenderer>().material = smudgedMat2;
-                    pageStage++;
-                    break;
-                case 2:
-                    page.GetComponent<MeshRenderer>().material = triggerMat;
-                    pageStage = 0;
-                    break;
-            }
         }
     }
 

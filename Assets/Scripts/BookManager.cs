@@ -7,9 +7,9 @@ using UnityEngine;
 public class BookManager : MonoBehaviour
 {
     //leftpagenum is used by pagesideTextManager
-    public int leftPageNum = 2;
+    public int leftPageNum = 0;
     int simPageNum = 1;
-    public int rightPageNum = 0;
+    public int rightPageNum = 2;
     int versoInspectorPageNum = 0;
     int rectoInspectorPageNum = 1;
     public bool pairedMode = true;
@@ -129,9 +129,9 @@ public class BookManager : MonoBehaviour
 
     public void ResetExperienceBM()
     {
-        leftPageNum = 2;
+        leftPageNum = 0;
         simPageNum = 1;
-        rightPageNum = 0;
+        rightPageNum = 2;
         versoInspectorPageNum = 0;
         rectoInspectorPageNum = 1;
         leftPage.GetComponent<Renderer>().material = pageList[leftPageNum];
@@ -141,7 +141,7 @@ public class BookManager : MonoBehaviour
         rectoInspectorPage.GetComponent<Renderer>().material = pageList[rectoInspectorPageNum];
 
         ResetPageParticles(null);
-        bookSystemObject.GetComponent<ParticlePositionManager>().LoadParticles("LeftSideResting");
+        bookSystemObject.GetComponent<ParticlePositionManager>().LoadParticles("RightSideResting");
     }
 
     IEnumerator ResetPageRoutine(BaseInteractor interactor)

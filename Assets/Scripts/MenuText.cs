@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class MenuText : MonoBehaviour
@@ -16,7 +17,7 @@ public class MenuText : MonoBehaviour
     {
         if (stateList.Count > 0)
         {
-            GetComponent<TextMesh>().text = stateList[0];
+            GetComponent<TextMeshPro>().text = stateList[0];
         }
     }
 
@@ -27,7 +28,7 @@ public class MenuText : MonoBehaviour
         {
             stateNum = 0;
         }
-        GetComponent<TextMesh>().text = stateList[stateNum];
+        GetComponent<TextMeshPro>().text = stateList[stateNum];
     }
     
     public void DecrementState()
@@ -37,12 +38,12 @@ public class MenuText : MonoBehaviour
         {
             stateNum = stateList.Count-1;
         }
-        GetComponent<TextMesh>().text = stateList[stateNum];
+        GetComponent<TextMeshPro>().text = stateList[stateNum];
     }
 
     public void ResetExperienceMT()
     {
         stateNum = 0;
-        GetComponent<TextMesh>().text = stateList[stateNum];
+        GetComponent<TextMeshPro>().text = stateList[stateNum];
     }
 }
