@@ -111,9 +111,18 @@ namespace Obi
         {
             return 0;
         }
+
         public void GetParticleGrid(ObiNativeAabbList cells)
         {
         }
 
+        public void SpatialQuery(ObiNativeQueryShapeList shapes, ObiNativeAffineTransformList transforms, ObiNativeQueryResultList results)
+        {
+        }
+
+        public void ReleaseJobHandles()
+        {
+
+        }
     }
 }

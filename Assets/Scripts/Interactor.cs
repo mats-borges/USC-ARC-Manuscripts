@@ -312,7 +312,7 @@ public class Interactor : MonoBehaviour, BaseInteractor
         if (isHandTracking)
         {
             // make interactor sphere larger
-            transform.localScale = _initialScale ;
+            transform.localScale = _initialScale * 2;
             _materialSwitcher.enabled = false;
             
             // turn outline off on interactor sphere

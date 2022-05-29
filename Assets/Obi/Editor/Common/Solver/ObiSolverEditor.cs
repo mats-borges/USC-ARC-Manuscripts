@@ -42,6 +42,8 @@ namespace Obi
         SerializedProperty backend;
         SerializedProperty simulateWhenInvisible;
         SerializedProperty parameters;
+        SerializedProperty gravity;
+        SerializedProperty gravitySpace;
         SerializedProperty worldLinearInertiaScale;
         SerializedProperty worldAngularInertiaScale;
 
@@ -62,15 +64,28 @@ namespace Obi
         SerializedProperty bendTwistConstraintParameters;
         SerializedProperty chainConstraintParameters;
 
-        bool constraintsFoldout = false;
+        BooleanPreference solverFoldout;
+        BooleanPreference simulationFoldout;
+        BooleanPreference collisionsFoldout;
+        BooleanPreference constraintsFoldout;
+
+        GUIContent constraintLabelContent;
 
         public void OnEnable()
         {
             solver = (ObiSolver)target;
+            constraintLabelContent = new GUIContent();
+
+            solverFoldout = new BooleanPreference($"{target.GetType()}.solverFoldout", true);
+            simulationFoldout = new BooleanPreference($"{target.GetType()}.simulationFoldout", false);
+            collisionsFoldout = new BooleanPreference($"{target.GetType()}.collisionsFoldout", false);
+            constraintsFoldout = new BooleanPreference($"{target.GetType()}.constraintsFoldout", false);
 
             backend = serializedObject.FindProperty("m_Backend");
             simulateWhenInvisible = serializedObject.FindProperty("simulateWhenInvisible");
             parameters = serializedObject.FindProperty("parameters");
+            gravity = serializedObject.FindProperty("gravity");
+            gravitySpace = serializedObject.FindProperty("gravitySpace");
             worldLinearInertiaScale = serializedObject.FindProperty("worldLinearInertiaScale");
             worldAngularInertiaScale = serializedObject.FindProperty("worldAngularInertiaScale");
 
@@ -96,57 +111,117 @@ namespace Obi
         {
 
             serializedObject.UpdateIfRequiredOrScript();
-            EditorGUILayout.HelpBox("Used particles:" + solver.allocParticleCount +"\n"+
-                                    "Points:" + solver.pointCount + "\n" +
-                                    "Edges:" + solver.edgeCount + "\n" +
-                                    "Triangles:" + solver.triCount + "\n" +
+            EditorGUILayout.HelpBox("Particles:" + solver.allocParticleCount +"\n"+
+                                    "Simplices:" + solver.simplexCounts.simplexCount+"\n" +
                                     "Contacts:" + solver.contactCount + "\n" +
-                                    "Particle contacts:" + solver.particleContactCount, MessageType.None);
+                                    "Simplex contacts:" + solver.particleContactCount, MessageType.None);
 
-            EditorGUI.BeginChangeCheck();
-            EditorGUILayout.PropertyField(backend);
+            solverFoldout.value = EditorGUILayout.BeginFoldoutHeaderGroup(solverFoldout, "Solver settings");
+            if (solverFoldout)
+            {
+                EditorGUI.BeginChangeCheck();
+                EditorGUILayout.PropertyField(backend);
 
 #if !(OBI_BURST && OBI_MATHEMATICS && OBI_COLLECTIONS)
             if (backend.enumValueIndex == (int)ObiSolver.BackendType.Burst)
-                EditorGUILayout.HelpBox("The Burst backend depends on the following packages: Mathematics, Collections and Burst. The default backend (Oni) will be used instead, if possible.", MessageType.Warning);
+                EditorGUILayout.HelpBox("The Burst backend depends on the following packages: Mathematics, Collections, Jobs and Burst. The default backend (Oni) will be used instead, if possible.", MessageType.Warning);
 #endif
 #if !(OBI_ONI_SUPPORTED)
             if (backend.enumValueIndex == (int)ObiSolver.BackendType.Oni)
                 EditorGUILayout.HelpBox("The Oni backend is not compatible with the target platform. Please switch to a compatible platform, or use the Burst backend instead.", MessageType.Warning);
 #endif
 
-            if (EditorGUI.EndChangeCheck())
-            {
-                serializedObject.ApplyModifiedProperties();
-                foreach (var t in targets)
-                    (t as ObiSolver).UpdateBackend();
+                if (EditorGUI.EndChangeCheck())
+                {
+                    serializedObject.ApplyModifiedProperties();
+                    foreach (var t in targets)
+                        (t as ObiSolver).UpdateBackend();
+                }
+
+
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("mode"));
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("interpolation"));
             }
+            EditorGUILayout.EndFoldoutHeaderGroup();
 
-            EditorGUILayout.PropertyField(parameters);
-            EditorGUILayout.PropertyField(worldLinearInertiaScale);
-            EditorGUILayout.PropertyField(worldAngularInertiaScale);
-            EditorGUILayout.PropertyField(simulateWhenInvisible);
+            simulationFoldout.value = EditorGUILayout.BeginFoldoutHeaderGroup(simulationFoldout, "Simulation settings");
+            if (simulationFoldout)
+            {
+                EditorGUILayout.PropertyField(gravitySpace);
+                EditorGUILayout.PropertyField(gravity);
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("sleepThreshold"));
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("damping"));
+                EditorGUILayout.PropertyField(worldLinearInertiaScale);
+                EditorGUILayout.PropertyField(worldAngularInertiaScale);
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("maxAnisotropy"));
+                EditorGUILayout.PropertyField(simulateWhenInvisible);
+            }
+            EditorGUILayout.EndFoldoutHeaderGroup();
 
-            constraintsFoldout = EditorGUILayout.Foldout(constraintsFoldout, "Constraints");
+            collisionsFoldout.value = EditorGUILayout.BeginFoldoutHeaderGroup(collisionsFoldout, "Collision settings");
+            if (collisionsFoldout)
+            {
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("continuousCollisionDetection"));
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("collisionMargin"));
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("maxDepenetration"));
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("shockPropagation"));
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("surfaceCollisionIterations"));
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("surfaceCollisionTolerance"));
+            }
+            EditorGUILayout.EndFoldoutHeaderGroup();
+
+            constraintsFoldout.value = EditorGUILayout.BeginFoldoutHeaderGroup(constraintsFoldout, "Constraint settings");
             if (constraintsFoldout)
             {
-                EditorGUILayout.PropertyField(distanceConstraintParameters);
-                EditorGUILayout.PropertyField(bendingConstraintParameters);
-                EditorGUILayout.PropertyField(particleCollisionConstraintParameters);
-                EditorGUILayout.PropertyField(particleFrictionConstraintParameters);
-                EditorGUILayout.PropertyField(collisionConstraintParameters);
-                EditorGUILayout.PropertyField(frictionConstraintParameters);
-                EditorGUILayout.PropertyField(skinConstraintParameters);
-                EditorGUILayout.PropertyField(volumeConstraintParameters);
-                EditorGUILayout.PropertyField(shapeMatchingConstraintParameters);
-                EditorGUILayout.PropertyField(tetherConstraintParameters);
-                EditorGUILayout.PropertyField(pinConstraintParameters);
-                EditorGUILayout.PropertyField(stitchConstraintParameters);
-                EditorGUILayout.PropertyField(densityConstraintParameters);
-                EditorGUILayout.PropertyField(stretchShearConstraintParameters);
-                EditorGUILayout.PropertyField(bendTwistConstraintParameters);
-                EditorGUILayout.PropertyField(chainConstraintParameters);
+                constraintLabelContent.text = "Distance";
+                EditorGUILayout.PropertyField(distanceConstraintParameters, constraintLabelContent);
+
+                constraintLabelContent.text = "Bending";
+                EditorGUILayout.PropertyField(bendingConstraintParameters, constraintLabelContent);
+
+                constraintLabelContent.text = "Particle collision / Queries";
+                EditorGUILayout.PropertyField(particleCollisionConstraintParameters, constraintLabelContent);
+
+                constraintLabelContent.text = "Particle friction";
+                EditorGUILayout.PropertyField(particleFrictionConstraintParameters, constraintLabelContent);
+
+                constraintLabelContent.text = "Collision";
+                EditorGUILayout.PropertyField(collisionConstraintParameters, constraintLabelContent);
+
+                constraintLabelContent.text = "Friction";
+                EditorGUILayout.PropertyField(frictionConstraintParameters, constraintLabelContent);
+
+                constraintLabelContent.text = "Skin";
+                EditorGUILayout.PropertyField(skinConstraintParameters, constraintLabelContent);
+
+                constraintLabelContent.text = "Volume";
+                EditorGUILayout.PropertyField(volumeConstraintParameters, constraintLabelContent);
+
+                constraintLabelContent.text = "Shape matching";
+                EditorGUILayout.PropertyField(shapeMatchingConstraintParameters, constraintLabelContent);
+
+                constraintLabelContent.text = "Tether";
+                EditorGUILayout.PropertyField(tetherConstraintParameters, constraintLabelContent);
+
+                constraintLabelContent.text = "Pin";
+                EditorGUILayout.PropertyField(pinConstraintParameters, constraintLabelContent);
+
+                constraintLabelContent.text = "Stitch";
+                EditorGUILayout.PropertyField(stitchConstraintParameters, constraintLabelContent);
+
+                constraintLabelContent.text = "Density";
+                EditorGUILayout.PropertyField(densityConstraintParameters, constraintLabelContent);
+
+                constraintLabelContent.text = "Stretch & Shear";
+                EditorGUILayout.PropertyField(stretchShearConstraintParameters, constraintLabelContent);
+
+                constraintLabelContent.text = "Bend & Twist";
+                EditorGUILayout.PropertyField(bendTwistConstraintParameters, constraintLabelContent);
+
+                constraintLabelContent.text = "Chain";
+                EditorGUILayout.PropertyField(chainConstraintParameters, constraintLabelContent);
             }
+            EditorGUILayout.EndFoldoutHeaderGroup();
 
             // Apply changes to the serializedProperty
             if (GUI.changed)

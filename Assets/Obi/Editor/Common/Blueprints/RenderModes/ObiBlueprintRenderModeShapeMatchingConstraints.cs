@@ -8,7 +8,7 @@ namespace Obi
     {
         public override string name
         {
-            get { return "Shape matching constraints"; }
+            get { return "Shape matching clusters"; }
         }
 
         public ObiBlueprintRenderModeShapeMatchingConstraints(ObiActorBlueprintEditor editor) : base(editor)

@@ -19,11 +19,14 @@ namespace Obi
                                                  ObiNativeVector4List restComs,
                                                  ObiNativeVector4List coms,
                                                  ObiNativeQuaternionList orientations,
+                                                 ObiNativeMatrix4x4List linearTransforms,
+                                                 ObiNativeMatrix4x4List plasticDeformations,
                                                  ObiNativeFloatList lambdas,
                                                  int count)
         {
             Oni.SetShapeMatchingConstraints(oniBatch, particleIndices.GetIntPtr(), firstIndex.GetIntPtr(), numIndices.GetIntPtr(), explicitGroup.GetIntPtr(),
-                                            shapeMaterialParameters.GetIntPtr(),restComs.GetIntPtr(), coms.GetIntPtr(), orientations.GetIntPtr(), count);
+                                            shapeMaterialParameters.GetIntPtr(),restComs.GetIntPtr(), coms.GetIntPtr(), orientations.GetIntPtr(), linearTransforms.GetIntPtr(),
+                                            plasticDeformations.GetIntPtr(), count);
         }
 
         public void CalculateRestShapeMatching()

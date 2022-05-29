@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
 
 namespace Obi
 {
@@ -47,7 +46,7 @@ namespace Obi
 
 		public override void RecalculateMinMax()
 		{
-            if (autoRange)
+            if (editor != null && autoRange)
             {
                 maxVisualizationValue = float.MinValue;
                 minVisualizationValue = float.MaxValue;
@@ -69,7 +68,7 @@ namespace Obi
         public override void VisualizationOptions()
         {
             EditorGUI.BeginChangeCheck();
-            autoRange = EditorGUILayout.Toggle("Automatic range", autoRange);
+            autoRange = EditorGUILayout.Toggle("Automatic property range", autoRange);
             GUI.enabled = !autoRange;
             EditorGUI.indentLevel++;
             minUserVisualizationValue = EditorGUILayout.FloatField("Min", minUserVisualizationValue);

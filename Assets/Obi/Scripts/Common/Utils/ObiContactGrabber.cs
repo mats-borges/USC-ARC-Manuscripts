@@ -131,13 +131,14 @@ public class ObiContactGrabber : MonoBehaviour
                         if (contact.distance < 0.01f)
                         {
                             var contactCollider = world.colliderHandles[contact.bodyB].owner;
+                            int particleIndex = solver.simplices[contact.bodyA];
 
                             // if the current contact references our collider, proceed to grab the particle.
                             if (contactCollider == localCollider)
                             {
                                 // try to grab the particle, if not already grabbed.
-                                if (GrabParticle(solver, contact.bodyA))
-                                    grabbedActors.Add(solver.particleToActor[contact.bodyA].actor);
+                                if (GrabParticle(solver, particleIndex))
+                                    grabbedActors.Add(solver.particleToActor[particleIndex].actor);
                             }
 
                         }

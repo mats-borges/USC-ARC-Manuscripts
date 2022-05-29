@@ -1,23 +1,26 @@
 ﻿#if (OBI_BURST && OBI_MATHEMATICS && OBI_COLLECTIONS)
-using UnityEngine;
 using Unity.Jobs;
-using System;
-using System.Collections;
 
 namespace Obi
 {
     public class BurstJobHandle : IObiJobHandle
     {
-        public JobHandle handle = new JobHandle();
+        private JobHandle handle = new JobHandle();
 
-        public BurstJobHandle(JobHandle handle)
+        public BurstJobHandle SetHandle(JobHandle newHandle)
         {
-            this.handle = handle;
+            handle = newHandle;
+            return this;
         }
 
         public void Complete()
         {
             handle.Complete();
+        }
+
+        public void Release()
+        {
+            handle = new JobHandle();
         }
     }
 }

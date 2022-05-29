@@ -18,7 +18,6 @@ namespace Obi
         SerializedProperty constrainOrientation;
         SerializedProperty compliance;
         SerializedProperty breakThreshold;
-        Rect groupDropdownRect;
 
         ObiParticleAttachment attachment;
 
@@ -61,10 +60,11 @@ namespace Obi
 
             if (blueprint != null)
             {
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.PrefixLabel("Particle group");
+                var rect = EditorGUILayout.GetControlRect();
+                var label = EditorGUI.BeginProperty(rect, new GUIContent("Particle group"), particleGroup);
+                rect = EditorGUI.PrefixLabel(rect, label);
 
-                if (GUILayout.Button(attachment.particleGroup != null ? attachment.particleGroup.name : "None", EditorStyles.popup))
+                if (GUI.Button(rect, attachment.particleGroup != null ? attachment.particleGroup.name : "None", EditorStyles.popup))
                 {
                     // create the menu and add items to it
                     GenericMenu menu = new GenericMenu();
@@ -76,13 +76,10 @@ namespace Obi
                     }
 
                     // display the menu
-                    menu.DropDown(groupDropdownRect);
+                    menu.DropDown(rect);
                 }
 
-                if (Event.current.type == EventType.Repaint)
-                    groupDropdownRect = GUILayoutUtility.GetLastRect();
-
-                EditorGUILayout.EndHorizontal();
+                EditorGUI.EndProperty();
             }
 
             EditorGUILayout.PropertyField(attachmentType, new GUIContent("Type"));
@@ -106,6 +103,7 @@ namespace Obi
         {
             Undo.RecordObject(attachment, "Set particle group");
             attachment.particleGroup = index as ObiParticleGroup;
+            PrefabUtility.RecordPrefabInstancePropertyModifications(attachment);
         }
     }
 

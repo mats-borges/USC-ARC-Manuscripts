@@ -1,9 +1,7 @@
 ﻿#if (OBI_BURST && OBI_MATHEMATICS && OBI_COLLECTIONS)
-using UnityEngine;
 using Unity.Burst;
 using Unity.Jobs;
 using Unity.Collections;
-using System.Collections;
 
 namespace Obi
 {

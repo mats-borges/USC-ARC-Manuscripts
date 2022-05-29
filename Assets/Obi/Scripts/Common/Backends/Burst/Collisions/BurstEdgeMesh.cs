@@ -1,11 +1,6 @@
 ﻿#if (OBI_BURST && OBI_MATHEMATICS && OBI_COLLECTIONS)
-using System;
-using System.Collections.Generic;
-using UnityEngine;
 using Unity.Collections;
-using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.Burst;
 
 namespace Obi
 {
@@ -13,7 +8,7 @@ namespace Obi
     {
 
         public BurstColliderShape shape;
-        public BurstAffineTransform transform;
+        public BurstAffineTransform colliderToSolver;
         public int dataOffset;
         public float dt;
 
@@ -22,28 +17,31 @@ namespace Obi
         public NativeArray<Edge> edges;
         public NativeArray<float2> vertices;
 
-        public void Evaluate(float4 point, ref BurstLocalOptimization.SurfacePoint projectedPoint)
+        public void Evaluate(float4 point, float4 radii, quaternion orientation, ref BurstLocalOptimization.SurfacePoint projectedPoint)
         {
-            point = transform.InverseTransformPointUnscaled(point);
+            point = colliderToSolver.InverseTransformPointUnscaled(point);
 
             if (shape.is2D != 0)
                 point[2] = 0;
 
             Edge t = edges[header.firstEdge + dataOffset];
-            float4 v1 = (new float4(vertices[header.firstVertex + t.i1], 0) + shape.center) * transform.scale;
-            float4 v2 = (new float4(vertices[header.firstVertex + t.i2], 0) + shape.center) * transform.scale;
+            float4 v1 = (new float4(vertices[header.firstVertex + t.i1], 0) + shape.center) * colliderToSolver.scale;
+            float4 v2 = (new float4(vertices[header.firstVertex + t.i2], 0) + shape.center) * colliderToSolver.scale;
 
             float4 nearestPoint = BurstMath.NearestPointOnEdge(v1, v2, point, out float mu);
             float4 normal = math.normalizesafe(point - nearestPoint);
 
-            projectedPoint.normal = transform.TransformDirection(normal);
-            projectedPoint.point = transform.TransformPointUnscaled(nearestPoint + normal * shape.contactOffset);
+            projectedPoint.normal = colliderToSolver.TransformDirection(normal);
+            projectedPoint.point = colliderToSolver.TransformPointUnscaled(nearestPoint + normal * shape.contactOffset);
         }
 
 
         public void Contacts(int colliderIndex,
+                             int rigidbodyIndex,
+                             NativeArray<BurstRigidbody> rigidbodies,
 
                               NativeArray<float4> positions,
+                              NativeArray<quaternion> orientations,
                               NativeArray<float4> velocities,
                               NativeArray<float4> radii,
 
@@ -60,7 +58,7 @@ namespace Obi
             if (shape.dataIndex < 0) return;
 
             BIHTraverse(colliderIndex, simplexIndex, simplexStart, simplexSize,
-                        positions, radii, simplices, in simplexBounds, 0, contacts, optimizationIterations, optimizationTolerance);
+                        positions, orientations, radii, simplices, in simplexBounds, 0, contacts, optimizationIterations, optimizationTolerance);
         }
 
         private void BIHTraverse(int colliderIndex,
@@ -68,6 +66,7 @@ namespace Obi
                                  int simplexStart,
                                  int simplexSize,
                                  NativeArray<float4> positions,
+                                 NativeArray<quaternion> orientations,
                                  NativeArray<float4> radii,
                                  NativeArray<int> simplices,
                                  in BurstAabb simplexBounds,
@@ -83,13 +82,13 @@ namespace Obi
                 // visit min node:
                 if (simplexBounds.min[node.axis] <= node.min + shape.center[node.axis])
                     BIHTraverse(colliderIndex, simplexIndex, simplexStart, simplexSize,
-                                positions, radii, simplices, in simplexBounds,
+                                positions, orientations, radii, simplices, in simplexBounds,
                                 node.firstChild, contacts, optimizationIterations, optimizationTolerance);
 
                 // visit max node:
                 if (simplexBounds.max[node.axis] >= node.max + shape.center[node.axis])
                     BIHTraverse(colliderIndex, simplexIndex, simplexStart, simplexSize,
-                                positions, radii, simplices, in simplexBounds,
+                                positions, orientations, radii, simplices, in simplexBounds,
                                 node.firstChild + 1, contacts, optimizationIterations, optimizationTolerance);
             }
             else
@@ -107,7 +106,7 @@ namespace Obi
                         var co = new BurstContact() { bodyA = simplexIndex, bodyB = colliderIndex };
                         float4 simplexBary = BurstMath.BarycenterForSimplexOfSize(simplexSize);
 
-                        var colliderPoint = BurstLocalOptimization.Optimize<BurstEdgeMesh>(ref this, positions, radii, simplices, simplexStart, simplexSize,
+                        var colliderPoint = BurstLocalOptimization.Optimize<BurstEdgeMesh>(ref this, positions, orientations, radii, simplices, simplexStart, simplexSize,
                                                                             ref simplexBary, out float4 convexPoint, optimizationIterations, optimizationTolerance);
 
                         co.pointB = colliderPoint.point;

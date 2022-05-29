@@ -1,8 +1,5 @@
 ﻿#if (OBI_BURST && OBI_MATHEMATICS && OBI_COLLECTIONS)
-using UnityEngine;
 using Unity.Mathematics;
-using System.Collections;
-using System;
 
 namespace Obi
 {
@@ -123,10 +120,12 @@ namespace Obi
         public bool IntersectsAabb(in BurstAabb bounds, bool in2D = false)
         {
             if (in2D)
-            return !(max[0] <= bounds.min[0] || max[1] <= bounds.min[1] ||
-                     min[0] >  bounds.max[0] || min[1] >  bounds.max[1]);
-            return !(max[0] <= bounds.min[0] || max[1] <= bounds.min[1] || max[2] <= bounds.min[2] ||
-                     min[0] >  bounds.max[0] || min[1] >  bounds.max[1] || min[2] >  bounds.max[2]);
+            return (min[0] <= bounds.max[0] && max[0] >= bounds.min[0]) &&
+                   (min[1] <= bounds.max[1] && max[1] >= bounds.min[1]);
+
+            return (min[0] <= bounds.max[0] && max[0] >= bounds.min[0]) &&
+                   (min[1] <= bounds.max[1] && max[1] >= bounds.min[1]) &&
+                   (min[2] <= bounds.max[2] && max[2] >= bounds.min[2]);
         }
 
         public bool IntersectsRay(float4 origin, float4 inv_dir, bool in2D = false) 

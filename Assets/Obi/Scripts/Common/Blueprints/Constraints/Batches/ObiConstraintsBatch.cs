@@ -92,8 +92,6 @@ namespace Obi
         // Merges a batch from a given actor with this one.
         public virtual void Merge(ObiActor actor, IObiConstraintsBatch other)
         {
-            ObiConstraintsBatch batch = other as ObiConstraintsBatch;
-
             m_ConstraintCount += other.constraintCount;
             m_ActiveConstraintCount += other.activeConstraintCount;
             m_InitialActiveConstraintCount += other.initialActiveConstraintCount;

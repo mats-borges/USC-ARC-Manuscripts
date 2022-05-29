@@ -16,11 +16,12 @@ namespace Obi{
         private Quaternion prevRotation;
         private Vector3 prevPosition;
 
-        public override void Awake(){
+        public override void OnEnable()
+        {
 			unityRigidbody = GetComponent<Rigidbody2D>();
             prevPosition = transform.position;
             prevRotation = transform.rotation;
-            base.Awake();
+            base.OnEnable();
 		}
 
         private void UpdateKinematicVelocities(float stepTime)

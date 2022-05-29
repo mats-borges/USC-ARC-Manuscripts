@@ -20,14 +20,14 @@ namespace Obi
         [Tooltip("Amount of substeps performed per FixedUpdate. Increasing the amount of substeps greatly improves accuracy and convergence speed.")]
         public int substeps = 4;
 
-        private float accumulatedTime;
+        [NonSerialized] private float accumulatedTime;
 
         private void OnValidate()
         {
             substeps = Mathf.Max(1, substeps);
         }
 
-        private void Awake()
+        private void OnEnable()
         {
             accumulatedTime = 0;
         }
@@ -40,6 +40,8 @@ namespace Obi
         private void FixedUpdate()
         {
             ObiProfiler.EnableProfiler();
+
+            PrepareFrame();
 
             BeginStep(Time.fixedDeltaTime);
 

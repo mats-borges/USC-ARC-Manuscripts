@@ -23,7 +23,7 @@ namespace Obi{
             var shape = world.colliderShapes[index];
             shape.is2D = 1;
             shape.type = ColliderShape.ShapeType.Capsule;
-            shape.phase = source.Phase;
+            shape.filter = source.Filter;
             shape.flags = capsule.isTrigger ? 1 : 0;
             shape.rigidbodyIndex = source.Rigidbody != null ? source.Rigidbody.handle.index : -1;
             shape.materialIndex = source.CollisionMaterial != null ? source.CollisionMaterial.handle.index : -1;

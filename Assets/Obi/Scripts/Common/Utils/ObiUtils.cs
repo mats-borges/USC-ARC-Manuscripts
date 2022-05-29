@@ -16,9 +16,29 @@ namespace Obi
     {
 
         public const float epsilon = 0.0000001f;
+        public const float sqrt3 = 1.73205080f;
+        public const float sqrt2 = 1.41421356f; 
+
+        public const int FilterMaskBitmask = unchecked((int)0xffff0000);
+        public const int FilterCategoryBitmask = 0x0000ffff;
+        public const int ParticleGroupBitmask = 0x00ffffff;
+
+        public const int CollideWithEverything = 0x0000ffff;
+        public const int CollideWithNothing= 0x0;
+
+        public const int MaxCategory = 15;
+        public const int MinCategory = 0;
+
+        [Flags]
+        public enum ParticleFlags
+        {
+            SelfCollide = 1 << 24,
+            Fluid = 1 << 25,
+            OneSided = 1 << 26
+        }
 
         // Colour alphabet from https://www.aic-color.org/resources/Documents/jaic_v5_06.pdf
-        public static readonly Color32[] colorAlphabet = new Color32[26]
+        public static readonly Color32[] colorAlphabet =
         {
             new Color32(240,163,255,255), 
             new Color32(0,117,220,255),
@@ -46,6 +66,11 @@ namespace Obi
             new Color32(255,255,128,255),  
             new Color32(255,255,0,255),
             new Color32(255,80,5,255)
+        };
+
+        public static readonly string[] categoryNames = 
+        {
+            "0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"
         };
 
         public static void DrawArrowGizmo(float bodyLenght, float bodyWidth, float headLenght, float headWidth)
@@ -151,6 +176,16 @@ namespace Obi
             return result;
         }
 
+        public static int CountTrailingZeroes(int x)
+        {
+            int mask = 1;
+            for (int i = 0; i < 32; i++, mask <<= 1)
+                if ((x & mask) != 0)
+                    return i;
+
+            return 32;
+        }
+
         public static void Add(Vector3 a, Vector3 b, ref Vector3 result)
         {
             result.x = a.x + b.x;
@@ -178,6 +213,15 @@ namespace Obi
             for (int i = 0; i < 16; ++i)
                 a[i] += other[i];
             return a;
+        }
+
+        public static float FrobeniusNorm(this Matrix4x4 a)
+        {
+            float norm = 0;
+            for (int i = 0; i < 16; ++i)
+                norm += a[i] * a[i];
+
+            return Mathf.Sqrt(norm);
         }
 
         public static Matrix4x4 ScalarMultiply(this Matrix4x4 a, float s)
@@ -212,6 +256,22 @@ namespace Obi
             float t = (Vector3.Dot(planeNormal,planePoint) - Vector3.Dot(planeNormal,linePoint)) / denom;
             point = linePoint + lineNormal * t;
             return true;
+        }
+
+        public static float RaySphereIntersection(Vector3 rayOrigin, Vector3 rayDirection, Vector3 center, float radius)
+        {
+            Vector3 oc = rayOrigin - center;
+
+            float a = Vector3.Dot(rayDirection, rayDirection);
+            float b = 2.0f * Vector3.Dot(oc, rayDirection);
+            float c = Vector3.Dot(oc, oc) - radius * radius;
+            float discriminant = b * b - 4 * a * c;
+            if(discriminant < 0){
+                return -1.0f;
+            }
+            else{
+                return (-b - Mathf.Sqrt(discriminant)) / (2.0f * a);
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -462,13 +522,14 @@ namespace Obi
         public static Quaternion RestDarboux(Quaternion q1, Quaternion q2)
         {
             Quaternion darboux = Quaternion.Inverse(q1) * q2;
+
             Vector4 omega_plus, omega_minus;
-            omega_plus = new Vector4(darboux.w, darboux.x, darboux.y, darboux.z) + new Vector4(1, 0, 0, 0);
-            omega_minus = new Vector4(darboux.w, darboux.x, darboux.y, darboux.z) - new Vector4(1, 0, 0, 0);
+            omega_plus = new Vector4(darboux.x, darboux.y, darboux.z, darboux.w + 1);
+            omega_minus = new Vector4(darboux.x, darboux.y, darboux.z, darboux.w - 1);
+
             if (omega_minus.sqrMagnitude > omega_plus.sqrMagnitude)
-            {
                 darboux = new Quaternion(darboux.x * -1, darboux.y * -1, darboux.z * -1, darboux.w * -1);
-            }
+
             return darboux;
         }
 
@@ -580,21 +641,39 @@ namespace Obi
             return normals;
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int MakePhase(int group, Oni.ParticleFlags flags)
+        public static int MakePhase(int group, ParticleFlags flags)
         {
-            return (group & (int)Oni.ParticleFlags.GroupMask) | (int)flags;
+            return (group & ParticleGroupBitmask) | (int)flags;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetGroupFromPhase(int phase)
         {
-            return phase & (int)Oni.ParticleFlags.GroupMask;
+            return phase & ParticleGroupBitmask;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Oni.ParticleFlags GetFlagsFromPhase(int phase)
+        public static ParticleFlags GetFlagsFromPhase(int phase)
         {
-            return (Oni.ParticleFlags)(phase & ~(int)Oni.ParticleFlags.GroupMask);
+            return (ParticleFlags)(phase & ~ParticleGroupBitmask);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int MakeFilter(int mask, int category)
+        {
+            return (mask << 16) | (1 << category);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int GetCategoryFromFilter(int filter)
+        {
+            return CountTrailingZeroes(filter & FilterCategoryBitmask);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int GetMaskFromFilter(int filter)
+        {
+            return (filter & FilterMaskBitmask) >> 16;
         }
 
         public static void EigenSolve(Matrix4x4 D, out Vector3 S, out Matrix4x4 V)
@@ -774,10 +853,10 @@ namespace Obi
             return centroid / points.Count;
         }
 
-        public static void GetPointCloudAnisotropy(List<Vector3> points, float max_anisotropy, float radius, ref Vector3 hint_normal, ref Vector3 centroid, ref Quaternion orientation, ref Vector3 principal_radii)
+        public static void GetPointCloudAnisotropy(List<Vector3> points, float max_anisotropy, float radius, in Vector3 hint_normal, ref Vector3 centroid, ref Quaternion orientation, ref Vector3 principal_radii)
         {
             int count = points.Count;
-            if (count == 0|| radius <= 0 || max_anisotropy <= 0)
+            if (count < 2 || radius <= 0 || max_anisotropy <= 0)
             {
                 principal_radii = Vector3.one * radius;
                 orientation = Quaternion.identity;

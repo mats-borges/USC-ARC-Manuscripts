@@ -16,7 +16,7 @@ namespace Obi{
 		[HideInInspector][SerializeField] private Bounds bounds = new Bounds(); 
 		[HideInInspector] public List<DFNode> nodes;		/**< list of distance field nodes*/
 
-		[Range(0.00001f,0.1f)]
+		[Range(0.0000001f,0.1f)]
 		public float maxError = 0.01f;
 
 		[Range(1, 8)]

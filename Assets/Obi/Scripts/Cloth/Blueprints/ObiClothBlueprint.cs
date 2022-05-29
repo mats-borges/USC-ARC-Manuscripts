@@ -35,7 +35,7 @@ namespace Obi
             velocities = new Vector3[topology.vertices.Count];
             invMasses = new float[topology.vertices.Count];
             principalRadii = new Vector3[topology.vertices.Count];
-            phases = new int[topology.vertices.Count];
+            filters = new int[topology.vertices.Count];
             colors = new Color[topology.vertices.Count];
 
             areaContribution = new float[topology.vertices.Count];
@@ -70,7 +70,7 @@ namespace Obi
                 restPositions[i] = positions[i];
                 restPositions[i][3] = 1; // activate rest position.
                 principalRadii[i] = Vector3.one * minEdgeLength * 0.5f;
-                phases[i] = ObiUtils.MakePhase(1, /*selfCollisions ? Oni.ParticlePhase.SelfCollide : 0*/ 0);
+                filters[i] = ObiUtils.MakeFilter(ObiUtils.CollideWithEverything, 1);
                 colors[i] = Color.white;
 
                 if (i % 500 == 0)

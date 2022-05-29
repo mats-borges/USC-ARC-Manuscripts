@@ -17,15 +17,14 @@ namespace Obi{
 
         public ObiRigidbodyHandle handle;
 
-
-		public virtual void Awake()
+        public virtual void OnEnable()
         {
             handle = ObiColliderWorld.GetInstance().CreateRigidbody();
             handle.owner = this;
             UpdateIfNeeded(1);
-		}
+        }
 
-		public void OnDestroy()
+		public void OnDisable()
         {
             ObiColliderWorld.GetInstance().DestroyRigidbody(handle);
         }

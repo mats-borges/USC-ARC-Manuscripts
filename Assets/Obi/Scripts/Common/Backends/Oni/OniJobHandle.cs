@@ -1,22 +1,26 @@
 ﻿#if (OBI_ONI_SUPPORTED)
-using UnityEngine;
 using System;
-using System.Collections;
 
 namespace Obi
 {
     public class OniJobHandle : IObiJobHandle
     {
-        public IntPtr pointer = IntPtr.Zero;
+        private IntPtr pointer = IntPtr.Zero;
 
-        public OniJobHandle(IntPtr pointer)
+        public OniJobHandle SetPointer(IntPtr newPtr)
         {
-            this.pointer = pointer;
+            pointer = newPtr;
+            return this;
         }
 
         public void Complete()
         {
             Oni.Complete(pointer);
+        }
+
+        public void Release()
+        {
+            pointer = IntPtr.Zero;
         }
     }
 }

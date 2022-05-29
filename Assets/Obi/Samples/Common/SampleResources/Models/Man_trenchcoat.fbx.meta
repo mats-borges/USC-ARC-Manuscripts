@@ -4,90 +4,248 @@ labels:
 - ObiCloth
 - ObiSoftbody
 ModelImporter:
-  serializedVersion: 22
-  fileIDToRecycleName:
-    100000: body_basemesh
-    100002: body_basemesh1
-    100004: joint1
-    100006: joint10
-    100008: joint11
-    100010: joint12
-    100012: joint13
-    100014: joint14
-    100016: joint15
-    100018: joint16
-    100020: joint17
-    100022: joint18
-    100024: joint19
-    100026: joint2
-    100028: joint20
-    100030: joint21
-    100032: joint22
-    100034: joint23
-    100036: joint3
-    100038: joint4
-    100040: joint5
-    100042: joint6
-    100044: joint7
-    100046: joint8
-    100048: joint9
-    100050: //RootNode
-    100052: joint24
-    100054: joint25
-    100056: joint26
-    100058: joint27
-    100060: joint28
-    100062: joint29
-    100064: joint30
-    100066: joint31
-    100068: joint32
-    400000: body_basemesh
-    400002: body_basemesh1
-    400004: joint1
-    400006: joint10
-    400008: joint11
-    400010: joint12
-    400012: joint13
-    400014: joint14
-    400016: joint15
-    400018: joint16
-    400020: joint17
-    400022: joint18
-    400024: joint19
-    400026: joint2
-    400028: joint20
-    400030: joint21
-    400032: joint22
-    400034: joint23
-    400036: joint3
-    400038: joint4
-    400040: joint5
-    400042: joint6
-    400044: joint7
-    400046: joint8
-    400048: joint9
-    400050: //RootNode
-    400052: joint24
-    400054: joint25
-    400056: joint26
-    400058: joint27
-    400060: joint28
-    400062: joint29
-    400064: joint30
-    400066: joint31
-    400068: joint32
-    2300000: body_basemesh
-    2300002: body_basemesh1
-    3300000: body_basemesh
-    3300002: body_basemesh1
-    4300000: body_basemesh
-    4300002: body_basemesh1
-    9500000: //RootNode
-    13700000: body_basemesh
-    13700002: body_basemesh1
+  serializedVersion: 19301
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: body_basemesh
+  - first:
+      1: 100002
+    second: body_basemesh1
+  - first:
+      1: 100004
+    second: joint1
+  - first:
+      1: 100006
+    second: joint10
+  - first:
+      1: 100008
+    second: joint11
+  - first:
+      1: 100010
+    second: joint12
+  - first:
+      1: 100012
+    second: joint13
+  - first:
+      1: 100014
+    second: joint14
+  - first:
+      1: 100016
+    second: joint15
+  - first:
+      1: 100018
+    second: joint16
+  - first:
+      1: 100020
+    second: joint17
+  - first:
+      1: 100022
+    second: joint18
+  - first:
+      1: 100024
+    second: joint19
+  - first:
+      1: 100026
+    second: joint2
+  - first:
+      1: 100028
+    second: joint20
+  - first:
+      1: 100030
+    second: joint21
+  - first:
+      1: 100032
+    second: joint22
+  - first:
+      1: 100034
+    second: joint23
+  - first:
+      1: 100036
+    second: joint3
+  - first:
+      1: 100038
+    second: joint4
+  - first:
+      1: 100040
+    second: joint5
+  - first:
+      1: 100042
+    second: joint6
+  - first:
+      1: 100044
+    second: joint7
+  - first:
+      1: 100046
+    second: joint8
+  - first:
+      1: 100048
+    second: joint9
+  - first:
+      1: 100050
+    second: //RootNode
+  - first:
+      1: 100052
+    second: joint24
+  - first:
+      1: 100054
+    second: joint25
+  - first:
+      1: 100056
+    second: joint26
+  - first:
+      1: 100058
+    second: joint27
+  - first:
+      1: 100060
+    second: joint28
+  - first:
+      1: 100062
+    second: joint29
+  - first:
+      1: 100064
+    second: joint30
+  - first:
+      1: 100066
+    second: joint31
+  - first:
+      1: 100068
+    second: joint32
+  - first:
+      4: 400000
+    second: body_basemesh
+  - first:
+      4: 400002
+    second: body_basemesh1
+  - first:
+      4: 400004
+    second: joint1
+  - first:
+      4: 400006
+    second: joint10
+  - first:
+      4: 400008
+    second: joint11
+  - first:
+      4: 400010
+    second: joint12
+  - first:
+      4: 400012
+    second: joint13
+  - first:
+      4: 400014
+    second: joint14
+  - first:
+      4: 400016
+    second: joint15
+  - first:
+      4: 400018
+    second: joint16
+  - first:
+      4: 400020
+    second: joint17
+  - first:
+      4: 400022
+    second: joint18
+  - first:
+      4: 400024
+    second: joint19
+  - first:
+      4: 400026
+    second: joint2
+  - first:
+      4: 400028
+    second: joint20
+  - first:
+      4: 400030
+    second: joint21
+  - first:
+      4: 400032
+    second: joint22
+  - first:
+      4: 400034
+    second: joint23
+  - first:
+      4: 400036
+    second: joint3
+  - first:
+      4: 400038
+    second: joint4
+  - first:
+      4: 400040
+    second: joint5
+  - first:
+      4: 400042
+    second: joint6
+  - first:
+      4: 400044
+    second: joint7
+  - first:
+      4: 400046
+    second: joint8
+  - first:
+      4: 400048
+    second: joint9
+  - first:
+      4: 400050
+    second: //RootNode
+  - first:
+      4: 400052
+    second: joint24
+  - first:
+      4: 400054
+    second: joint25
+  - first:
+      4: 400056
+    second: joint26
+  - first:
+      4: 400058
+    second: joint27
+  - first:
+      4: 400060
+    second: joint28
+  - first:
+      4: 400062
+    second: joint29
+  - first:
+      4: 400064
+    second: joint30
+  - first:
+      4: 400066
+    second: joint31
+  - first:
+      4: 400068
+    second: joint32
+  - first:
+      23: 2300000
+    second: body_basemesh
+  - first:
+      23: 2300002
+    second: body_basemesh1
+  - first:
+      33: 3300000
+    second: body_basemesh
+  - first:
+      33: 3300002
+    second: body_basemesh1
+  - first:
+      43: 4300000
+    second: body_basemesh
+  - first:
+      43: 4300002
+    second: body_basemesh1
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: body_basemesh
+  - first:
+      137: 13700002
+    second: body_basemesh1
   externalObjects: {}
   materials:
-    importMaterials: 0
+    materialImportMode: 0
     materialName: 0
     materialSearch: 1
     materialLocation: 0
@@ -120,17 +278,23 @@ ModelImporter:
     globalScale: 10
     meshCompression: 0
     addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
     importVisibility: 0
     importBlendShapes: 0
     importCameras: 0
     importLights: 0
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
     preserveHierarchy: 0
+    skinWeightsMode: 1
+    maxBonesPerVertex: 16
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
     indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
@@ -142,10 +306,13 @@ ModelImporter:
     normalImportMode: 1
     tangentImportMode: 3
     normalCalculationMode: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 1
-  copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human:
     - boneName: joint1
       humanName: Hips
@@ -429,14 +596,16 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 10
     rootMotionBoneName: 
-    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1
+  avatarSetup: 1
   additionalBone: 0
   userData: 
   assetBundleName: 

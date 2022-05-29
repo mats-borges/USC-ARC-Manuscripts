@@ -101,7 +101,8 @@ public class PageEdgeGrabTrigger : MonoBehaviourGizmos
         }
 
         var tform = transform;
-        Draw.WireBox(tform.position + trigger.center, tform.rotation, trigger.size, new Color(1,1,1, 0.25f));
+        var avgScale = (tform.localScale.x + tform.localScale.y + tform.localScale.z) / 3.0f;
+        Draw.WireBox(tform.position + trigger.center, tform.rotation, trigger.size * avgScale, new Color(1,1,1, 0.25f));
         
         foreach (var pIdx in actor.solverIndices)
         {

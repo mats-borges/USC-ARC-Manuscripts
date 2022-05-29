@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 namespace Obi
 {
@@ -23,10 +22,12 @@ namespace Obi
                                           heightmap: width (x axis), height (y axis) and depth (z axis) in world units.*/
         public ShapeType type;
         public float contactOffset;
+
         public int dataIndex;
         public int rigidbodyIndex;  // index of the associated rigidbody in the collision world.
         public int materialIndex;   // index of the associated material in the collision world.
-        public int phase;
+
+        public int filter;          // bitwise category/mask.
         public int flags;           // for now, only used for trigger (1) or regular collider (0).
         public int is2D;            // whether the collider is 2D (1) or 3D (0).
     }

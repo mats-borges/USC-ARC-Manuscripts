@@ -7,7 +7,7 @@ namespace Obi
 {
     [AddComponentMenu("Physics/Obi/Obi SkinnedCloth", 902)]
     [RequireComponent(typeof(SkinnedMeshRenderer))]
-    public class ObiSkinnedCloth : ObiClothBase, ITetherConstraintsUser
+    public class ObiSkinnedCloth : ObiClothBase, ITetherConstraintsUser, ISkinConstraintsUser
     {
         static ProfilerMarker m_SetTargetSkinPerfMarker = new ProfilerMarker("SetTargetSkin");
         static ProfilerMarker m_SortSkinInputsPerfMarker = new ProfilerMarker("SortSkinInputs");
@@ -57,6 +57,8 @@ namespace Obi
             get { return _tetherScale; }
             set { _tetherScale = value; SetConstraintsDirty(Oni.ConstraintType.Tether); }
         }
+
+        public bool skinConstraintsEnabled { get { return true; } set { } }
 
         public ObiSkinnedClothBlueprint skinnedClothBlueprint
         {
@@ -129,6 +131,18 @@ namespace Obi
             DestroyImmediate(bakedMesh);
         }
 
+        public Vector3 GetSkinRadiiBackstop(ObiSkinConstraintsBatch batch, int constraintIndex)
+        {
+            return new Vector3(batch.skinRadiiBackstop[constraintIndex*3],
+                               batch.skinRadiiBackstop[constraintIndex * 3+1],
+                               batch.skinRadiiBackstop[constraintIndex * 3+2]);
+        }
+
+        public float GetSkinCompliance(ObiSkinConstraintsBatch batch, int constraintIndex)
+        {
+            return batch.skinCompliance[constraintIndex];
+        }
+
         private void CreateBakedMeshIfNeeded()
         {
             if (bakedMesh == null && m_SkinnedClothBlueprint != null)
@@ -158,7 +172,10 @@ namespace Obi
 
                 using (m_SetSkinInputsPerfMarker.Auto())
                 {
-                    Matrix4x4 skinToSolver = actorLocalToSolverMatrix;
+                    var skinScale = skin.transform.lossyScale;
+                    var invSkinScale = Matrix4x4.Scale(new Vector3(1 / skinScale.x, 1 / skinScale.y, 1 / skinScale.z));
+
+                    Matrix4x4 skinToSolver = actorLocalToSolverMatrix * invSkinScale;
                     int offset = solverBatchOffsets[(int)Oni.ConstraintType.Skin][0];
 
                     for (int i = 0; i < batch.activeConstraintCount; ++i)

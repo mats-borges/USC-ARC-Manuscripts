@@ -3,8 +3,7 @@ using System;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Mathematics;
-using Unity.Jobs;
-using Unity.Burst;
+using System.Runtime.CompilerServices;
 
 namespace Obi
 {
@@ -159,12 +158,14 @@ namespace Obi
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GridLevelForSize(float size)
         {
             // the magic number is 1/log(2)
             return (int)math.ceil(math.log(math.max(size,minSize)) * 1.44269504089f);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float CellSizeOfLevel(int level)
         {
             return math.exp2(level);

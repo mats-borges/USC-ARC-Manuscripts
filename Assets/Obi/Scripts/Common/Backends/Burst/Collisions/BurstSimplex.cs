@@ -30,7 +30,7 @@ namespace Obi
             }
         }
 
-        public void Evaluate(float4 point, ref BurstLocalOptimization.SurfacePoint projectedPoint)
+        public void Evaluate(float4 point, float4 radii, quaternion orientation, ref BurstLocalOptimization.SurfacePoint projectedPoint)
         {
             switch (simplexSize)
             {
@@ -56,27 +56,6 @@ namespace Obi
             }
 
             projectedPoint.normal = math.normalizesafe(point - projectedPoint.point);
-
-            /*float radius1 = radii[simplices[simplexStart]].x;
-            float radius2 = radii[simplices[simplexStart+1]].x;
-
-            float invLen2 = 1.0f / math.lengthsq(p1 - p2);
-            float dl = (radius1 - radius2) * invLen2;
-            float sl = math.sqrt(1.0f / invLen2 - math.pow(radius1 - radius2, 2)) * math.sqrt(invLen2);
-            float adj_radii1 = radius1 * sl;
-            float adj_radii2 = radius2 * sl;
-
-            float trange1 = radius1 * dl;
-            float trange2 = 1 + radius2 * dl;
-
-            float adj_t = (mu - trange1) / (trange2 - trange1);
-            float radius = adj_radii1 + adj_t * (adj_radii2 - adj_radii1);
-
-            float4 centerToPoint = point - centerLine;
-            float4 normal = centerToPoint / (math.length(centerToPoint) + BurstMath.epsilon);
-
-            projectedPoint.point = centerLine + normal * radius;
-            projectedPoint.normal = normal;*/
         }
 
     }

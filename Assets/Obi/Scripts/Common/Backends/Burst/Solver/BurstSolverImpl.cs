@@ -3,8 +3,6 @@ using UnityEngine;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Collections;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace Obi
 {
@@ -47,7 +45,13 @@ namespace Obi
         private ConstraintBatcher constraintBatcher;
 
         // Per-type constraints array:
-        IBurstConstraintsImpl[] constraints;
+        private IBurstConstraintsImpl[] constraints;
+
+        // Per-type iteration padding array:
+        private int[] padding = new int[Oni.ConstraintTypeCount];
+
+        // Pool job handles to avoid runtime alloc:
+        private JobHandlePool<BurstJobHandle> jobHandlePool;
 
         // particle contact generation:
         public ParticleGrid particleGrid;
@@ -101,6 +105,7 @@ namespace Obi
 
         public NativeArray<int> collisionMaterials;
         public NativeArray<int> phases;
+        public NativeArray<int> filters;
         public NativeArray<float4> anisotropies;
         public NativeArray<float4> principalRadii;
         public NativeArray<float4> normals;
@@ -124,6 +129,8 @@ namespace Obi
         public BurstSolverImpl(ObiSolver solver)
         {
             this.m_Solver = solver;
+
+            jobHandlePool = new JobHandlePool<BurstJobHandle>(4);
 
             // Initialize collision world:
             GetOrCreateColliderWorld();
@@ -200,6 +207,11 @@ namespace Obi
             if (colliderContacts.IsCreated)
                 colliderContacts.Dispose();
 
+        }
+
+        public void ReleaseJobHandles()
+        {
+            jobHandlePool.ReleaseAll();
         }
 
         // Utility function to count scheduled jobs. Call it once per job.
@@ -289,8 +301,8 @@ namespace Obi
                 int set = ClampArrayAccess(amount, num, sourceOffset);
                 int end = sourceOffset + set;
 
-                for (int i = end * 3 - 1; i >= sourceOffset * 3; --i)
-                    deformableTriangles.RemoveAtSwapBack(i);
+                // TODO: replace by built in method in 0.9.0
+                deformableTriangles.RemoveRangeBurst(sourceOffset * 3, (end - sourceOffset) * 3 );
 
                 return set;
             }
@@ -457,6 +469,7 @@ namespace Obi
 
             collisionMaterials = abstraction.collisionMaterials.AsNativeArray<int>();
             phases = abstraction.phases.AsNativeArray<int>();
+            filters = abstraction.filters.AsNativeArray<int>();
             anisotropies = abstraction.anisotropies.AsNativeArray<float4>();
             principalRadii = abstraction.principalRadii.AsNativeArray<float4>();
             normals = abstraction.normals.AsNativeArray<float4>();
@@ -497,7 +510,7 @@ namespace Obi
 
             var inertiaUpdate = RecalculateInertiaTensors(fluidHandle);
 
-            return new BurstJobHandle(GenerateContacts(inertiaUpdate, stepTime));
+            return jobHandlePool.Borrow().SetHandle(GenerateContacts(inertiaUpdate, stepTime));
         }
 
         protected JobHandle FindFluidParticles()
@@ -643,25 +656,45 @@ namespace Obi
 
                 // Generate particle contact/friction batches:
                 var pc = constraints[(int)Oni.ConstraintType.ParticleCollision] as BurstParticleCollisionConstraints;
-                pc.batches.Clear();
                 var pf = constraints[(int)Oni.ConstraintType.ParticleFriction] as BurstParticleFrictionConstraints;
-                pf.batches.Clear();
+
+                for (int i = 0; i < pc.batches.Count; ++i)
+                    pc.batches[i].enabled = false;
+
+                for (int i = 0; i < pf.batches.Count; ++i)
+                    pf.batches[i].enabled = false;
+
                 for (int i = 0; i < activeParticleBatchCount[0]; ++i)
                 {
-                    var cbatch = pc.CreateConstraintsBatch() as BurstParticleCollisionConstraintsBatch;
-                    cbatch.batchData = particleBatchData[i];
+                    // create extra batches if not enough:
+                    if (i == pc.batches.Count)
+                    {
+                        pc.CreateConstraintsBatch();
+                        pf.CreateConstraintsBatch();
+                    }
 
-                    var fbatch = pf.CreateConstraintsBatch() as BurstParticleFrictionConstraintsBatch;
-                    fbatch.batchData = particleBatchData[i];
+                    pc.batches[i].enabled = true;
+                    pf.batches[i].enabled = true;
+
+                    (pc.batches[i] as BurstParticleCollisionConstraintsBatch).batchData = particleBatchData[i];
+                    (pf.batches[i] as BurstParticleFrictionConstraintsBatch ).batchData = particleBatchData[i];
                 }
 
                 // Generate fluid interaction batches:
                 var dc = constraints[(int)Oni.ConstraintType.Density] as BurstDensityConstraints;
-                dc.batches.Clear();
+
+                for (int i = 0; i < dc.batches.Count; ++i)
+                    dc.batches[i].enabled = false;
+
                 for (int i = 0; i < activeFluidBatchCount[0]; ++i)
                 {
-                    var batch = dc.CreateConstraintsBatch() as BurstDensityConstraintsBatch;
-                    batch.batchData = fluidBatchData[i];
+                    // create extra batches if not enough:
+                    if (i == dc.batches.Count)
+                        dc.CreateConstraintsBatch();
+
+                    dc.batches[i].enabled = true;
+
+                    (dc.batches[i] as BurstDensityConstraintsBatch).batchData = fluidBatchData[i];
                 }
 
                 // dispose of temporary buffers:
@@ -750,7 +783,7 @@ namespace Obi
 
             JobHandle updatePositionsHandle = updatePositionsJob.Schedule(activeParticles.Length, 128, velocityCorrectionsHandle);
 
-            return new BurstJobHandle(updatePositionsHandle);
+            return jobHandlePool.Borrow().SetHandle(updatePositionsHandle);
         }
 
         private JobHandle ApplyVelocityCorrections(JobHandle inputDeps, float deltaTime)
@@ -784,7 +817,6 @@ namespace Obi
             }
 
             // calculate iteration paddings:
-            int[] padding = new int[Oni.ConstraintTypeCount];
             for (int i = 0; i < Oni.ConstraintTypeCount; ++i)
             {
                 var parameters = m_Solver.GetConstraintParameters((Oni.ConstraintType)i);
@@ -895,6 +927,41 @@ namespace Obi
                                                       diffuseProperties.AsNativeArray<float4>(),
                                                       neighbourCount.AsNativeArray<int>(),
                                                       diffuseCount).Complete();
+        }
+
+        public void SpatialQuery(ObiNativeQueryShapeList shapes, ObiNativeAffineTransformList transforms, ObiNativeQueryResultList results)
+        {
+            var resultsQueue = new NativeQueue<BurstQueryResult>(Allocator.Persistent);
+
+            particleGrid.SpatialQuery(this,
+                                      shapes.AsNativeArray<BurstQueryShape>(),
+                                      transforms.AsNativeArray<BurstAffineTransform>(),
+                                      resultsQueue).Complete();
+
+            int count = resultsQueue.Count;
+            results.ResizeUninitialized(count);
+
+            var dequeueQueryResults = new DequeueIntoArrayJob<BurstQueryResult>()
+            {
+                InputQueue = resultsQueue,
+                OutputArray = results.AsNativeArray<BurstQueryResult>()
+            };
+
+            var dequeueHandle = dequeueQueryResults.Schedule();
+
+            var distanceJob = new CalculateQueryDistances()
+            {
+                prevPositions = prevPositions,
+                prevOrientations = prevOrientations,
+                radii = principalRadii,
+                simplices = simplices,
+                simplexCounts = simplexCounts,
+                queryResults = results.AsNativeArray<BurstQueryResult>()
+            };
+
+            distanceJob.Schedule(count, 16, dequeueHandle).Complete();
+
+            resultsQueue.Dispose();
         }
 
         public int GetParticleGridSize()

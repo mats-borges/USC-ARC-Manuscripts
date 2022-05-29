@@ -7,6 +7,8 @@ using UnityEngine.Events;
 
 public class IntroWall : MonoBehaviour
 {
+    //controls the wall of introductory text and images
+    
     [SerializeField] private GameObject textWall;
     [SerializeField] private GameObject introWallParent;
     [SerializeField] private GameObject spriteWall;
@@ -16,16 +18,14 @@ public class IntroWall : MonoBehaviour
 
     private int currentIndex = 0;
     
-    // Start is called before the first frame update
     void Start()
     {
         UpdateTextWall();
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.T) || OVRInput.GetDown(OVRInput.Button.One))
+        if ( OVRInput.GetDown(OVRInput.Button.One))
         {
             if (currentIndex < textList.Count - 1)
             {
@@ -36,7 +36,6 @@ public class IntroWall : MonoBehaviour
             {
                 introWallParent.SetActive(false);
             }
-            
         }
     }
 

@@ -127,7 +127,7 @@ namespace Obi
                 quaternion d2 = orientationDeltas[q2];
 
                 d1.value += math.mul(orientations[q2], dlambdaQ).value * w1;
-                d2.value += math.mul(orientations[q1], dlambdaQ).value * -w2;
+                d2.value -= math.mul(orientations[q1], dlambdaQ).value * w2;
 
                 orientationDeltas[q1] = d1;
                 orientationDeltas[q2] = d2;

@@ -44,7 +44,18 @@ namespace Obi
         /// <summary>
         /// current best-match orientation for each constraint.
         /// </summary>
-        public ObiNativeQuaternionList orientations = new ObiNativeQuaternionList();   
+        public ObiNativeQuaternionList orientations = new ObiNativeQuaternionList();
+
+        /// <summary>
+        /// current best-match linear transform for each constraint.
+        /// </summary>
+        public ObiNativeMatrix4x4List linearTransforms = new ObiNativeMatrix4x4List();
+
+        /// <summary>
+        /// current plastic deformation for each constraint.
+        /// </summary>
+        public ObiNativeMatrix4x4List plasticDeformations = new ObiNativeMatrix4x4List();
+
 
         public override Oni.ConstraintType constraintType
         {
@@ -89,6 +100,29 @@ namespace Obi
                 particles.Add(particleIndices[i]);
         }
 
+        public void RemoveParticleFromConstraint(int constraintIndex, int particleIndex)
+        {
+            int first = firstIndex[constraintIndex];
+            int num = numIndices[constraintIndex];
+
+            int found = 0;
+            for (int i = first + num - 1; i >= first; --i)
+            {
+                if (particleIndices[i] == particleIndex)
+                {
+                    found++;
+                    particleIndices.RemoveAt(i);
+                }
+            }
+
+            // update num indices of the current constraint:
+            numIndices[constraintIndex] -= found;
+
+            // update firstIndex of following constraints:
+            for (int i = constraintIndex + 1; i < constraintCount; ++i)
+                firstIndex[i] -= found;
+        }
+
         protected override void SwapConstraints(int sourceIndex, int destIndex)
         {
             firstIndex.Swap(sourceIndex, destIndex);
@@ -101,6 +135,8 @@ namespace Obi
             restComs.Swap(sourceIndex, destIndex);
             coms.Swap(sourceIndex, destIndex);
             orientations.Swap(sourceIndex, destIndex);
+            linearTransforms.Swap(sourceIndex, destIndex);
+            plasticDeformations.Swap(sourceIndex, destIndex);
         }
 
         public override void Merge(ObiActor actor, IObiConstraintsBatch other)
@@ -130,6 +166,9 @@ namespace Obi
                 restComs.ResizeUninitialized(m_ActiveConstraintCount + batch.activeConstraintCount);
                 coms.ResizeUninitialized(m_ActiveConstraintCount + batch.activeConstraintCount);
                 orientations.ResizeUninitialized(m_ActiveConstraintCount + batch.activeConstraintCount);
+                linearTransforms.ResizeUninitialized(m_ActiveConstraintCount + batch.activeConstraintCount);
+                plasticDeformations.ResizeInitialized(m_ActiveConstraintCount + batch.activeConstraintCount, Matrix4x4.identity);
+
                 lambdas.ResizeInitialized(m_ActiveConstraintCount + batch.activeConstraintCount);
 
                 numIndices.CopyFrom(batch.numIndices, 0, m_ActiveConstraintCount, batch.activeConstraintCount);
@@ -142,11 +181,11 @@ namespace Obi
                 for (int i = 0; i < batch.activeConstraintCount; ++i)
                 {
                     firstIndex[m_ActiveConstraintCount + i] = batch.firstIndex[i] + initialIndexCount;
-                    materialParameters[(m_ActiveConstraintCount + i) * 5] = user.deformationResistance;
-                    materialParameters[(m_ActiveConstraintCount + i) * 5 + 1] = user.plasticYield;
-                    materialParameters[(m_ActiveConstraintCount + i) * 5 + 2] = user.plasticCreep;
-                    materialParameters[(m_ActiveConstraintCount + i) * 5 + 3] = user.plasticRecovery;
-                    materialParameters[(m_ActiveConstraintCount + i) * 5 + 4] = user.maxDeformation;
+                    materialParameters[(m_ActiveConstraintCount + i) * 5] = batch.materialParameters[i * 5] * user.deformationResistance;
+                    materialParameters[(m_ActiveConstraintCount + i) * 5 + 1] = batch.materialParameters[i * 5 + 1] * user.plasticYield;
+                    materialParameters[(m_ActiveConstraintCount + i) * 5 + 2] = batch.materialParameters[i * 5 + 2] * user.plasticCreep;
+                    materialParameters[(m_ActiveConstraintCount + i) * 5 + 3] = batch.materialParameters[i * 5 + 3] * user.plasticRecovery;
+                    materialParameters[(m_ActiveConstraintCount + i) * 5 + 4] = batch.materialParameters[i * 5 + 4] * user.maxDeformation;
                 }
 
                 base.Merge(actor, other);
@@ -161,7 +200,8 @@ namespace Obi
             if (m_BatchImpl != null)
             {
                 m_BatchImpl.SetShapeMatchingConstraints(particleIndices, firstIndex, numIndices, explicitGroup,
-                                                        materialParameters, restComs, coms, orientations, lambdas, m_ActiveConstraintCount);
+                                                        materialParameters, restComs, coms, orientations, linearTransforms, plasticDeformations,
+                                                        lambdas, m_ActiveConstraintCount);
 
                 m_BatchImpl.CalculateRestShapeMatching();
             }

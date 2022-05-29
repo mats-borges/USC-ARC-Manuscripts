@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-
-namespace Obi
+﻿namespace Obi
 {
     public interface IShapeMatchingConstraintsBatchImpl : IConstraintsBatchImpl
     {
@@ -13,6 +10,8 @@ namespace Obi
                                          ObiNativeVector4List restComs,
                                          ObiNativeVector4List coms,
                                          ObiNativeQuaternionList orientations,
+                                         ObiNativeMatrix4x4List linearTransforms,
+                                         ObiNativeMatrix4x4List plasticDeformations,
                                          ObiNativeFloatList lambdas,
                                          int count);
 

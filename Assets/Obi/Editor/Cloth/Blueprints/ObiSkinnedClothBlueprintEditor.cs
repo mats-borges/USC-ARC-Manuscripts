@@ -1,8 +1,5 @@
 using UnityEngine;
 using UnityEditor;
-using System.Collections.Generic;
-using System.Collections;
-using System;
 
 namespace Obi
 {
@@ -39,7 +36,7 @@ namespace Obi
 
             properties.Add(new ObiBlueprintMass(this));
             properties.Add(new ObiBlueprintRadius(this));
-            properties.Add(new ObiBlueprintLayer(this));
+            properties.Add(new ObiBlueprintFilterCategory(this));
             properties.Add(new ObiBlueprintColor(this));
             properties.Add(new ObiBlueprintSkinBackstop(this));
             properties.Add(new ObiBlueprintSkinBackstopRadius(this));

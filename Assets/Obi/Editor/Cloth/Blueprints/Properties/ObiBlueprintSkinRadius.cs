@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
 
 namespace Obi
 {
@@ -11,6 +10,7 @@ namespace Obi
         {
             brushModes.Add(new ObiFloatPaintBrushMode(this));
             brushModes.Add(new ObiFloatAddBrushMode(this));
+            brushModes.Add(new ObiFloatCopyBrushMode(this, this));
             brushModes.Add(new ObiFloatSmoothBrushMode(this));
         }
 

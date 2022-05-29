@@ -7,9 +7,9 @@ using UnityEngine;
 public class BookManager : MonoBehaviour
 {
     //leftpagenum is used by pagesideTextManager
-    public int leftPageNum = 0;
+    public int leftPageNum = 2;
     int simPageNum = 1;
-    int rightPageNum = 2;
+    public int rightPageNum = 0;
     int versoInspectorPageNum = 0;
     int rectoInspectorPageNum = 1;
     public bool pairedMode = true;
@@ -20,11 +20,9 @@ public class BookManager : MonoBehaviour
     [SerializeField] GameObject simPage;
     [SerializeField] GameObject versoInspectorPage;
     [SerializeField] GameObject rectoInspectorPage;
-    [SerializeField] private GameObject obiSolver;
-    [SerializeField] private GraspingPoint grabber;
-    private Vector3 obiSolverPos;
-    private Quaternion obiSolverQuat;
-    
+    [SerializeField] private GameObject bookSystemObject;
+    private GameObject folioMenuText;
+
     [SerializeField] List<Material> pageList = new List<Material>(); 
 
     private void Start()
@@ -34,29 +32,7 @@ public class BookManager : MonoBehaviour
         simPage.GetComponent<Renderer>().material = pageList[simPageNum];
         versoInspectorPage.GetComponent<Renderer>().material = pageList[versoInspectorPageNum];
         rectoInspectorPage.GetComponent<Renderer>().material = pageList[rectoInspectorPageNum];
-
-        obiSolverPos = obiSolver.transform.position;
-        obiSolverQuat = obiSolver.transform.rotation;
-    }
-    
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            ToggleInspector();
-        }
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            IncrementInspector();
-        }
-        if(Input.GetKeyDown(KeyCode.G))
-        {
-            IncrementAll();
-        }
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            ToggleInspectorMode();
-        }
+        folioMenuText = GameObject.Find("Advance Page Name Text");
     }
 
     public void Increment(GameObject page,ref int pgn)
@@ -97,6 +73,9 @@ public class BookManager : MonoBehaviour
             Increment(versoInspectorPage,  ref versoInspectorPageNum);
             Increment(rectoInspectorPage,  ref rectoInspectorPageNum);
         }
+        
+        //increment the control panel's page number display
+        folioMenuText.GetComponent<MenuText>().IncrementState();
     }
 
     public void decrementAll()
@@ -109,16 +88,19 @@ public class BookManager : MonoBehaviour
             Decrement(versoInspectorPage,  ref versoInspectorPageNum);
             Decrement(rectoInspectorPage,  ref rectoInspectorPageNum);
         }
+        
+        //decrement the control panel's page number display
+        folioMenuText.GetComponent<MenuText>().DecrementState();
     }
 
-    //only the inspector
+    //increments only the inspector
     public void IncrementInspector()
     {
         Increment(versoInspectorPage, ref versoInspectorPageNum);
         Increment(rectoInspectorPage, ref rectoInspectorPageNum);
     }
     
-    //only the inspector
+    //decrements only the inspector
     public void DecrementInspector()
     {
         Decrement(versoInspectorPage, ref versoInspectorPageNum);
@@ -144,14 +126,12 @@ public class BookManager : MonoBehaviour
         versoInspectorPage.GetComponent<MeshRenderer>().enabled = isInspectorOn;
         rectoInspectorPage.GetComponent<MeshRenderer>().enabled = isInspectorOn;
     }
-    
-    
 
     public void ResetExperienceBM()
     {
-        leftPageNum = 0;
+        leftPageNum = 2;
         simPageNum = 1;
-        rightPageNum = 2;
+        rightPageNum = 0;
         versoInspectorPageNum = 0;
         rectoInspectorPageNum = 1;
         leftPage.GetComponent<Renderer>().material = pageList[leftPageNum];
@@ -161,25 +141,16 @@ public class BookManager : MonoBehaviour
         rectoInspectorPage.GetComponent<Renderer>().material = pageList[rectoInspectorPageNum];
 
         ResetPageParticles(null);
+        bookSystemObject.GetComponent<ParticlePositionManager>().LoadParticles("LeftSideResting");
     }
 
     IEnumerator ResetPageRoutine(BaseInteractor interactor)
     {
         simPage.GetComponent<ObiTearableCloth>().ResetParticles();
         simPage.GetComponent<ObiTearableCloth>().RemoveFromSolver();
-
-        // for (int i = 0; i < 30; i++)
-        // {
-        //     yield return new WaitForEndOfFrame();   
-        // }
-
         simPage.GetComponent<ObiTearableCloth>().AddToSolver();
 
-        yield return new WaitForEndOfFrame();   
-        if (interactor != null)
-        {
-            // grabber.Attach(interactor);
-        }
+        yield return new WaitForEndOfFrame();
 
         yield return null;
     }

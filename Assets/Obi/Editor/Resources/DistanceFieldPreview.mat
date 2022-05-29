@@ -76,8 +76,8 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _AABBMax: {r: 7.7813697, g: 7.7813697, b: 7.7813697, a: 0}
-    - _AABBMin: {r: -7.7813697, g: -7.7813697, b: -7.7813697, a: 0}
+    - _AABBMax: {r: 38.110596, g: 38.110596, b: 38.110596, a: 0}
+    - _AABBMin: {r: -38.110596, g: -38.110596, b: -38.110596, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _InsideColor: {r: 1, g: 1, b: 1, a: 1}

@@ -33,15 +33,6 @@ public static class Oni
         Friction = 16
     };
 
-    [Flags]
-    public enum ParticleFlags
-    {
-        GroupMask = 0x00ffffff,
-        SelfCollide = 1 << 24,
-        Fluid = 1 << 25,
-        OneSided = 1 << 26
-    }
-
     public enum ShapeType
     {
         Sphere = 0,
@@ -154,7 +145,7 @@ public static class Oni
             surfaceCollisionTolerance = 0.005f;
             maxAnisotropy = 3;
             maxDepenetration = 10;
-            sleepThreshold = 0.001f;
+            sleepThreshold = 0.0005f;
             collisionMargin = 0.02f;
             continuousCollisionDetection = 1;
         }
@@ -195,7 +186,7 @@ public static class Oni
 
     }
 
-    // In this particular case, size is forced to 128 bytes to ensure 16 byte memory alignment needed by Oni.
+    // In this particular case, size is forced to 144 bytes to ensure 16 byte memory alignment needed by Oni.
     [StructLayout(LayoutKind.Sequential, Size = 144)]
     public struct Contact
     {
@@ -293,7 +284,6 @@ public static class Oni
     [DllImport(LIBNAME)]
     public static extern void SetRigidbodyAngularDeltas(IntPtr solver, IntPtr angularDeltas);
 
-
     [DllImport(LIBNAME)]
     public static extern void GetBounds(IntPtr solver, ref Vector3 min, ref Vector3 max);
 
@@ -302,6 +292,12 @@ public static class Oni
 
     [DllImport(LIBNAME)]
     public static extern void GetParticleGrid(IntPtr solver, GridCell[] cells);
+
+    [DllImport(LIBNAME)]
+    public static extern int SpatialQuery(IntPtr solver, IntPtr shapes, IntPtr transforms, int count);
+
+    [DllImport(LIBNAME)]
+    public static extern void GetQueryResults(IntPtr solver, IntPtr results, int num);
 
     [DllImport(LIBNAME)]
     public static extern void SetSolverParameters(IntPtr solver, ref SolverParameters parameters);
@@ -332,6 +328,9 @@ public static class Oni
 
     [DllImport(LIBNAME)]
     public static extern void SetParticlePhases(IntPtr solver, IntPtr phases);
+
+    [DllImport(LIBNAME)]
+    public static extern void SetParticleFilters(IntPtr solver, IntPtr filters);
 
     [DllImport(LIBNAME)]
     public static extern void SetParticleCollisionMaterials(IntPtr solver, IntPtr materialIndices);
@@ -533,6 +532,8 @@ public static class Oni
                                                           IntPtr restComs,
                                                           IntPtr coms,
                                                           IntPtr orientations,
+                                                          IntPtr linearTransforms,
+                                                          IntPtr plasticDeformations,
                                                           int num);
 
     [DllImport(LIBNAME)]
@@ -601,7 +602,7 @@ public static class Oni
     public static extern int InterpolateDiffuseParticles(IntPtr solver, IntPtr properties, IntPtr diffusePositions, IntPtr diffuseProperties, IntPtr neighbourCount, int n);
 
     [DllImport(LIBNAME)]
-    public static extern int MakePhase(int group, ParticleFlags flags);
+    public static extern int MakePhase(int group, ObiUtils.ParticleFlags flags);
 
     [DllImport(LIBNAME)]
     public static extern int GetGroupFromPhase(int phase);

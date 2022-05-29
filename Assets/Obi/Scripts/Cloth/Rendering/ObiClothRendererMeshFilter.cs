@@ -10,10 +10,11 @@ namespace Obi
     public abstract class ObiClothRendererMeshFilter : ObiClothRendererBase
     {
         MeshFilter filter;
-        protected override void Awake()
+
+        protected override void OnEnable()
         {
             filter = GetComponent<MeshFilter>();
-            base.Awake();
+            base.OnEnable();
         }
 
         protected override void OnBlueprintLoaded(ObiActor actor, ObiActorBlueprint blueprint)

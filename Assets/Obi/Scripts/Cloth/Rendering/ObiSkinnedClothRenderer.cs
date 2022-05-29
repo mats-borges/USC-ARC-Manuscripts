@@ -11,24 +11,23 @@ namespace Obi
     public class ObiSkinnedClothRenderer : ObiClothRendererBase
     {
         private SkinnedMeshRenderer skin;
-        private Matrix4x4 local2Root;
         private List<Material> rendererMaterials = new List<Material>();
+        private MaterialPropertyBlock propertyBlock;
 
         public override Matrix4x4 renderMatrix
         {
             get
             {
-                if (skin.rootBone != null)
-                    return skin.rootBone.worldToLocalMatrix;
-                else
-                    return cloth.transform.worldToLocalMatrix;
+                var skinScale = Matrix4x4.Scale(skin.transform.lossyScale);
+                return skinScale * skin.transform.worldToLocalMatrix;
             }
         }
 
-        protected override void Awake()
+        protected override void OnEnable()
         {
+            propertyBlock = new MaterialPropertyBlock();
             skin = GetComponent<SkinnedMeshRenderer>();
-            base.Awake();
+            base.OnEnable();
         }
 
         protected override void OnBlueprintLoaded(ObiActor actor, ObiActorBlueprint blueprint)
@@ -47,20 +46,16 @@ namespace Obi
             // we do this every frame, to make sure non-simulated vertices are fully skinned.
             clothMesh = ((ObiSkinnedCloth)cloth).bakedMesh;
             GetClothMeshData();
-
-            // update local space to root bone space matrix:
-            local2Root = skin.rootBone.worldToLocalMatrix * skin.transform.localToWorldMatrix;
-
         }
 
         protected override void UpdateInactiveVertex(ObiSolver solver, int actorIndex, int meshVertexIndex)
         {
             var skinnedCloth = (ObiSkinnedCloth)cloth;
 
-            clothVertices[meshVertexIndex] = local2Root.MultiplyPoint3x4(skinnedCloth.bakedVertices[meshVertexIndex]);
-            clothNormals[meshVertexIndex] = local2Root.MultiplyVector(skinnedCloth.bakedNormals[meshVertexIndex]);
-            Vector3 tangent = local2Root.MultiplyVector(skinnedCloth.bakedTangents[meshVertexIndex]);
-            clothTangents[meshVertexIndex] = new Vector4(tangent.x, tangent.y, tangent.z, clothTangents[meshVertexIndex].w);
+            clothVertices[meshVertexIndex] = skinnedCloth.bakedVertices[meshVertexIndex];
+            clothNormals[meshVertexIndex] = skinnedCloth.bakedNormals[meshVertexIndex];
+            Vector3 tangent = skinnedCloth.bakedTangents[meshVertexIndex];
+            clothTangents[meshVertexIndex] = new Vector4(tangent.x, tangent.y, tangent.z, clothTangents[meshVertexIndex].w); 
         }
 
         public override void UpdateRenderer(ObiActor actor)
@@ -73,17 +68,18 @@ namespace Obi
                 // since the skinned mesh renderer won't accept a mesh with no bone weights, we need to render the mesh ourselves:
                 skin.sharedMesh = null;
 
-                skin.GetSharedMaterials(rendererMaterials);
+                skin.GetMaterials(rendererMaterials);
+                skin.GetPropertyBlock(propertyBlock);
 
                 // Render all submeshes and materials:
-                Matrix4x4 matrix = skin.rootBone.transform.localToWorldMatrix;
+                Matrix4x4 matrix = renderMatrix.inverse;
                 int subMeshCount = clothMesh.subMeshCount;
                 int drawcalls = Mathf.Max(subMeshCount, rendererMaterials.Count);
 
                 for (int j = 0; j < drawcalls; ++j)
                 {
                     if (j < rendererMaterials.Count)
-                        Graphics.DrawMesh(clothMesh, matrix, rendererMaterials[j], gameObject.layer, null, Mathf.Min(j, subMeshCount - 1), null, skin.shadowCastingMode, skin.receiveShadows);
+                        Graphics.DrawMesh(clothMesh, matrix, rendererMaterials[j], gameObject.layer, null, Mathf.Min(j, subMeshCount - 1), propertyBlock, skin.shadowCastingMode, skin.receiveShadows);
                 }
             }
         }

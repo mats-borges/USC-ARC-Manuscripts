@@ -16,12 +16,11 @@ namespace Obi
         protected int m_Stride;
         protected int m_Capacity;
         protected int m_Count;
+        [SerializeField] protected int m_AlignBytes = 16;
 
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
         protected AtomicSafetyHandle m_SafetyHandle;
 #endif
-        protected bool m_AsNativeArray = false;
-
         protected ComputeBuffer m_ComputeBuffer;
 
         public int count
@@ -69,12 +68,20 @@ namespace Obi
             }
         }
 
+        // Declare parameterless constructor, called by Unity upon deserialization.
+        protected ObiNativeList()
+        {
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+            m_SafetyHandle = AtomicSafetyHandle.Create();
+#endif
+        }
+
         public ObiNativeList(int capacity = 8, int alignment = 16)
         {
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
             m_SafetyHandle = AtomicSafetyHandle.Create();
 #endif
-
+            m_AlignBytes = alignment;
             ChangeCapacity(capacity);
         }
 
@@ -88,16 +95,6 @@ namespace Obi
             if (isCreated)
             {
 
-#if ENABLE_UNITY_COLLECTIONS_CHECKS
-                // dispose of atomic safety handle:
-                if (m_AsNativeArray)
-                {
-                    AtomicSafetyHandle.CheckDeallocateAndThrow(m_SafetyHandle);
-                    AtomicSafetyHandle.Release(m_SafetyHandle);
-                    m_AsNativeArray = false;
-                }
-#endif
-
                 // dispose of compuse buffer representation:
                 if (m_ComputeBuffer != null)
                 {
@@ -108,6 +105,11 @@ namespace Obi
                 UnsafeUtility.Free(m_AlignedPtr, Allocator.Persistent);
                 m_AlignedPtr = null;
             }
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+            // dispose of atomic safety handle:
+            AtomicSafetyHandle.CheckDeallocateAndThrow(m_SafetyHandle);
+            AtomicSafetyHandle.Release(m_SafetyHandle);
+#endif
         }
 
         public void Dispose()
@@ -168,7 +170,6 @@ namespace Obi
 
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
                 NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref array, m_SafetyHandle);
-                m_AsNativeArray = true;
 #endif
                 return array;
             }
@@ -187,7 +188,7 @@ namespace Obi
             return m_ComputeBuffer;
         }
 
-        protected void ChangeCapacity(int newCapacity, int byteAlignment = 16)
+        protected void ChangeCapacity(int newCapacity)
         {
             // allocate a new buffer:
             m_Stride = UnsafeUtility.SizeOf<T>();

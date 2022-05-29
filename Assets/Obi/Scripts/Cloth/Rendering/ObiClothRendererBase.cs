@@ -50,7 +50,7 @@ namespace Obi
             get { return cloth.transform.worldToLocalMatrix; }
         }
 
-        protected virtual void Awake()
+        /*protected virtual void Awake()
         {
             cloth = GetComponent<ObiClothBase>();
             cloth.OnBlueprintLoaded += OnBlueprintLoaded;
@@ -66,16 +66,29 @@ namespace Obi
                 cloth.OnBlueprintUnloaded -= OnBlueprintUnloaded;
                 DestroyImmediate(clothMesh);
             }
-        }
+        }*/
 
         protected virtual void OnEnable()
         {
+            cloth = GetComponent<ObiClothBase>();
+            cloth.OnBlueprintLoaded += OnBlueprintLoaded;
+            cloth.OnBlueprintUnloaded += OnBlueprintUnloaded;
+            if (cloth.isLoaded)
+                OnBlueprintLoaded(cloth, cloth.sourceBlueprint);
+
             cloth.OnInterpolate += UpdateRenderer;
         }
 
         protected virtual void OnDisable()
         {
-            cloth.OnInterpolate -= UpdateRenderer;
+            if (cloth != null)
+            {
+                cloth.OnInterpolate -= UpdateRenderer;
+
+                cloth.OnBlueprintLoaded -= OnBlueprintLoaded;
+                cloth.OnBlueprintUnloaded -= OnBlueprintUnloaded;
+                DestroyImmediate(clothMesh);
+            }
         }
 
         protected virtual void GetClothMeshData()

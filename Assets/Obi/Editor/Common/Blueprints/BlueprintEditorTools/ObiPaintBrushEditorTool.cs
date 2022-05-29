@@ -1,7 +1,5 @@
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
-using System;
 
 namespace Obi
 {
@@ -9,8 +7,7 @@ namespace Obi
     {
         public ObiRaycastBrush paintBrush;
         public bool selectionMask = false;
-
-        protected bool visualizationOptions;
+        public int sourcePropertyIndex = 0; /**<index of the property to copy from*/
 
         public ObiMeshBasedActorBlueprintEditor meshBasedEditor
         {
@@ -56,8 +53,26 @@ namespace Obi
 
             EditorGUILayout.Space();
 
-            if (editor.PropertySelector())
+            EditorGUI.BeginChangeCheck();
+            editor.currentPropertyIndex = editor.PropertySelector(editor.currentPropertyIndex);
+            if (EditorGUI.EndChangeCheck())
+            {
+                editor.Refresh();
                 editor.currentProperty.OnSelect(paintBrush);
+            }
+
+            if (paintBrush.brushMode is ObiFloatCopyBrushMode)
+            {
+                EditorGUI.BeginChangeCheck();
+                sourcePropertyIndex = editor.PropertySelector(sourcePropertyIndex, "Copy from");
+                var sourceProperty = editor.GetProperty(sourcePropertyIndex) as ObiBlueprintFloatProperty; 
+                if (EditorGUI.EndChangeCheck())
+                {
+                    (paintBrush.brushMode as ObiFloatCopyBrushMode).source = sourceProperty;
+                }
+                if (sourceProperty == null)
+                    EditorGUILayout.HelpBox("You can't copy value from this property.", MessageType.Error);
+            }
 
             if (paintBrush.brushMode.needsInputValue)
                 editor.currentProperty.PropertyField();
@@ -65,6 +80,8 @@ namespace Obi
             paintBrush.radius = EditorGUILayout.Slider("Brush size", paintBrush.radius, 0.0001f, 0.5f);
             paintBrush.innerRadius = EditorGUILayout.Slider("Brush inner size", paintBrush.innerRadius, 0, 1);
             paintBrush.opacity = EditorGUILayout.Slider("Brush opacity", paintBrush.opacity, 0, 1);
+            paintBrush.mirror.axis = (ObiBrushMirrorSettings.MirrorAxis)EditorGUILayout.EnumPopup("Brush mirror axis", paintBrush.mirror.axis);
+            paintBrush.mirror.space = (ObiBrushMirrorSettings.MirrorSpace)EditorGUILayout.EnumPopup("Brush mirror space", paintBrush.mirror.space);
 
             EditorGUI.BeginChangeCheck();
             meshBasedEditor.particleCulling = (ObiMeshBasedActorBlueprintEditor.ParticleCulling)EditorGUILayout.EnumPopup("Culling", meshBasedEditor.particleCulling);
@@ -85,13 +102,10 @@ namespace Obi
             GUILayout.Box(GUIContent.none, ObiEditorUtils.GetSeparatorLineStyle());
 
             EditorGUILayout.BeginVertical(EditorStyles.inspectorDefaultMargins);
-            visualizationOptions = EditorGUILayout.Foldout(visualizationOptions, "Visualization");
 
-            if (visualizationOptions)
-            {
                 editor.RenderModeSelector();
                 editor.currentProperty.VisualizationOptions();
-            }
+           
             EditorGUILayout.EndVertical();
         }
 

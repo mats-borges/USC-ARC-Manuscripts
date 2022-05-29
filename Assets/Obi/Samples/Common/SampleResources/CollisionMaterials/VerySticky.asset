@@ -15,7 +15,7 @@ MonoBehaviour:
   dynamicFriction: 0.2
   staticFriction: 0
   stickiness: 0.2
-  stickDistance: 0.01
+  stickDistance: 0.03
   frictionCombine: 3
   stickinessCombine: 3
   rollingContacts: 0

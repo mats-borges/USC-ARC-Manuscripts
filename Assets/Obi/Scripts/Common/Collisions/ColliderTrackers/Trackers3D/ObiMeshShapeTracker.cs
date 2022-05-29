@@ -50,7 +50,7 @@ namespace Obi{
             // update collider:
             var shape = world.colliderShapes[index];
             shape.type = ColliderShape.ShapeType.TriangleMesh;
-            shape.phase = source.Phase;
+            shape.filter = source.Filter;
             shape.flags = meshCollider.isTrigger ? 1 : 0;
             shape.rigidbodyIndex = source.Rigidbody != null ? source.Rigidbody.handle.index : -1;
             shape.materialIndex = source.CollisionMaterial != null ? source.CollisionMaterial.handle.index : -1;

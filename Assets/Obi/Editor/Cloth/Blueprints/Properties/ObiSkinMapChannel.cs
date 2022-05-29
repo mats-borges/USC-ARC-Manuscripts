@@ -1,7 +1,3 @@
-using UnityEngine;
-using UnityEditor;
-using System.Collections;
-
 namespace Obi
 {
     public class ObiSkinMapChannel : ObiBlueprintIntProperty

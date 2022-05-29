@@ -7,6 +7,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Burst;
 using System.Runtime.CompilerServices;
+using Unity.Collections.LowLevel.Unsafe;
 
 namespace Obi
 {
@@ -16,6 +17,7 @@ namespace Obi
         public const float epsilon = 0.0000001f;
         public const float zero = 0;
         public const float one = 1;
+        public static readonly float golden = (math.sqrt(5.0f) + 1) / 2.0f;
 
         // multiplies a column vector by a row vector.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -81,15 +83,30 @@ namespace Obi
                                                          NativeArray<BurstRigidbody> rigidbodies,
                                                          NativeArray<float4> linearDeltas,
                                                          NativeArray<float4> angularDeltas,
-                                                         BurstAffineTransform transform) 
+                                                         BurstAffineTransform solverToWorld) 
         {
             float4 linear  = rigidbodies[rigidbodyIndex].velocity + linearDeltas[rigidbodyIndex];
             float4 angular = rigidbodies[rigidbodyIndex].angularVelocity + angularDeltas[rigidbodyIndex];
-            float4 r = transform.TransformPoint(point) - rigidbodies[rigidbodyIndex].com;
+            float4 r = solverToWorld.TransformPoint(point) - rigidbodies[rigidbodyIndex].com;
 
             // Point is assumed to be expressed in solver space. Since rigidbodies are expressed in world space, we need to convert the
             // point to world space, and convert the resulting velocity back to solver space.
-            return transform.InverseTransformVector(linear + new float4(math.cross(angular.xyz, r.xyz), 0));
+            return solverToWorld.InverseTransformVector(linear + new float4(math.cross(angular.xyz, r.xyz), 0));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float4 GetRigidbodyVelocityAtPoint(int rigidbodyIndex,
+                                                         float4 point,
+                                                         NativeArray<BurstRigidbody> rigidbodies,
+                                                         BurstAffineTransform solverToWorld)
+        {
+            float4 linear = rigidbodies[rigidbodyIndex].velocity;
+            float4 angular = rigidbodies[rigidbodyIndex].angularVelocity;
+            float4 r = solverToWorld.TransformPoint(point) - rigidbodies[rigidbodyIndex].com;
+
+            // Point is assumed to be expressed in solver space. Since rigidbodies are expressed in world space, we need to convert the
+            // point to world space, and convert the resulting velocity back to solver space.
+            return solverToWorld.InverseTransformVector(linear + new float4(math.cross(angular.xyz, r.xyz), 0));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -99,10 +116,10 @@ namespace Obi
                                         NativeArray<BurstRigidbody> rigidbodies,
                                         NativeArray<float4> linearDeltas,
                                         NativeArray<float4> angularDeltas,
-                                        BurstAffineTransform transform)
+                                        BurstAffineTransform solverToWorld)
         {
-            float4 impulseWS = transform.TransformVector(impulse);
-            float4 r = transform.TransformPoint(point) - rigidbodies[rigidbodyIndex].com;
+            float4 impulseWS = solverToWorld.TransformVector(impulse);
+            float4 r = solverToWorld.TransformPoint(point) - rigidbodies[rigidbodyIndex].com;
             linearDeltas[rigidbodyIndex]  += rigidbodies[rigidbodyIndex].inverseMass * impulseWS;
             angularDeltas[rigidbodyIndex] += math.mul(rigidbodies[rigidbodyIndex].inverseInertiaTensor, new float4(math.cross(r.xyz, impulseWS.xyz), 0));
         }
@@ -112,11 +129,11 @@ namespace Obi
                                                 quaternion rotation,
                                                 quaternion delta,
                                                 NativeArray<float4> angularDeltas,
-                                                BurstAffineTransform transform,
+                                                BurstAffineTransform solverToWorld,
                                                 float dt)
         {
-            quaternion rotationWS = math.mul(transform.rotation, rotation);
-            quaternion deltaWS = math.mul(transform.rotation, delta);
+            quaternion rotationWS = math.mul(solverToWorld.rotation, rotation);
+            quaternion deltaWS = math.mul(solverToWorld.rotation, delta);
 
             // convert quaternion delta to angular acceleration:
             quaternion newRotation = math.normalize(new quaternion(rotationWS.value + deltaWS.value));
@@ -659,6 +676,29 @@ namespace Obi
             for (int i = 0; i < simplexSize; ++i)
                 center[i] = value;
             return center;
+        }
+
+        public static unsafe void RemoveRangeBurst<T>(this NativeList<T> list, int index, int count)
+            where T : unmanaged
+        {
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+            if ((uint)index >= (uint)list.Length)
+            {
+                throw new IndexOutOfRangeException(
+                    $"Index {index} is out of range in NativeList of '{list.Length}' Length.");
+            }
+#endif
+
+            int elemSize = UnsafeUtility.SizeOf<T>();
+            byte* basePtr = (byte*)list.GetUnsafePtr();
+
+            UnsafeUtility.MemMove(basePtr + (index * elemSize), basePtr + ((index + count) * elemSize), elemSize * (list.Length - count - index));
+
+            // No easy way to change length so we just loop this unfortunately.
+            for (var i = 0; i < count; i++)
+            {
+                list.RemoveAtSwapBack(list.Length - 1);
+            }
         }
     }
 }

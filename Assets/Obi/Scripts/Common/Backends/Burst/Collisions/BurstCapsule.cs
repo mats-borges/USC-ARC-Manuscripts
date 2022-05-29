@@ -1,33 +1,28 @@
 ﻿#if (OBI_BURST && OBI_MATHEMATICS && OBI_COLLECTIONS)
-using System;
-using System.Collections.Generic;
-using UnityEngine;
 using Unity.Collections;
-using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.Burst;
 
 namespace Obi
 {
     public struct BurstCapsule : BurstLocalOptimization.IDistanceFunction, IBurstCollider
     {
         public BurstColliderShape shape;
-        public BurstAffineTransform transform;
+        public BurstAffineTransform colliderToSolver;
         public float dt;
 
-        public void Evaluate(float4 point, ref BurstLocalOptimization.SurfacePoint projectedPoint)
+        public void Evaluate(float4 point, float4 radii, quaternion orientation, ref BurstLocalOptimization.SurfacePoint projectedPoint)
         {
-            float4 center = shape.center * transform.scale;
-            point = transform.InverseTransformPointUnscaled(point) - center;
+            float4 center = shape.center * colliderToSolver.scale;
+            point = colliderToSolver.InverseTransformPointUnscaled(point) - center;
 
             if (shape.is2D != 0)
                 point[2] = 0;
 
             int direction = (int)shape.size.z;
-            float radius = shape.size.x * math.max(transform.scale[(direction + 1) % 3],
-                                                   transform.scale[(direction + 2) % 3]);
+            float radius = shape.size.x * math.max(colliderToSolver.scale[(direction + 1) % 3],
+                                                   colliderToSolver.scale[(direction + 2) % 3]);
 
-            float height = math.max(radius, shape.size.y * 0.5f * transform.scale[direction]);
+            float height = math.max(radius, shape.size.y * 0.5f * colliderToSolver.scale[direction]);
             float4 halfVector = float4.zero;
             halfVector[direction] = height - radius;
 
@@ -37,13 +32,16 @@ namespace Obi
 
             float4 normal = centerToPoint / (distanceToCenter + BurstMath.epsilon);
 
-            projectedPoint.point = transform.TransformPointUnscaled(center + centerLine + normal * (radius + shape.contactOffset));
-            projectedPoint.normal = transform.TransformDirection(normal);
+            projectedPoint.point = colliderToSolver.TransformPointUnscaled(center + centerLine + normal * (radius + shape.contactOffset));
+            projectedPoint.normal = colliderToSolver.TransformDirection(normal);
         }
 
         public void Contacts(int colliderIndex,
+                             int rigidbodyIndex,
+                             NativeArray<BurstRigidbody> rigidbodies,
 
                               NativeArray<float4> positions,
+                              NativeArray<quaternion> orientations,
                               NativeArray<float4> velocities,
                               NativeArray<float4> radii,
 
@@ -60,7 +58,7 @@ namespace Obi
             var co = new BurstContact() { bodyA = simplexIndex, bodyB = colliderIndex };
             float4 simplexBary = BurstMath.BarycenterForSimplexOfSize(simplexSize);
 
-            var colliderPoint = BurstLocalOptimization.Optimize<BurstCapsule>(ref this, positions, radii, simplices, simplexStart, simplexSize,
+            var colliderPoint = BurstLocalOptimization.Optimize<BurstCapsule>(ref this, positions, orientations, radii, simplices, simplexStart, simplexSize,
                                                                               ref simplexBary, out float4 convexPoint, optimizationIterations, optimizationTolerance);
 
             co.pointB = colliderPoint.point;
@@ -69,81 +67,6 @@ namespace Obi
 
             contacts.Enqueue(co);
         }
-
-        /*public static void Contacts(int particleIndex,
-                                    float4 position,
-                                    quaternion orientation,
-                                    float4 radii,
-                                    int colliderIndex,
-                                    BurstAffineTransform transform,
-                                    BurstColliderShape shape,
-                                    NativeQueue<BurstContact>.ParallelWriter contacts)
-        {
-            BurstContact c = new BurstContact()
-            {
-                entityA = particleIndex,
-                entityB = colliderIndex,
-            };
-
-            float4 center = shape.center * transform.scale;
-
-            position = transform.InverseTransformPointUnscaled(position) - center;
-
-            int direction = (int)shape.size.z;
-            float radius = shape.size.x * math.max(transform.scale[(direction + 1) % 3], transform.scale[(direction + 2) % 3]);
-            float height = math.max(radius, shape.size.y * 0.5f * transform.scale[direction]);
-            float d = position[direction];
-            float4 axisProj = float4.zero;
-            float4 cap = float4.zero;
-
-            axisProj[direction] = d;
-            cap[direction] = height - radius;
-
-            float4 centerToPoint;
-            float centerToPointNorm;
-
-            if (d > height - radius)
-            { //one cap
-
-                centerToPoint = position - cap;
-                centerToPointNorm = math.length(centerToPoint);
-
-                c.distance = centerToPointNorm - radius;
-                c.normal = (centerToPoint / (centerToPointNorm + math.FLT_MIN_NORMAL));
-                c.point = cap + c.normal * radius;
-
-            }
-            else if (d < -height + radius)
-            { // other cap
-
-                centerToPoint = position + cap;
-                centerToPointNorm = math.length(centerToPoint);
-
-                c.distance = centerToPointNorm - radius;
-                c.normal = (centerToPoint / (centerToPointNorm + math.FLT_MIN_NORMAL));
-                c.point = -cap + c.normal * radius;
-
-            }
-            else
-            {//cylinder
-
-                centerToPoint = position - axisProj;
-                centerToPointNorm = math.length(centerToPoint);
-
-                c.distance = centerToPointNorm - radius;
-                c.normal = (centerToPoint / (centerToPointNorm + math.FLT_MIN_NORMAL));
-                c.point = axisProj + c.normal * radius;
-
-            }
-
-            c.point += center;
-            c.point = transform.TransformPointUnscaled(c.point);
-            c.normal = transform.TransformDirection(c.normal);
-
-            c.distance -= shape.contactOffset + BurstMath.EllipsoidRadius(c.normal, orientation, radii.xyz);
-
-            contacts.Enqueue(c);
-        }*/
     }
 
 }

@@ -15,6 +15,9 @@ namespace Obi
         private NativeArray<float2> stiffnesses;
         private NativeArray<float2> plasticity;
 
+        BendConstraintsBatchJob projectConstraints;
+        ApplyBendConstraintsBatchJob applyConstraints;
+
         public BurstBendConstraintsBatch(BurstBendConstraints constraints)
         {
             m_Constraints = constraints;
@@ -29,23 +32,23 @@ namespace Obi
             this.plasticity = plasticity.AsNativeArray<float2>();
             this.lambdas = lambdas.AsNativeArray<float>();
             m_ConstraintCount = count;
+
+            projectConstraints.particleIndices = this.particleIndices;
+            projectConstraints.restBends = this.restBends;
+            projectConstraints.stiffnesses = this.stiffnesses;
+            projectConstraints.plasticity = this.plasticity;
+            projectConstraints.lambdas = this.lambdas;
+
+            applyConstraints.particleIndices = this.particleIndices;
         }
 
         public override JobHandle Evaluate(JobHandle inputDeps, float stepTime, float substepTime, int substeps)
         {
-            var projectConstraints = new BendConstraintsBatchJob()
-            {
-                particleIndices = particleIndices,
-                restBends = restBends,
-                stiffnesses = stiffnesses,
-                plasticity = plasticity,
-                lambdas = lambdas,
-                positions = solverImplementation.positions,
-                invMasses = solverImplementation.invMasses,
-                deltas = solverImplementation.positionDeltas,
-                counts = solverImplementation.positionConstraintCounts,
-                deltaTime = substepTime
-            };
+            projectConstraints.positions = solverImplementation.positions;
+            projectConstraints.invMasses = solverImplementation.invMasses;
+            projectConstraints.deltas = solverImplementation.positionDeltas;
+            projectConstraints.counts = solverImplementation.positionConstraintCounts;
+            projectConstraints.deltaTime = substepTime;
 
             return projectConstraints.Schedule(m_ConstraintCount, 32, inputDeps);
         }
@@ -54,16 +57,10 @@ namespace Obi
         {
             var parameters = solverAbstraction.GetConstraintParameters(m_ConstraintType);
 
-            var applyConstraints = new ApplyBendConstraintsBatchJob()
-            {
-                particleIndices = particleIndices,
-
-                positions = solverImplementation.positions,
-                deltas = solverImplementation.positionDeltas,
-                counts = solverImplementation.positionConstraintCounts,
-
-                sorFactor = parameters.SORFactor
-            };
+            applyConstraints.positions = solverImplementation.positions;
+            applyConstraints.deltas = solverImplementation.positionDeltas;
+            applyConstraints.counts = solverImplementation.positionConstraintCounts;
+            applyConstraints.sorFactor = parameters.SORFactor;
 
             return applyConstraints.Schedule(m_ConstraintCount, 64, inputDeps);
         }

@@ -6,6 +6,9 @@ using UnityEngine;
 public class MenuText : MonoBehaviour
 {
     
+    //controls the name of the folio displayed in the control panel
+    
+    //takes in list of names from inspector
     [SerializeField] private List<string> stateList = new List<string>();
     private int stateNum = 0;
 

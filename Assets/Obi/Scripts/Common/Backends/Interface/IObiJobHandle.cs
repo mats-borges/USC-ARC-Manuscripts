@@ -1,12 +1,8 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using System;
-
-namespace Obi
+﻿namespace Obi
 {
     public interface IObiJobHandle
     {
         void Complete();
+        void Release();
     }
 }

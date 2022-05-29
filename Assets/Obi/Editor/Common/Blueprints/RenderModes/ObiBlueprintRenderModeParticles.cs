@@ -44,12 +44,12 @@ namespace Obi
         {
             CreateMaterialIfNeeded();
             foreach (Mesh mesh in impostorDrawer.Meshes)
-                Graphics.DrawMesh(mesh, Matrix4x4.identity, material, 0);
+                Graphics.DrawMesh(mesh, Matrix4x4.identity, material, 0, camera);
         }
 
         public override void Refresh()
         {
-            impostorDrawer.UpdateMeshes(editor.blueprint);
+            impostorDrawer.UpdateMeshes(editor.blueprint, editor.visible, editor.tint);
         }
 
         public override void OnDestroy()

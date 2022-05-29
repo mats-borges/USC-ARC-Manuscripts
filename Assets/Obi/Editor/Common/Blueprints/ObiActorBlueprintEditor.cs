@@ -24,6 +24,7 @@ namespace Obi
 
         protected List<ObiBlueprintRenderMode> renderModes = new List<ObiBlueprintRenderMode>();
         public int renderModeFlags = 0;
+        BooleanPreference showRenderModes;
 
         public bool editMode = false;
         public bool isEditing = false;
@@ -32,9 +33,12 @@ namespace Obi
         protected UnityEngine.Object oldSelection;
 
         //Additional status info for all particles:
+        public float dotRadiusScale = 1;
         public int selectedCount = 0;
+        public int activeParticle = -1;
         public bool[] selectionStatus = new bool[0];
         public bool[] visible = new bool[0];
+        public Color[] tint = new Color[0];
         protected float[] sqrDistanceToCamera = new float[0];
         public int[] sortedIndices = new int[0];
 
@@ -45,17 +49,27 @@ namespace Obi
 
         public ObiBlueprintPropertyBase currentProperty
         {
-            get { return (properties.Count > currentPropertyIndex && currentPropertyIndex >= 0) ? properties[currentPropertyIndex] : null; }
+            get { return GetProperty(currentPropertyIndex); }
         }
 
         public ObiBlueprintEditorTool currentTool
         {
-            get { return (tools.Count > currentToolIndex && currentToolIndex >= 0) ? tools[currentToolIndex] : null; }
+            get { return GetTool(currentToolIndex); }
         }
 
         public override bool UseDefaultMargins()
         {
             return false;
+        }
+
+        public ObiBlueprintPropertyBase GetProperty(int index)
+        {
+            return (properties.Count > index && index >= 0) ? properties[index] : null;
+        }
+
+        public ObiBlueprintEditorTool GetTool(int index)
+        {
+            return (tools.Count > index && index >= 0) ? tools[index] : null;
         }
 
 #if (UNITY_2019_1_OR_NEWER)
@@ -66,9 +80,11 @@ namespace Obi
         {
             properties.Add(new ObiBlueprintMass(this));
             properties.Add(new ObiBlueprintRadius(this));
-            properties.Add(new ObiBlueprintLayer(this));
+            properties.Add(new ObiBlueprintFilterCategory(this));
+            properties.Add(new ObiBlueprintFilterMask(this));
 
             renderModes.Add(new ObiBlueprintRenderModeParticles(this));
+            showRenderModes = new BooleanPreference($"{target.GetType()}.showRenderModes", false);
 
 #if (UNITY_2019_1_OR_NEWER)
             renderCallback = new System.Action<ScriptableRenderContext, Camera>((cntxt, cam) => { DrawWithCamera(cam); });
@@ -87,7 +103,7 @@ namespace Obi
             RenderPipelineManager.beginCameraRendering -= renderCallback;
 #endif
             Camera.onPreCull -= DrawWithCamera;
-            
+
             ObiParticleEditorDrawing.DestroyParticlesMesh();
 
             foreach (var tool in tools)
@@ -113,6 +129,7 @@ namespace Obi
                 CoroutineJob job = new CoroutineJob();
                 routine = job.Start(blueprint.Generate());
                 EditorCoroutine.ShowCoroutineProgressBar("Generating blueprint...", ref routine);
+                Refresh();
                 EditorGUIUtility.ExitGUI();
             }
             else
@@ -123,6 +140,7 @@ namespace Obi
                     CoroutineJob job = new CoroutineJob();
                     routine = job.Start(blueprint.Generate());
                     EditorCoroutine.ShowCoroutineProgressBar("Generating blueprint...", ref routine);
+                    Refresh();
                     EditorGUIUtility.ExitGUI();
                 }
             }
@@ -136,8 +154,10 @@ namespace Obi
             serializedObject.UpdateIfRequiredOrScript();
 
             EditorGUILayout.BeginVertical(EditorStyles.inspectorDefaultMargins);
-            Editor.DrawPropertiesExcluding(serializedObject, "m_Script");
 
+            DrawBlueprintProperties();
+
+            GUILayout.Space(10);
             GUI.enabled = ValidateBlueprint();
             if (GUILayout.Button("Generate", GUI.skin.FindStyle("LargeButton"), GUILayout.Height(32)))
                 Generate();
@@ -167,6 +187,11 @@ namespace Obi
                 EditorUtility.SetDirty(target);
             }
 
+        }
+
+        protected virtual void DrawBlueprintProperties()
+        {
+            Editor.DrawPropertiesExcluding(serializedObject, "m_Script");
         }
 
         private void DrawWithCamera(Camera camera)
@@ -222,7 +247,7 @@ namespace Obi
                         s.sceneViewState.showParticleSystems = false;
                         s.Frame(blueprint.bounds);
                     }
-                    
+
                     isEditing = true;
                     Repaint();
                 }
@@ -310,8 +335,11 @@ namespace Obi
                 // property OnSceneRepaint:
                 currentProperty.OnSceneRepaint();
 
+                // update particle color based on visiblity, etc.
+                UpdateTintColor();
+
                 // Draw particle handles:
-                ObiParticleEditorDrawing.DrawParticles(sceneView.camera, blueprint, visible, selectionStatus, sortedIndices);
+                ObiParticleEditorDrawing.DrawParticles(sceneView.camera, blueprint, activeParticle, visible, tint, sortedIndices, dotRadiusScale);
 
             }
 
@@ -320,19 +348,38 @@ namespace Obi
 
         }
 
+        protected virtual void UpdateTintColor()
+        {
+            Color regularColor = ObiEditorSettings.GetOrCreateSettings().particleColor;
+            Color selectedColor = ObiEditorSettings.GetOrCreateSettings().selectedParticleColor;
+            Color activeColor = ObiEditorSettings.GetOrCreateSettings().activeParticleColor;
+
+            for (int i = 0; i < blueprint.positions.Length; i++)
+            {
+                // get particle color:
+                if (activeParticle == i)
+                    tint[i] = activeColor;
+                else
+                    tint[i] = selectionStatus[i] ? selectedColor : regularColor;
+
+                tint[i].a = visible[i] ? 1 : 0.15f;
+            }
+        }
+
         protected void ResizeParticleArrays()
         {
             if (blueprint.positions != null)
             {
                 Array.Resize(ref selectionStatus, blueprint.positions.Length);
                 Array.Resize(ref visible, blueprint.positions.Length);
+                Array.Resize(ref tint, blueprint.positions.Length);
                 Array.Resize(ref sqrDistanceToCamera, blueprint.positions.Length);
                 Array.Resize(ref sortedIndices, blueprint.positions.Length);
             }
 
         }
 
-        public bool PropertySelector()
+        public int PropertySelector(int propertyIndex, string label = "Property")
         {
             // get all particle properties:
             string[] propertyNames = new string[properties.Count];
@@ -340,31 +387,28 @@ namespace Obi
                 propertyNames[i] = properties[i].name;
 
             // Draw a selection dropdown:
-            EditorGUI.BeginChangeCheck();
-            int newPropertyIndex = EditorGUILayout.Popup("Property", currentPropertyIndex, propertyNames);
-            if (EditorGUI.EndChangeCheck())
-            {
-                currentPropertyIndex = newPropertyIndex;
-                Refresh();
-                return true;
-            }
-            return false;
+            return EditorGUILayout.Popup(label, propertyIndex, propertyNames);
         }
 
-        public void RenderModeSelector()
+        public virtual void RenderModeSelector()
         {
-            string[] renderModeNames = new string[renderModes.Count];
-            for (int i = 0; i < renderModes.Count; ++i)
-                renderModeNames[i] = renderModes[i].name;
-
-            // Draw a selection dropdown:
-            EditorGUI.BeginChangeCheck();
-            int newRenderModeFlags = EditorGUILayout.MaskField("Render mode", renderModeFlags, renderModeNames);
-            if (EditorGUI.EndChangeCheck())
+            showRenderModes.value = EditorGUILayout.BeginFoldoutHeaderGroup(showRenderModes, "Render modes");
+            if (showRenderModes)
             {
-                renderModeFlags = newRenderModeFlags;
-                Refresh();
+                EditorGUI.BeginChangeCheck();
+                for (int i = 0; i < renderModes.Count; ++i)
+                {
+                    int value = 1 << i;
+
+                    if (EditorGUILayout.Toggle(renderModes[i].name, (value & renderModeFlags) != 0))
+                        renderModeFlags |= value;
+                    else
+                        renderModeFlags &= ~value;
+                }
+                if (EditorGUI.EndChangeCheck())
+                    Refresh();
             }
+            EditorGUILayout.EndFoldoutHeaderGroup();
         }
 
         public void Refresh()
@@ -398,6 +442,8 @@ namespace Obi
                 }
             }
 
+            if ((renderModeFlags & 1) != 0)
+                Refresh();
         }
 
         protected void DrawTools()

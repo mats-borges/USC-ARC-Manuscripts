@@ -41,6 +41,11 @@ namespace Obi
         public event ActorBlueprintCallback OnBlueprintUnloaded;
 
         /// <summary>
+        /// Called at the start of the solver's FixedUpdate (for Fixed and LateFixed updaters) or the solver's Update (for Late updaters)
+        /// </summary>
+        public event ActorCallback OnPrepareFrame;
+
+        /// <summary>
         /// Called at the beginning of a time step, before dirty constraints and active particles have been updated.
         /// </summary>
         public event ActorStepCallback OnPrepareStep;
@@ -65,17 +70,17 @@ namespace Obi
         /// </summary>
         public event ActorCallback OnInterpolate;                       
 
-        [HideInInspector][NonSerialized] protected int m_ActiveParticleCount = 0;
+        [HideInInspector] protected int m_ActiveParticleCount = 0;
 
         /// <summary>
         /// Index of each one of the actor's particles in the solver.
         /// </summary>
-        [HideInInspector][NonSerialized] public int[] solverIndices;
+        [HideInInspector] public int[] solverIndices;
 
         /// <summary>
         /// For each of the actor's constraint types, offset of every batch in the solver.
         /// </summary>
-        [HideInInspector][NonSerialized] public List<int>[] solverBatchOffsets;
+        [HideInInspector] public List<int>[] solverBatchOffsets;
 
         protected ObiSolver m_Solver;
         protected bool m_Loaded = false;
@@ -83,8 +88,8 @@ namespace Obi
         private ObiActorBlueprint state;
         private ObiActorBlueprint m_BlueprintInstance;
         private ObiPinConstraintsData m_PinConstraints;
-        [SerializeField] [HideInInspector] protected ObiCollisionMaterial m_CollisionMaterial;
-        [SerializeField] [HideInInspector] protected bool m_SurfaceCollisions = false;
+        [SerializeField][HideInInspector] protected ObiCollisionMaterial m_CollisionMaterial;
+        [SerializeField][HideInInspector] protected bool m_SurfaceCollisions = false;
 
         /// <summary>
         /// The solver in charge of simulating this actor.
@@ -96,7 +101,8 @@ namespace Obi
         }
 
         /// <summary>
-        /// True if the actor blueprint has been loaded into a solver. Being true, guarantees actor.solver won't be null.
+        /// True if the actor blueprint has been loaded into a solver.
+        /// If true, it guarantees actor.solver, actor.solverIndices and actor.solverBatchOffsets won't be null.
         /// </summary>
         public bool isLoaded
         {
@@ -231,7 +237,7 @@ namespace Obi
         }
 
         /// <summary>
-        /// Reference to the bleuprint asset sed by this actor.
+        /// Reference to the blueprint asset used by this actor.
         /// </summary>
         public abstract ObiActorBlueprint sourceBlueprint
         {
@@ -270,18 +276,16 @@ namespace Obi
             }
         }
 
-        protected void Awake()
+        protected virtual void Awake()
         {
-            solverBatchOffsets = new List<int>[Oni.ConstraintTypeCount];
-            for (int i = 0; i < solverBatchOffsets.Length; ++i)
-                solverBatchOffsets[i] = new List<int>();
-
-            m_PinConstraints = new ObiPinConstraintsData();
-
 #if UNITY_EDITOR
 
             // Check if this script's GameObject is in a PrefabStage
+#if UNITY_2021_2_OR_NEWER
+            var prefabStage = UnityEditor.SceneManagement.PrefabStageUtility.GetPrefabStage(gameObject);
+#else
             var prefabStage = UnityEditor.Experimental.SceneManagement.PrefabStageUtility.GetPrefabStage(gameObject);
+#endif
 
             if (prefabStage != null)
             {
@@ -298,7 +302,7 @@ namespace Obi
 #endif
         }
 
-        protected void OnDestroy()
+        protected virtual void OnDestroy()
         {
             if (m_BlueprintInstance != null)
                 DestroyImmediate(m_BlueprintInstance);
@@ -306,6 +310,12 @@ namespace Obi
 
         protected virtual void OnEnable()
         {
+            solverBatchOffsets = new List<int>[Oni.ConstraintTypeCount];
+            for (int i = 0; i < solverBatchOffsets.Length; ++i)
+                solverBatchOffsets[i] = new List<int>();
+
+            m_PinConstraints = new ObiPinConstraintsData();
+
             // when an actor is enabled, grabs the first solver up its hierarchy,
             // initializes it (if not initialized) and gets added to it.
             m_Solver = GetComponentInParent<ObiSolver>();
@@ -422,6 +432,7 @@ namespace Obi
             m_Solver.invRotationalMasses[destIndex] = m_Solver.invRotationalMasses[sourceIndex];
             m_Solver.principalRadii[destIndex] = m_Solver.principalRadii[sourceIndex];
             m_Solver.phases[destIndex] = m_Solver.phases[sourceIndex];
+            m_Solver.filters[destIndex] = m_Solver.filters[sourceIndex];
             m_Solver.colors[destIndex] = m_Solver.colors[sourceIndex];
 
             return true;
@@ -563,9 +574,9 @@ namespace Obi
                 for (int i = 0; i < particleCount; i++)
                 {
                     if (selfCollisions)
-                        m_Solver.phases[solverIndices[i]] |= (int)Oni.ParticleFlags.SelfCollide;
+                        m_Solver.phases[solverIndices[i]] |= (int)ObiUtils.ParticleFlags.SelfCollide;
                     else
-                        m_Solver.phases[solverIndices[i]] &= ~(int)Oni.ParticleFlags.SelfCollide;
+                        m_Solver.phases[solverIndices[i]] &= ~(int)ObiUtils.ParticleFlags.SelfCollide;
                 }
             }
         }
@@ -580,9 +591,9 @@ namespace Obi
                 for (int i = 0; i < particleCount; i++)
                 {
                     if (oneSided)
-                        m_Solver.phases[solverIndices[i]] |= (int)Oni.ParticleFlags.OneSided;
+                        m_Solver.phases[solverIndices[i]] |= (int)ObiUtils.ParticleFlags.OneSided;
                     else
-                        m_Solver.phases[solverIndices[i]] &= ~(int)Oni.ParticleFlags.OneSided;
+                        m_Solver.phases[solverIndices[i]] &= ~(int)ObiUtils.ParticleFlags.OneSided;
                 }
             }
         }
@@ -747,18 +758,34 @@ namespace Obi
         }
 
         /// <summary>  
-        /// Sets a given phase value for all particles in the actor.
+        /// Sets a given category value for all particles in the actor.
         /// </summary>  
-        /// <param name="newPhase"> Phase value.</param>  
-        public void SetPhase(int newPhase)
+        /// <param name="newCategory"> Category value.</param>  
+        public void SetFilterCategory(int newCategory)
         {
-            newPhase = Mathf.Clamp(newPhase, 0, (1 << 24) - 1);
+            newCategory = Mathf.Clamp(newCategory, ObiUtils.MinCategory, ObiUtils.MaxCategory);
 
             for (int i = 0; i < particleCount; ++i)
             {
                 int solverIndex = solverIndices[i];
-                var flags = (Oni.ParticleFlags)ObiUtils.GetFlagsFromPhase(solver.phases[solverIndex]);
-                solver.phases[solverIndex] = ObiUtils.MakePhase(newPhase, flags);
+                var mask = ObiUtils.GetMaskFromFilter(solver.filters[solverIndex]);
+                solver.filters[solverIndex] = ObiUtils.MakeFilter(mask, newCategory);
+            }
+        }
+
+        /// <summary>  
+        /// Sets a given mask value for all particles in the actor.
+        /// </summary>  
+        /// <param name="newMask"> Mask value.</param>  
+        public void SetFilterMask(int newMask)
+        {
+            newMask = Mathf.Clamp(newMask, ObiUtils.CollideWithNothing, ObiUtils.CollideWithEverything);
+
+            for (int i = 0; i < particleCount; ++i)
+            {
+                int solverIndex = solverIndices[i];
+                var category = ObiUtils.GetCategoryFromFilter(solver.filters[solverIndex]);
+                solver.filters[solverIndex] = ObiUtils.MakeFilter(newMask, category);
             }
         }
 
@@ -948,7 +975,7 @@ namespace Obi
 
         #region Blueprints
 
-        private void LoadBlueprintParticles(ObiActorBlueprint bp)
+        private void LoadBlueprintParticles(ObiActorBlueprint bp, int groupID)
         {
 
             Matrix4x4 l2sTransform = actorLocalToSolverMatrix;
@@ -970,6 +997,12 @@ namespace Obi
                     m_Solver.renderableOrientations[k] = l2sRotation * bp.orientations[i];
                 }
 
+                if (bp.restPositions != null && i < bp.restPositions.Length)
+                    m_Solver.restPositions[k] = bp.restPositions[i];
+
+                if (bp.restOrientations != null && i < bp.restOrientations.Length)
+                    m_Solver.restOrientations[k] = bp.restOrientations[i];
+
                 if (bp.velocities != null && i < bp.velocities.Length)
                     m_Solver.velocities[k] = l2sTransform.MultiplyVector(bp.velocities[i]);
 
@@ -985,18 +1018,13 @@ namespace Obi
                 if (bp.principalRadii != null && i < bp.principalRadii.Length)
                     m_Solver.principalRadii[k] = bp.principalRadii[i];
 
-                if (bp.phases != null && i < bp.phases.Length)
-                    m_Solver.phases[k] = ObiUtils.MakePhase(bp.phases[i],0);
-
-                if (bp.restPositions != null && i < bp.restPositions.Length)
-                    m_Solver.restPositions[k] = bp.restPositions[i];
-
-                if (bp.restOrientations != null && i < bp.restOrientations.Length)
-                    m_Solver.restOrientations[k] = bp.restOrientations[i];
+                if (bp.filters != null && i < bp.filters.Length)
+                    m_Solver.filters[k] = bp.filters[i];
 
                 if (bp.colors != null && i < bp.colors.Length)
                     m_Solver.colors[k] = bp.colors[i];
 
+                m_Solver.phases[k] = ObiUtils.MakePhase(groupID, 0);
             }
 
             m_ActiveParticleCount = sourceBlueprint.activeParticleCount;
@@ -1033,12 +1061,12 @@ namespace Obi
                 {
                     int solverIndex = solverIndices[i];
 
-                    solver.positions[solverIndex] = l2sTransform.MultiplyPoint3x4(sourceBlueprint.positions[i]);
+                    solver.renderablePositions[solverIndex] = solver.positions[solverIndex] = l2sTransform.MultiplyPoint3x4(sourceBlueprint.positions[i]);
                     solver.velocities[solverIndex] = l2sTransform.MultiplyVector(sourceBlueprint.velocities[i]);
 
                     if (usesOrientedParticles)
                     {
-                        solver.orientations[solverIndex] = l2sRotation * sourceBlueprint.orientations[i];
+                        solver.renderableOrientations[solverIndex] = solver.orientations[solverIndex] = l2sRotation * sourceBlueprint.orientations[i];
                         solver.angularVelocities[solverIndex] = l2sTransform.MultiplyVector(sourceBlueprint.angularVelocities[i]);
                     }
                 }
@@ -1053,7 +1081,7 @@ namespace Obi
         /// <summary>  
         /// Resets the position and velocity of all particles, to the values stored in the blueprint.
         /// </summary>  
-        /// <param name="com"> The blueprint that we want to fill with current particle data.</param>
+        /// <param name="bp"> The blueprint that we want to fill with current particle data.</param>
         /// Note that this will not resize the blueprint's data arrays, and that it does not perform range checking. For this reason,
         /// you must supply a blueprint large enough to store all particles' data.
         public void SaveStateToBlueprint(ObiActorBlueprint bp)
@@ -1107,7 +1135,7 @@ namespace Obi
 
             m_Loaded = true;
 
-            LoadBlueprintParticles(bp);
+            LoadBlueprintParticles(bp, solver.actors.Count);
             solver.dirtyConstraints |= ~0;
 
             if (OnBlueprintLoaded != null)
@@ -1133,6 +1161,12 @@ namespace Obi
 
             if (OnBlueprintUnloaded != null)
                 OnBlueprintUnloaded(this, null);
+        }
+
+        public virtual void PrepareFrame()
+        {
+            if (OnPrepareFrame != null)
+                OnPrepareFrame(this);
         }
 
         public virtual void PrepareStep(float stepTime)

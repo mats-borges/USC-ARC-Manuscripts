@@ -51,15 +51,17 @@ MonoBehaviour:
     mode: 0
     interpolation: 1
     gravity: {x: 123.5, y: 0, z: 50.47}
-    damping: 0.9999
+    damping: 0.9999999
     maxAnisotropy: 5
     sleepThreshold: 0.07
     collisionMargin: 0.01
-    maxDepenetration: 3
+    maxDepenetration: 60
     continuousCollisionDetection: 1
     shockPropagation: 1
     surfaceCollisionIterations: 4
-    surfaceCollisionTolerance: 0
+    surfaceCollisionTolerance: 0.69
+  gravity: {x: 0, y: -200, z: 0}
+  gravitySpace: 0
   worldLinearInertiaScale: 0
   worldAngularInertiaScale: 0
   distanceConstraintParameters:
@@ -69,8 +71,8 @@ MonoBehaviour:
     enabled: 1
   bendingConstraintParameters:
     evaluationOrder: 0
-    iterations: 1
-    SORFactor: 1.2
+    iterations: 2
+    SORFactor: 0.345
     enabled: 1
   particleCollisionConstraintParameters:
     evaluationOrder: 0
@@ -85,7 +87,7 @@ MonoBehaviour:
   collisionConstraintParameters:
     evaluationOrder: 1
     iterations: 1
-    SORFactor: 0.129
+    SORFactor: 0.1
     enabled: 1
   frictionConstraintParameters:
     evaluationOrder: 0

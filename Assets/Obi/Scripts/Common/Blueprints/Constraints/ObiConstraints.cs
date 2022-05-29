@@ -59,7 +59,9 @@ namespace Obi
 
         public IObiConstraintsBatch GetBatch(int i)
         {
-            return (IObiConstraintsBatch) batches[i];
+            if (batches != null && i >= 0 && i < batches.Count)
+                return (IObiConstraintsBatch) batches[i];
+            return null;
         }
 
         public int GetBatchCount()

@@ -6,47 +6,26 @@ using UnityEngine.Events;
 
 public class UnturnableCollider : MonoBehaviour
 {
-    //check if player is trying to grab
-    //check if grabber is close
-    //display message
-    //disappear message
-
-    [SerializeField] private GameObject messageText;
-    [SerializeField] private GameObject objToCheck;
-    [SerializeField] private GameObject otherMessage;
+    //controls the page turning "magic trick" 
     
-    public float minDist = 5f;
+    //check if player is trying to grab
+    //check if grabber is on the side closer to the hand
+    //invoke the magic trick unity events in the inspector
+    
+    public GraspingPoint.SimPageSide colliderSide = GraspingPoint.SimPageSide.LeftSide;
 
     //InteractibleEvent is defined in Interactible.cs
     [SerializeField] private InteractibleEvent pageMagic;
+    [SerializeField] private GraspingPoint _graspingPoint;
     
     public void PageMagicCheck(BaseInteractor interactor)
     {
-        Vector3 dist = transform.position - objToCheck.transform.position;
-        if (dist.magnitude >= minDist)
-        {
-            //MessageDisplay();
-            
-            pageMagic.Invoke(interactor);
-        }
-    }
-    
-    void MessageDisplay()
-    {
-        if (otherMessage.activeInHierarchy == false)
-        {
-            messageText.SetActive(true);
-            StartCoroutine(HideText());
-        }
-    }
-    
-    private IEnumerator HideText()
-    {
-        if (otherMessage.activeInHierarchy)
-        {
-            messageText.SetActive(false);
-        }
-        yield return new WaitForSeconds(5f);
-        messageText.SetActive(false);
+        if (!_graspingPoint) return;
+
+        var currentPageSide = _graspingPoint.GetSimPageSide();
+
+        if (currentPageSide == colliderSide) return;
+        
+        pageMagic.Invoke(interactor);
     }
 }

@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System;
 
@@ -43,11 +42,11 @@ namespace Obi
         {
             RegisterConstraint();
 
-            particleIndices.Add(indices[0]);
-            particleIndices.Add(indices[1]);
-            restDarbouxVectors.Add(restDarboux);
-            stiffnesses.Add(Vector3.zero);
-            plasticity.Add(Vector2.zero);
+            this.particleIndices.Add(indices[0]);
+            this.particleIndices.Add(indices[1]);
+            this.restDarbouxVectors.Add(restDarboux);
+            this.stiffnesses.Add(Vector3.zero);
+            this.plasticity.Add(Vector2.zero);
         }
 
         public override void Clear()
@@ -91,8 +90,12 @@ namespace Obi
                 lambdas.ResizeInitialized((m_ActiveConstraintCount + batch.activeConstraintCount) * 3);
 
                 restDarbouxVectors.CopyFrom(batch.restDarbouxVectors, 0, m_ActiveConstraintCount, batch.activeConstraintCount);
-                stiffnesses.CopyReplicate(new Vector3(user.torsionCompliance, user.bend1Compliance, user.bend2Compliance), m_ActiveConstraintCount, batch.activeConstraintCount);
-                plasticity.CopyReplicate(new Vector2(user.plasticYield, user.plasticCreep), m_ActiveConstraintCount, batch.activeConstraintCount);
+
+                for (int i = 0; i < batch.activeConstraintCount; ++i)
+                {
+                    stiffnesses[m_ActiveConstraintCount + i] = user.GetBendTwistCompliance(batch, i);
+                    plasticity[m_ActiveConstraintCount + i] = user.GetBendTwistPlasticity(batch, i);
+                }
 
                 for (int i = 0; i < batch.activeConstraintCount * 2; ++i)
                     particleIndices[m_ActiveConstraintCount * 2 + i] = actor.solverIndices[batch.particleIndices[i]];

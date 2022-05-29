@@ -53,6 +53,8 @@ namespace Obi
         void ResetForces();
         int GetParticleGridSize();
         void GetParticleGrid(ObiNativeAabbList cells);
+        void SpatialQuery(ObiNativeQueryShapeList shapes, ObiNativeAffineTransformList transforms, ObiNativeQueryResultList results);
+        void ReleaseJobHandles();
         #endregion
     }
 }

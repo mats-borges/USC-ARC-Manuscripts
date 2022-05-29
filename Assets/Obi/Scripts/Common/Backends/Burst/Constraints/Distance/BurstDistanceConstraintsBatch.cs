@@ -14,10 +14,13 @@ namespace Obi
         private NativeArray<float> restLengths;
         private NativeArray<float2> stiffnesses;
 
+        DistanceConstraintsBatchJob projectConstraints;
+        ApplyDistanceConstraintsBatchJob applyConstraints;
+
         public BurstDistanceConstraintsBatch(BurstDistanceConstraints constraints)
         {
             m_Constraints = constraints;
-            m_ConstraintType = Oni.ConstraintType.Distance; 
+            m_ConstraintType = Oni.ConstraintType.Distance;
         }
 
         public void SetDistanceConstraints(ObiNativeIntList particleIndices, ObiNativeFloatList restLengths, ObiNativeVector2List stiffnesses, ObiNativeFloatList lambdas, int count)
@@ -27,22 +30,23 @@ namespace Obi
             this.stiffnesses = stiffnesses.AsNativeArray<float2>();
             this.lambdas = lambdas.AsNativeArray<float>();
             m_ConstraintCount = count;
+
+            projectConstraints.particleIndices = this.particleIndices;
+            projectConstraints.restLengths = this.restLengths;
+            projectConstraints.stiffnesses = this.stiffnesses;
+            projectConstraints.lambdas = this.lambdas;
+
+            applyConstraints.particleIndices = this.particleIndices;
         }
 
         public override JobHandle Evaluate(JobHandle inputDeps, float stepTime, float substepTime, int substeps)
         {
-            var projectConstraints = new DistanceConstraintsBatchJob()
-            {
-                particleIndices = particleIndices,
-                restLengths = restLengths,
-                stiffnesses = stiffnesses,
-                lambdas = lambdas,
-                positions = solverImplementation.positions,
-                invMasses = solverImplementation.invMasses,
-                deltas = solverImplementation.positionDeltas,
-                counts = solverImplementation.positionConstraintCounts,
-                deltaTimeSqr = substepTime * substepTime
-            };
+            projectConstraints.positions = solverImplementation.positions;
+            projectConstraints.invMasses = solverImplementation.invMasses;
+            projectConstraints.deltas = solverImplementation.positionDeltas;
+            projectConstraints.counts = solverImplementation.positionConstraintCounts;
+            projectConstraints.deltaTimeSqr = substepTime * substepTime;
+
             return projectConstraints.Schedule(m_ConstraintCount, 32, inputDeps);
         }
 
@@ -50,16 +54,11 @@ namespace Obi
         {
             var parameters = solverAbstraction.GetConstraintParameters(m_ConstraintType);
 
-            var applyConstraints = new ApplyDistanceConstraintsBatchJob()
-            {
-                particleIndices = particleIndices,
+            applyConstraints.positions = solverImplementation.positions;
+            applyConstraints.deltas = solverImplementation.positionDeltas;
+            applyConstraints.counts = solverImplementation.positionConstraintCounts;
+            applyConstraints.sorFactor = parameters.SORFactor;
 
-                positions = solverImplementation.positions,
-                deltas = solverImplementation.positionDeltas,
-                counts = solverImplementation.positionConstraintCounts,
-
-                sorFactor = parameters.SORFactor
-            };
             return applyConstraints.Schedule(m_ConstraintCount, 64, inputDeps);
         }
 

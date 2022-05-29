@@ -1,8 +1,5 @@
 ﻿using UnityEngine;
-using Unity.Profiling;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace Obi
 {
@@ -13,14 +10,13 @@ namespace Obi
     public abstract class ObiColliderBase : MonoBehaviour
     {
 
+        [SerializeProperty("Thickness")]
+        [SerializeField] private float thickness = 0;
+
         [SerializeProperty("CollisionMaterial")]
         [SerializeField] private ObiCollisionMaterial material;
 
-        [SerializeProperty("Phase")]
-        [SerializeField] private int phase = 0;
-
-        [SerializeProperty("Thickness")]
-        [SerializeField] private float thickness = 0;
+        [SerializeField] private int filter = ObiUtils.MakeFilter(ObiUtils.CollideWithEverything, 0);
 
         public ObiCollisionMaterial CollisionMaterial
         {
@@ -31,17 +27,17 @@ namespace Obi
             get { return material; }
         }
 
-        public int Phase
+        public int Filter
         {
             set
             {
-                if (phase != value)
+                if (filter != value)
                 {
-                    phase = value;
+                    filter = value;
                     dirty = true;
                 }
             }
-            get { return phase; }
+            get { return filter; }
         }
 
         public float Thickness

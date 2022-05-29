@@ -19,7 +19,7 @@ namespace Obi
         // bend constraints:
         [SerializeField] protected bool _bendConstraintsEnabled = true;
         [SerializeField] protected float _bendCompliance = 0;
-        [SerializeField] [Range(0, 0.1f)] protected float _maxBending = 0;
+        [SerializeField] [Range(0, 0.1f)] protected float _maxBending = 0.025f;
         [SerializeField] [Range(0, 0.1f)] protected float _plasticYield = 0;
         [SerializeField] protected float _plasticCreep = 0;
 

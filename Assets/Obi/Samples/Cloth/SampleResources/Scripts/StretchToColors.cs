@@ -22,6 +22,11 @@ public class StretchToColors : MonoBehaviour
         counts = new int[cloth.particleCount];
     }
 
+    private void OnDestroy()
+    {
+        cloth.OnEndStep -= Cloth_OnEndStep;
+    }
+
     private void Cloth_OnEndStep(ObiActor actor, float substepTime)
     {
         if (Mathf.Approximately(maxForce, 0))
@@ -64,10 +69,13 @@ public class StretchToColors : MonoBehaviour
             // average force over each particle, map to color, and reset forces:
             for (int i = 0; i < cloth.solverIndices.Length; ++i)
             {
-                int solverIndex = cloth.solverIndices[i];
-                cloth.solver.colors[solverIndex] = gradient.Evaluate((forces[i] / counts[i] - minForce) / (maxForce - minForce));
-                forces[i] = 0;
-                counts[i] = 0;
+                if (counts[i] > 0)
+                {
+                    int solverIndex = cloth.solverIndices[i];
+                    cloth.solver.colors[solverIndex] = gradient.Evaluate((forces[i] / counts[i] - minForce) / (maxForce - minForce));
+                    forces[i] = 0;
+                    counts[i] = 0;
+                }
             }
 
         }

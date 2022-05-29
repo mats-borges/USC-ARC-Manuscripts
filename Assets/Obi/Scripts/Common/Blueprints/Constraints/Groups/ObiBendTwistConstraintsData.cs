@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System;
 
 namespace Obi
@@ -13,35 +12,8 @@ namespace Obi
             set;
         }
 
-        float torsionCompliance
-        {
-            get;
-            set;
-        }
-
-        float bend1Compliance
-        {
-            get;
-            set;
-        }
-
-        float bend2Compliance
-        {
-            get;
-            set;
-        }
-
-        float plasticYield
-        {
-            get;
-            set;
-        }
-
-        float plasticCreep
-        {
-            get;
-            set;
-        }
+        Vector3 GetBendTwistCompliance(ObiBendTwistConstraintsBatch batch, int constraintIndex);
+        Vector2 GetBendTwistPlasticity(ObiBendTwistConstraintsBatch batch, int constraintIndex);
     }
 
     [Serializable]

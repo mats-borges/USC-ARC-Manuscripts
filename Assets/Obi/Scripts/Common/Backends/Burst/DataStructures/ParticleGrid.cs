@@ -75,12 +75,14 @@ namespace Obi
             [ReadOnly] public NativeArray<float4> positions;
             [ReadOnly] public NativeArray<quaternion> orientations;
             [ReadOnly] public NativeArray<float4> restPositions;
+            [ReadOnly] public NativeArray<quaternion> restOrientations;
             [ReadOnly] public NativeArray<float4> velocities;
             [ReadOnly] public NativeArray<float> invMasses;
             [ReadOnly] public NativeArray<float4> radii;
             [ReadOnly] public NativeArray<float4> normals;
             [ReadOnly] public NativeArray<float> fluidRadii;
             [ReadOnly] public NativeArray<int> phases;
+            [ReadOnly] public NativeArray<int> filters;
 
             // simplex arrays:
             [ReadOnly] public NativeList<int> simplices;
@@ -191,15 +193,18 @@ namespace Obi
                 }
             }
 
-            private int GetSimplexPhase(int simplexStart, int simplexSize, out Oni.ParticleFlags flags, ref bool restPositionsEnabled)
+            private int GetSimplexGroup(int simplexStart, int simplexSize, out ObiUtils.ParticleFlags flags, out int category, out int mask, ref bool restPositionsEnabled)
             {
                 flags = 0;
                 int group = 0;
-
+                category = 0;
+                mask = 0;
                 for (int j = 0; j < simplexSize; ++j)
                 {
                     int particleIndex = simplices[simplexStart + j];
                     flags |= ObiUtils.GetFlagsFromPhase(phases[particleIndex]);
+                    category |= filters[particleIndex] & ObiUtils.FilterCategoryBitmask;
+                    mask |= (filters[particleIndex] & ObiUtils.FilterMaskBitmask) >> 16;
                     group = math.max(group, ObiUtils.GetGroupFromPhase(phases[particleIndex]));
                     restPositionsEnabled |= restPositions[particleIndex].w > 0.5f;
                 }
@@ -223,17 +228,24 @@ namespace Obi
                         if (simplices[simplexStartA + a] == simplices[simplexStartB + b])
                             return;
 
-                // get phases for each simplex:
+                // get group for each simplex:
                 bool restPositionsEnabled = false;
-                int groupA = GetSimplexPhase(simplexStartA, simplexSizeA, out Oni.ParticleFlags flagsA, ref restPositionsEnabled);
-                int groupB = GetSimplexPhase(simplexStartB, simplexSizeB, out Oni.ParticleFlags flagsB, ref restPositionsEnabled);
+                int groupA = GetSimplexGroup(simplexStartA, simplexSizeA, out ObiUtils.ParticleFlags flagsA, out int categoryA, out int maskA, ref restPositionsEnabled);
+                int groupB = GetSimplexGroup(simplexStartB, simplexSizeB, out ObiUtils.ParticleFlags flagsB, out int categoryB, out int maskB, ref restPositionsEnabled);
 
-                // if all particles have the same group and none have self-collision, reject the pair.
-                if (groupA == groupB && (flagsA & flagsB & Oni.ParticleFlags.SelfCollide) == 0)
+                // if all particles are in the same group:
+                if (groupA == groupB)
+                {
+                    // if none are self-colliding, reject the pair.
+                    if ((flagsA & flagsB & ObiUtils.ParticleFlags.SelfCollide) == 0)
+                        return;
+                }
+                // category-based filtering:
+                else if ((maskA & categoryB) == 0 || (maskB & categoryA) == 0)
                     return;
 
                 // if all simplices are fluid, check their smoothing radii:
-                if ((flagsA & Oni.ParticleFlags.Fluid) != 0 && (flagsB & Oni.ParticleFlags.Fluid) != 0)
+                if ((flagsA & ObiUtils.ParticleFlags.Fluid) != 0 && (flagsB & ObiUtils.ParticleFlags.Fluid) != 0)
                 {
                     int particleA = simplices[simplexStartA];
                     int particleB = simplices[simplexStartB];
@@ -254,7 +266,7 @@ namespace Obi
                 else // at least one solid particle is present:
                 {
                     // swap simplices so that B is always the one-sided one.
-                    if ((flagsA & Oni.ParticleFlags.OneSided) != 0 && groupA < groupB)
+                    if ((flagsA & ObiUtils.ParticleFlags.OneSided) != 0 && categoryA < categoryB)
                     {
                         ObiUtils.Swap(ref A, ref B);
                         ObiUtils.Swap(ref simplexStartA, ref simplexStartB);
@@ -276,7 +288,7 @@ namespace Obi
                     // skip the contact if there's self-intersection at rest:
                     if (groupA == groupB && restPositionsEnabled)
                     {
-                        var restPoint = BurstLocalOptimization.Optimize<BurstSimplex>(ref simplexShape, restPositions, radii,
+                        var restPoint = BurstLocalOptimization.Optimize<BurstSimplex>(ref simplexShape, restPositions, restOrientations, radii,
                                                     simplices, simplexStartA, simplexSizeA, ref simplexBary, out simplexPoint, 4, 0);
 
                         for (int j = 0; j < simplexSizeA; ++j)
@@ -294,7 +306,7 @@ namespace Obi
                     simplexShape.positions = positions;
                     simplexShape.CacheData();
 
-                    var surfacePoint = BurstLocalOptimization.Optimize<BurstSimplex>(ref simplexShape, positions, radii,
+                    var surfacePoint = BurstLocalOptimization.Optimize<BurstSimplex>(ref simplexShape, positions, orientations, radii,
                                         simplices, simplexStartA, simplexSizeA, ref simplexBary, out simplexPoint, optimizationIterations, optimizationTolerance);
 
                     simplexRadiusA = 0; simplexRadiusB = 0;
@@ -322,7 +334,7 @@ namespace Obi
                     if (vel * dt + dAB <= simplexRadiusA + simplexRadiusB + collisionMargin)
                     {
                         // adapt collision normal for one-sided simplices:
-                        if ((flagsB & Oni.ParticleFlags.OneSided) != 0 && groupB < groupA)
+                        if ((flagsB & ObiUtils.ParticleFlags.OneSided) != 0 && categoryA < categoryB)
                             BurstMath.OneSidedNormal(normalB, ref surfacePoint.normal);
 
                         contactsQueue.Enqueue(new BurstContact()
@@ -455,12 +467,14 @@ namespace Obi
                 positions = solver.positions,
                 orientations = solver.orientations,
                 restPositions = solver.restPositions,
+                restOrientations = solver.restOrientations,
                 velocities = solver.velocities,
                 invMasses = solver.invMasses,
                 radii = solver.principalRadii,
                 normals = solver.normals,
                 fluidRadii = solver.smoothingRadii,
                 phases = solver.phases,
+                filters = solver.filters,
 
                 simplices = solver.simplices,
                 simplexCounts = solver.simplexCounts,
@@ -514,6 +528,36 @@ namespace Obi
             };
 
             return interpolateDiffusePropertiesJob.Schedule(diffuseCount, 64);
+        }
+
+        public JobHandle SpatialQuery(BurstSolverImpl solver,
+                                      NativeArray<BurstQueryShape> shapes,
+                                      NativeArray<BurstAffineTransform> transforms,
+                                      NativeQueue<BurstQueryResult> results)
+        {
+            var world = ObiColliderWorld.GetInstance();
+
+            var job = new SpatialQueryJob
+            {
+                grid = grid,
+
+                positions = solver.abstraction.prevPositions.AsNativeArray<float4>(),
+                orientations = solver.abstraction.prevOrientations.AsNativeArray<quaternion>(),
+                radii = solver.abstraction.principalRadii.AsNativeArray<float4>(),
+                filters = solver.abstraction.filters.AsNativeArray<int>(),
+
+                simplices = solver.simplices,
+                simplexCounts = solver.simplexCounts,
+
+                shapes = shapes,
+                transforms = transforms,
+
+                results = results.AsParallelWriter(),
+                worldToSolver = solver.worldToSolver,
+                parameters = solver.abstraction.parameters
+            };
+
+            return job.Schedule(shapes.Length, 4);
         }
 
         public void GetCells(ObiNativeAabbList cells)

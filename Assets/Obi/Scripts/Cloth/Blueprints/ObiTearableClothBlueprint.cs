@@ -59,7 +59,7 @@ namespace Obi
             velocities = new Vector3[totalParticles];
             invMasses = new float[totalParticles];
             principalRadii = new Vector3[totalParticles];
-            phases = new int[totalParticles];
+            filters = new int[totalParticles];
             colors = new Color[totalParticles];
 
             areaContribution = new float[totalParticles];
@@ -96,7 +96,7 @@ namespace Obi
                 restPositions[i] = positions[i];
                 restPositions[i][3] = 1; // activate rest position.
                 principalRadii[i] = Vector3.one * minEdgeLength * 0.5f;
-                phases[i] = ObiUtils.MakePhase(1, /*selfCollisions ? Oni.ParticlePhase.SelfCollide : 0*/ 0);
+                filters[i] = ObiUtils.MakeFilter(ObiUtils.CollideWithEverything, 1);
                 colors[i] = Color.white;
 
                 if (i % 500 == 0)

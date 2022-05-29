@@ -15,19 +15,19 @@ namespace Obi
         }
 
         [SerializeField] [HideInInspector] private ObiActor m_Actor;
-
         [SerializeField] [HideInInspector] private Transform m_Target;
+
         [SerializeField] [HideInInspector] private ObiParticleGroup m_ParticleGroup;
         [SerializeField] [HideInInspector] private AttachmentType m_AttachmentType = AttachmentType.Static;
         [SerializeField] [HideInInspector] private bool m_ConstrainOrientation = false;
         [SerializeField] [HideInInspector] private float m_Compliance = 0;
         [SerializeField] [HideInInspector] [Delayed] private float m_BreakThreshold = float.PositiveInfinity;
 
-        private ObiPinConstraintsBatch pinBatch;
-        private ObiColliderBase attachedCollider;
-        private int attachedColliderHandleIndex;
-
         // private variables are serialized during script reloading, to keep their value. Must mark them explicitly as non-serialized.
+        [NonSerialized] private ObiPinConstraintsBatch pinBatch;
+        [NonSerialized] private ObiColliderBase attachedCollider;
+        [NonSerialized] private int attachedColliderHandleIndex;
+
         [NonSerialized] private int[] m_SolverIndices;
         [NonSerialized] private Vector3[] m_PositionOffsets = null;
         [NonSerialized] private Quaternion[] m_OrientationOffsets = null;
@@ -161,7 +161,7 @@ namespace Obi
             }
         }
 
-        private void Awake()
+        private void OnEnable()
         {
             m_Actor = GetComponent<ObiActor>();
             m_Actor.OnBlueprintLoaded += Actor_OnBlueprintLoaded;
@@ -170,23 +170,17 @@ namespace Obi
 
             if (m_Actor.solver != null)
                 Actor_OnBlueprintLoaded(m_Actor, m_Actor.sourceBlueprint);
-        }
 
-        private void OnDestroy()
-        {
-            m_Actor.OnBlueprintLoaded -= Actor_OnBlueprintLoaded;
-            m_Actor.OnPrepareStep -= Actor_OnPrepareStep;
-            m_Actor.OnEndStep -= Actor_OnEndStep;
-        }
-
-        private void OnEnable()
-        {
             EnableAttachment(m_AttachmentType);
         }
 
         private void OnDisable()
         {
             DisableAttachment(m_AttachmentType);
+
+            m_Actor.OnBlueprintLoaded -= Actor_OnBlueprintLoaded;
+            m_Actor.OnPrepareStep -= Actor_OnPrepareStep;
+            m_Actor.OnEndStep -= Actor_OnEndStep;
         }
 
         private void OnValidate()
@@ -222,7 +216,7 @@ namespace Obi
             // Disable attachment.
             DisableAttachment(m_AttachmentType);
 
-            if (m_Target != null && m_ParticleGroup != null && m_Actor.solver != null)
+            if (m_Target != null && m_ParticleGroup != null && m_Actor.isLoaded)
             {
                 Matrix4x4 bindMatrix = m_Target.worldToLocalMatrix * m_Actor.solver.transform.localToWorldMatrix;
 
@@ -480,7 +474,7 @@ namespace Obi
                 if (actorConstraints != null && pinBatch != null)
                 {
                     int pinBatchIndex = actorConstraints.batches.IndexOf(pinBatch);
-                    if (pinBatchIndex >= 0)
+                    if (pinBatchIndex >= 0 && pinBatchIndex < actor.solverBatchOffsets[(int)Oni.ConstraintType.Pin].Count)
                     {
                         int offset = actor.solverBatchOffsets[(int)Oni.ConstraintType.Pin][pinBatchIndex];
                         var solverBatch = solverConstraints.batches[pinBatchIndex];

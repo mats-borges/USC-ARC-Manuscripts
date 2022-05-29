@@ -6,7 +6,7 @@ namespace Obi
     [Serializable]
     public class ObiNativeVector4List : ObiNativeList<Vector4>
     {
-
+        public ObiNativeVector4List() { }
         public ObiNativeVector4List(int capacity = 8, int alignment = 16) : base(capacity, alignment)
         {
             for (int i = 0; i < capacity; ++i)

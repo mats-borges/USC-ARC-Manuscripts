@@ -24,7 +24,7 @@ namespace Obi
             return inputDeps;
         }
 
-        public override JobHandle Evaluate(JobHandle inputDeps, float stepTime, float deltaTime, int substeps)
+        public override JobHandle Evaluate(JobHandle inputDeps, float stepTime, float substepTime, int substeps)
         {
 
             // update densities and gradients:
@@ -38,7 +38,7 @@ namespace Obi
                 userData = solverImplementation.userData,
                 fluidData = solverImplementation.fluidData,
                 batchData = batchData,
-                dt = deltaTime
+                dt = substepTime
             };
 
             int batchCount = batchData.isLast ? batchData.workItemCount : 1;

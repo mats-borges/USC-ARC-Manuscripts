@@ -115,13 +115,16 @@ namespace Oni
         
 		EXPORT void GetBounds(Solver* solver, Eigen::Vector3f& min, Eigen::Vector3f& max);
         EXPORT int GetParticleGridSize(Solver* solver);
-        EXPORT void GetParticleGrid(Solver* solver, ParticleGrid::GridCell* cells);
+        EXPORT void GetParticleGrid(Solver* solver, Bounds* cells);
         
 		EXPORT void SetSolverParameters(Solver* solver, const SolverParameters* parameters);
 		EXPORT void GetSolverParameters(Solver* solver, SolverParameters* parameters);
         
         EXPORT TaskHandle* CollisionDetection(Solver* solver, float step_time);
 		EXPORT TaskHandle* Step(Solver* solver, float step_time, float substep_time, int substeps);
+    
+        EXPORT int SpatialQuery(Solver* solver, QueryShape* shapes, Transform* transforms, int shape_count);
+        EXPORT void GetQueryResults(Solver* solver, QueryResult* results, int num);
         
 		EXPORT void ApplyPositionInterpolation(Solver* solver,
                                                Eigen::Vector4f* start_positions,
@@ -146,6 +149,8 @@ namespace Oni
         EXPORT void SetParticleCollisionMaterials(Solver* solver, int* material_indices);
     
 		EXPORT void SetParticlePhases(Solver* solver, int* phases);
+    
+        EXPORT void SetParticleFilters(Solver* solver, int* filters);
         
 		EXPORT void SetParticlePositions(Solver* solver, Eigen::Vector4f* positions);
         
@@ -302,6 +307,8 @@ namespace Oni
                                                  Eigen::Vector4f* rest_coms,
                                                  Eigen::Vector4f* coms,
                                                  Eigen::Quaternionf* orientations,
+                                                 Eigen::Matrix4f* linear_transforms,
+                                                 Eigen::Matrix4f* plastic_deformations,
                                                  int num);
         
         EXPORT  void CalculateRestShapeMatching(Solver* solver, ConstraintBatchHandle* batch);

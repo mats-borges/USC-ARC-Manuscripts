@@ -69,15 +69,19 @@ namespace Obi
         {
             EditorGUILayout.BeginVertical(EditorStyles.inspectorDefaultMargins);
             EditorGUILayout.Space();
-            editor.RenderModeSelector();
-            editor.PropertySelector();
+
+            EditorGUI.BeginChangeCheck();
+            editor.currentPropertyIndex = editor.PropertySelector(editor.currentPropertyIndex);
+            if (EditorGUI.EndChangeCheck())
+                editor.Refresh();
+
             EditorGUILayout.EndVertical();
 
             EditorGUILayout.Space();
             GUILayout.Box(GUIContent.none, ObiEditorUtils.GetSeparatorLineStyle());
 
             EditorGUILayout.BeginVertical(EditorStyles.inspectorDefaultMargins);
-            import = EditorGUILayout.Foldout(import, "Import texture");
+            import = EditorGUILayout.BeginFoldoutHeaderGroup(import, "Import texture");
 
             if (import)
             {
@@ -112,13 +116,14 @@ namespace Obi
                     editor.Refresh();
                 }
             }
+            EditorGUILayout.EndFoldoutHeaderGroup();
             EditorGUILayout.EndVertical();
 
             EditorGUILayout.Space();
             GUILayout.Box(GUIContent.none, ObiEditorUtils.GetSeparatorLineStyle());
 
             EditorGUILayout.BeginVertical(EditorStyles.inspectorDefaultMargins);
-            export = EditorGUILayout.Foldout(export, "Export texture");
+            export = EditorGUILayout.BeginFoldoutHeaderGroup(export, "Export texture");
 
             if (export)
             {
@@ -146,8 +151,15 @@ namespace Obi
                 }
             }
 
+            EditorGUILayout.EndFoldoutHeaderGroup();
             EditorGUILayout.EndVertical();
 
+            EditorGUILayout.Space();
+            GUILayout.Box(GUIContent.none, ObiEditorUtils.GetSeparatorLineStyle());
+
+            EditorGUILayout.BeginVertical(EditorStyles.inspectorDefaultMargins);
+            editor.RenderModeSelector();
+            EditorGUILayout.EndVertical();
         }
 
     }

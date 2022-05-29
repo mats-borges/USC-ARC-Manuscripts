@@ -13,24 +13,7 @@ namespace Obi
             set;
         }
 
-        float stretchCompliance
-        {
-            get;
-            set;
-        }
-
-        float shear1Compliance
-        {
-            get;
-            set;
-        }
-
-        float shear2Compliance
-        {
-            get;
-            set;
-        }
-
+        Vector3 GetStretchShearCompliance(ObiStretchShearConstraintsBatch batch, int constraintIndex);
     }
 
     [Serializable]

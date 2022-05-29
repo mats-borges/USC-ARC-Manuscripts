@@ -32,7 +32,7 @@ namespace Obi
             GameObject.DestroyImmediate(particlesMesh);
         }
 
-        public static void DrawParticles(Camera cam, ObiActorBlueprint blueprint, bool[] facingCamera, bool[] selectionStatus, int[] sortedIndices)
+        public static void DrawParticles(Camera cam, ObiActorBlueprint blueprint, int activeParticle, bool[] visible, Color[] baseColor, int[] sortedIndices, float radiusScale = 1)
         {
             CreateParticlesMesh();
             CreateParticleMaterials();
@@ -51,15 +51,12 @@ namespace Obi
             List<Color> colors = new List<Color>(blueprint.activeParticleCount * 4);
             List<int> triangles = new List<int>(blueprint.activeParticleCount * 6);
 
-            Color regularColor = ObiEditorSettings.GetOrCreateSettings().particleColor;
-            Color selectedColor = ObiEditorSettings.GetOrCreateSettings().selectedParticleColor;
-
             Vector3 particleOffset0 = new Vector3(1, 1, 0);
             Vector3 particleOffset1 = new Vector3(-1, 1, 0);
             Vector3 particleOffset2 = new Vector3(-1, -1, 0);
             Vector3 particleOffset3 = new Vector3(1, -1, 0);
 
-            Vector4 radius = new Vector4(1, 0, 0, 0.006f);
+            Vector4 radius = new Vector4(1, 0, 0, 0.005f * radiusScale);
 
             for (int i = 0; i < drawcallCount; ++i)
             {
@@ -85,10 +82,6 @@ namespace Obi
                     if (!blueprint.IsParticleActive(sortedIndex))
                         continue;
 
-                    // get particle color:
-                    Color color = selectionStatus[sortedIndex] ? selectedColor : regularColor;
-                    color.a = facingCamera[sortedIndex] ? 1 : 0.15f;
-
                     normals.Add(particleOffset0);
                     normals.Add(particleOffset1);
                     normals.Add(particleOffset2);
@@ -104,10 +97,10 @@ namespace Obi
                     vertices.Add(blueprint.positions[sortedIndex]);
                     vertices.Add(blueprint.positions[sortedIndex]);
 
-                    colors.Add(color);
-                    colors.Add(color);
-                    colors.Add(color);
-                    colors.Add(color);
+                    colors.Add(baseColor[sortedIndex]);
+                    colors.Add(baseColor[sortedIndex]);
+                    colors.Add(baseColor[sortedIndex]);
+                    colors.Add(baseColor[sortedIndex]);
 
                     triangles.Add(index + 2);
                     triangles.Add(index + 1);

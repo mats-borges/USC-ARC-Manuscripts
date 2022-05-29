@@ -87,9 +87,12 @@ namespace Obi
         public override void Merge(ObiActor actor, IObiConstraintsBatch other)
         {
             var batch = other as ObiSkinConstraintsBatch;
+            var user = actor as ISkinConstraintsUser;
 
-            if (batch != null)
+            if (batch != null && user != null)
             {
+                if (!user.skinConstraintsEnabled)
+                    return;
 
                 particleIndices.ResizeUninitialized(m_ActiveConstraintCount + batch.activeConstraintCount);
                 skinPoints.ResizeUninitialized(m_ActiveConstraintCount + batch.activeConstraintCount);
@@ -100,8 +103,15 @@ namespace Obi
 
                 skinPoints.CopyFrom(batch.skinPoints, 0, m_ActiveConstraintCount, batch.activeConstraintCount);
                 skinNormals.CopyFrom(batch.skinNormals, 0, m_ActiveConstraintCount, batch.activeConstraintCount);
-                skinCompliance.CopyFrom(batch.skinCompliance, 0, m_ActiveConstraintCount, batch.activeConstraintCount);
-                skinRadiiBackstop.CopyFrom(batch.skinRadiiBackstop, 0, m_ActiveConstraintCount*3, batch.activeConstraintCount*3);
+
+                for (int i = 0; i < batch.activeConstraintCount; ++i)
+                {
+                    var radiiBackstop = user.GetSkinRadiiBackstop(batch, i);
+                    skinRadiiBackstop[(m_ActiveConstraintCount + i) * 3] = radiiBackstop.x;
+                    skinRadiiBackstop[(m_ActiveConstraintCount + i) * 3 + 1] = radiiBackstop.y;
+                    skinRadiiBackstop[(m_ActiveConstraintCount + i) * 3 + 2] = radiiBackstop.z;
+                    skinCompliance[m_ActiveConstraintCount + i] = user.GetSkinCompliance(batch, i);
+                }
 
                 for (int i = 0; i < batch.activeConstraintCount; ++i)
                     particleIndices[m_ActiveConstraintCount + i] = actor.solverIndices[batch.particleIndices[i]];

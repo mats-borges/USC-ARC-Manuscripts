@@ -39,7 +39,7 @@ namespace Obi
 
             properties.Add(new ObiBlueprintMass(this));
             properties.Add(new ObiBlueprintRadius(this));
-            properties.Add(new ObiBlueprintLayer(this));
+            properties.Add(new ObiBlueprintFilterCategory(this));
             properties.Add(new ObiBlueprintTearResistance(this));
             properties.Add(new ObiBlueprintColor(this));
 

@@ -366,7 +366,7 @@ namespace Obi
             // reset all solver's delta buffers to zero:
             foreach (ObiSolver solver in solvers)
             {
-                if (solver != null)
+                if (solver != null && solver.initialized)
                 {
                     solver.EnsureRigidbodyArraysCapacity(rigidbodyHandles.Count);
                     solver.rigidbodyLinearDeltas.WipeToZero();
@@ -403,7 +403,7 @@ namespace Obi
         {
             int count = 0;
             foreach (ObiSolver solver in solvers)
-                if (solver != null) count++;
+                if (solver != null && solver.initialized) count++;
 
             if (count > 0)
             {
@@ -417,7 +417,7 @@ namespace Obi
 
                     foreach (ObiSolver solver in solvers)
                     {
-                        if (solver != null)
+                        if (solver != null && solver.initialized)
                         {
                             linearDelta += solver.rigidbodyLinearDeltas[i] * rcpCount;
                             angularDelta += solver.rigidbodyAngularDeltas[i] * rcpCount;
