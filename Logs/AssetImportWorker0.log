@@ -15,12 +15,12 @@ C:/Users/matts/Documents/Dev/Unity/USC/Book of Hours
 -logFile
 Logs/AssetImportWorker0.log
 -srvPort
-53325
+49226
 Successfully changed project path to: C:/Users/matts/Documents/Dev/Unity/USC/Book of Hours
 C:/Users/matts/Documents/Dev/Unity/USC/Book of Hours
 Using Asset Import Pipeline V2.
-Refreshing native plugins compatible for Editor in 680.04 ms, found 8 plugins.
-Preloading 1 native plugins for Editor in 0.80 ms.
+Refreshing native plugins compatible for Editor in 103.98 ms, found 8 plugins.
+Preloading 1 native plugins for Editor in 0.78 ms.
 Initialize engine version: 2020.3.1f1 (77a89f25062f)
 [Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/Resources/UnitySubsystems
 [Subsystems] Discovering subsystems at path C:/Users/matts/Documents/Dev/Unity/USC/Book of Hours/Assets
@@ -37,23 +37,143 @@ Initialize mono
 Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/Managed'
 Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit'
 Mono config path = 'C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56480
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56672
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.3.1f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.141193 seconds.
+Registered in 0.001683 seconds.
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 95.65 ms, found 8 plugins.
+Refreshing native plugins compatible for Editor in 86.77 ms, found 8 plugins.
 Preloading 1 native plugins for Editor in 0.07 ms.
 Invoked RoslynAnalysisRunner static constructor.
 RoslynAnalysisRunner will not be running.
 RoslynAnalysisRunner has terminated.
 Mono: successfully reloaded assembly
-- Completed reload, in  4.922 seconds
+- Completed reload, in  1.605 seconds
 Platform modules already initialized, skipping
 Registering precompiled user dll's ...
-Registered in 0.235137 seconds.
+Registered in 0.006516 seconds.
 Begin MonoManager ReloadAssembly
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 89.07 ms, found 8 plugins.
+Refreshing native plugins compatible for Editor in 87.99 ms, found 8 plugins.
 Preloading 1 native plugins for Editor in 0.06 ms.
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+[XR] OculusXRPlugin: registering subsystems
+[XR] Unable to register display lifecyle provider: [1]
+[XR] Oculus Input lifecycle provider registered.
+[XR] Unable to register input lifecyle provider: [1]
+[XR] OVRP version 1.57.0
+Mono: successfully reloaded assembly
+- Completed reload, in  1.560 seconds
+Platform modules already initialized, skipping
+========================================================================
+Worker process is ready to serve import requests
+Shader 'Oculus/OVRMRCameraFrameLit': fallback shader 'Alpha-Diffuse' not found
+Shader 'Universal Render Pipeline/Particles/Lit': fallback shader 'Universal Render Pipeline/Particles/SimpleLit' not found
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.04 seconds
+Refreshing native plugins compatible for Editor in 1.24 ms, found 8 plugins.
+Preloading 1 native plugins for Editor in 0.06 ms.
+Unloading 4320 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 220.0 MB.
+System memory in use after: 220.2 MB.
+
+Unloading 62 unused Assets to reduce memory usage. Loaded Objects now: 4757.
+Total: 3.258100 ms (FindLiveObjects: 0.380000 ms CreateObjectMapping: 0.164500 ms MarkObjects: 2.587300 ms  DeleteObjects: 0.125100 ms)
+
+========================================================================
+Received Import Request.
+  path: Assets/Sounds/audioTest.mp3
+  artifactKey: Guid(19247d5f16325bc45ac5e462037faf15) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Sounds/audioTest.mp3 using Guid(19247d5f16325bc45ac5e462037faf15) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '462b9517bd059db6d445d4bd9e383dce') in 0.106269 seconds
+  Import took 0.113224 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000197 seconds.
+  path: Assets/Sounds/BoH_ThorntonEM.mp3
+  artifactKey: Guid(1230f60245cf71a49b7f1beb939ef075) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Sounds/BoH_ThorntonEM.mp3 using Guid(1230f60245cf71a49b7f1beb939ef075) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd362a6cea3ed1e153c11c71b18432b34') in 0.009724 seconds
+  Import took 0.016256 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 53.013751 seconds.
+  path: Assets/Obi Resources/Obi Assets/big_right_page_high.fbx
+  artifactKey: Guid(f4d10cb072ec4ce4d9b3e7a691244f4d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Obi Resources/Obi Assets/big_right_page_high.fbx using Guid(f4d10cb072ec4ce4d9b3e7a691244f4d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '6a37b2571d9caa246977d7b486e65725') in 0.206541 seconds
+  Import took 0.214340 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000200 seconds.
+  path: Assets/Obi Resources/Obi Assets/big_right_page_low.fbx
+  artifactKey: Guid(8fcbc4c419c512446bad2168e614c591) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Obi Resources/Obi Assets/big_right_page_low.fbx using Guid(8fcbc4c419c512446bad2168e614c591) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e33d1d6c30d613272b641a1a991cde9a') in 0.020708 seconds
+  Import took 0.028507 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000192 seconds.
+  path: Assets/Obi Resources/Obi Assets/page_right_small_high.fbx
+  artifactKey: Guid(525e4218a94482245ace5bbbb11c0faa) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Obi Resources/Obi Assets/page_right_small_high.fbx using Guid(525e4218a94482245ace5bbbb11c0faa) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c8a1e941bf6502df64b17e4b76e874f2') in 0.019921 seconds
+  Import took 0.026937 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000216 seconds.
+  path: Assets/Obi Resources/Obi Assets/Page.asset
+  artifactKey: Guid(d69040c35f35d794587ba36fcc55c95d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Obi Resources/Obi Assets/Page.asset using Guid(d69040c35f35d794587ba36fcc55c95d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c3c2fd73ae9cebe39060751ad7e45959') in 0.011590 seconds
+  Import took 0.018442 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000200 seconds.
+  path: Assets/Obi Resources/Obi Assets/book_collision_volume.asset
+  artifactKey: Guid(8fec5bfba73d6a04f8e13ca7f3e8ad04) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Obi Resources/Obi Assets/book_collision_volume.asset using Guid(8fec5bfba73d6a04f8e13ca7f3e8ad04) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '18fdb34afbc045dc7b4dd9c9779b05b9') in 0.177521 seconds
+  Import took 0.184121 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000338 seconds.
+  path: Assets/Obi Resources/Obi Assets/SimPageClothBlueprint.asset
+  artifactKey: Guid(9ece228c22da6254a93bef0d6b8498d5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Obi Resources/Obi Assets/SimPageClothBlueprint.asset using Guid(9ece228c22da6254a93bef0d6b8498d5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '360ff46ee6c171c47c08dc5715b1f9fe') in 0.059390 seconds
+  Import took 0.067259 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 23.018854 seconds.
+  path: Assets/Textures/Environments/Materials/cathedral01_Bg.mat
+  artifactKey: Guid(22ad33c0716c984489a64c3327725009) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Textures/Environments/Materials/cathedral01_Bg.mat using Guid(22ad33c0716c984489a64c3327725009) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1665dceec3be983774da84f021f975be') in 2.141504 seconds
+  Import took 2.154456 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 80.011097 seconds.
+  path: Assets/Textures/USC BoH/metallic/8r8v Specular.png
+  artifactKey: Guid(d805bfff96b7945438b5596688b0cd94) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Textures/USC BoH/metallic/8r8v Specular.png using Guid(d805bfff96b7945438b5596688b0cd94) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '8b543c8d12af1aefdfdf545b47376822') in 0.170481 seconds
+  Import took 0.177906 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000211 seconds.
+  path: Assets/Textures/USC BoH/metallic/9r6v Specular.png
+  artifactKey: Guid(43fa6db00844063488a0ef4188034361) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Textures/USC BoH/metallic/9r6v Specular.png using Guid(43fa6db00844063488a0ef4188034361) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'dc677b9de38fa2a9cd55b3eb02b90eb9') in 0.131785 seconds
+  Import took 0.138441 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 50.048795 seconds.
+  path: Assets/Textures/Table/Materials/tabletop.mat
+  artifactKey: Guid(c27407c26a181b7429c2a26ff98be975) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Textures/Table/Materials/tabletop.mat using Guid(c27407c26a181b7429c2a26ff98be975) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '265bedaca8b754f34e0612d3e4a84f22') in 0.375547 seconds
+  Import took 0.384632 seconds .
+
